@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Share receipts</title>
+    <script src="/js/lib/jquery-3.1.0.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/components/header.css">
+    <script src="js/lib/react.js"></script>
+    <script src="/js/components/header.js" type="text/babel"></script>
+    <script src="/js/components/registration-form.js" type="text/babel"></script>
+</head>
+<body>
+<div id="container"></div>
+<h2>test</h2>
+<script type="text/babel">
+    var WelcomePage = React.createClass({
+        render: function () {
+            render(
+                    <h1>Hello in app!</h1>
+            )
+        }
+    });
+
+    var MainPage = React.createClass({
+        constructor: function () {
+            this.state = {
+                currentPage: "welcomePage",
+                currentUser: null
+            }
+        },
+
+        render: function () {
+            if (this.state.currentPage === 'welcomePage') {
+                return (
+                        <div>
+                            <Header/>
+                            <WelcomePage/>
+                        </div>
+                )
+            } else {
+                console.log('current page' + this.state.currentPage);
+            }
+        }
+    });
+
+    React.render(
+            <MainPage/>,
+            document.getElementById('container')
+    );
+</script>
+</body>
+</html>

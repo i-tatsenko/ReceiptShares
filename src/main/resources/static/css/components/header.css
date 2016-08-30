@@ -1,0 +1,22 @@
+.header {
+    height: 100px;
+    background: #888888;
+}
+
+.header-user_action {
+    height:100%;
+    float: right;
+    margin-right: 50px;
+}
+
+.header-user_action button {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.header-user_action__login {
+}
+
+.header-user_action__register {
+}
