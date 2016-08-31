@@ -3,28 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Share receipts</title>
-    <script src="/js/lib/jquery-3.1.0.min.js"></script>
-    <link rel="stylesheet" href="/css/bootstrap.css">
-    <link rel="stylesheet" href="/css/components/header.css">
-    <script src="js/lib/react.js"></script>
-    <script src="/js/components/header.js" type="text/babel"></script>
-    <script src="/js/components/registration-form.js" type="text/babel"></script>
+    <link rel="stylesheet" href="bootstrap.css">
+    <link rel="stylesheet" href="components/header.css">
+    <script src="components/header.js" type="text/jsx"></script>
+    <script src="components/registration-form.js" type="text/babel"></script>
+    <script src="lib/jquery-3.1.0.min.js"></script>
+    <script src="lib/react.js"></script>
+    <script src="lib/react-dom.js"></script>
+    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+
 </head>
 <body>
 <div id="container"></div>
-<h2>test</h2>
+<h2>test5</h2>
 <script type="text/babel">
+    var Header = React.createClass({
+        render: function () {
+            return (
+                    <div className='header'>
+                        <div className='header-user_action'>
+                            <button className='btn btn-default header-user_action__login' onClick={this.props.login}>Login</button>
+                            <button className='btn btn-default header-user_action__register' onClick={this.props.register}>Register</button>
+                        </div>
+                    </div>
+            )
+        }
+    });
+
+
+
     var WelcomePage = React.createClass({
         render: function () {
-            render(
+            return(
                     <h1>Hello in app!</h1>
             )
         }
     });
 
     var MainPage = React.createClass({
-        constructor: function () {
-            this.state = {
+        getInitialState: function () {
+            return {
                 currentPage: "welcomePage",
                 currentUser: null
             }
@@ -34,8 +52,8 @@
             if (this.state.currentPage === 'welcomePage') {
                 return (
                         <div>
-                            <Header/>
-                            <WelcomePage/>
+                            <Header />
+                            <WelcomePage />
                         </div>
                 )
             } else {
@@ -44,8 +62,8 @@
         }
     });
 
-    React.render(
-            <MainPage/>,
+    ReactDOM.render(
+            <MainPage />,
             document.getElementById('container')
     );
 </script>
