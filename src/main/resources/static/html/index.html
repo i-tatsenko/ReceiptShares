@@ -4,68 +4,13 @@
     <meta charset="UTF-8">
     <title>Share receipts</title>
     <link rel="stylesheet" href="bootstrap.css">
-    <link rel="stylesheet" href="components/header.css">
-    <script src="components/header.js" type="text/jsx"></script>
-    <script src="components/registration-form.js" type="text/babel"></script>
     <script src="lib/jquery-3.1.0.min.js"></script>
-    <script src="lib/react.js"></script>
-    <script src="lib/react-dom.js"></script>
-    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
 </head>
 <body>
 <div id="container"></div>
-<h2>test5</h2>
-<script type="text/babel">
-    var Header = React.createClass({
-        render: function () {
-            return (
-                    <div className='header'>
-                        <div className='header-user_action'>
-                            <button className='btn btn-default header-user_action__login' onClick={this.props.login}>Login</button>
-                            <button className='btn btn-default header-user_action__register' onClick={this.props.register}>Register</button>
-                        </div>
-                    </div>
-            )
-        }
-    });
 
-
-
-    var WelcomePage = React.createClass({
-        render: function () {
-            return(
-                    <h1>Hello in app!</h1>
-            )
-        }
-    });
-
-    var MainPage = React.createClass({
-        getInitialState: function () {
-            return {
-                currentPage: "welcomePage",
-                currentUser: null
-            }
-        },
-
-        render: function () {
-            if (this.state.currentPage === 'welcomePage') {
-                return (
-                        <div>
-                            <Header />
-                            <WelcomePage />
-                        </div>
-                )
-            } else {
-                console.log('current page' + this.state.currentPage);
-            }
-        }
-    });
-
-    ReactDOM.render(
-            <MainPage />,
-            document.getElementById('container')
-    );
-</script>
+<script src="bundle.js"></script>
 </body>
 </html>

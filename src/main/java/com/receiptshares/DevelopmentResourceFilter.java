@@ -35,7 +35,7 @@ class DevelopmentResourceFilter implements Filter {
         }
         String uri = ((HttpServletRequest) request).getRequestURI();
         Resource resource = Resource.find(uri);
-        if (resource != null) {
+        if (resource != null && resource.exists(uri)) {
             resource.writeResource(uri, (HttpServletResponse) response);
             return;
         }
@@ -68,16 +68,24 @@ class DevelopmentResourceFilter implements Filter {
             return null;
         }
 
+        boolean exists(String uri) {
+            return Files.exists(getPath(uri));
+        }
+
         boolean writeResource(String uri, HttpServletResponse response) {
             response.setContentType(contentType + "; charset=utf-8");
             try {
-                Path pathToResource = Paths.get(DevelopmentResourceFilter.resourceLocation + "/" + name + "/" + uri);
+                Path pathToResource = getPath(uri);
                 response.getOutputStream().write(Files.readAllBytes(pathToResource));
                 return true;
             } catch (IOException ioe) {
                 LOGGER.error("Can't write resource " + uri, ioe);
                 return false;
             }
+        }
+
+        private Path getPath(String uri) {
+            return Paths.get(DevelopmentResourceFilter.resourceLocation + "/" + name + "/" + uri);
         }
     }
 }

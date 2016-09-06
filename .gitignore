@@ -10,20 +10,7 @@ gradle-app.setting
 *.war
 *.ear
 hs_err_pid*
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/jsLibraryMappings.xml
-.idea/dataSources.ids
-.idea/dataSources.xml
-.idea/dataSources.local.xml
-.idea/sqlDataSources.xml
-.idea/dynamic.xml
-.idea/uiDesigner.xml
-.idea/gradle.xml
-.idea/libraries
-.idea/mongoSettings.xml
+.idea/
 *.iws
 /out/
 .idea_modules/
@@ -32,3 +19,5 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+node_modules
+src/main/resources/static/js/bundle.js
