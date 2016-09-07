@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
 @Component
 @RestController
 @RequestMapping("/reg")
@@ -22,14 +25,19 @@ class RegistrationController {
     public static final Logger LOG = LoggerFactory.getLogger(RegistrationController)
 
     UserDao userDao
+    GoogleCaptcha captchaService
 
     @Autowired
-    RegistrationController(UserDao userDao) {
+    RegistrationController(UserDao userDao, GoogleCaptcha captcha) {
         this.userDao = userDao
+        this.captchaService = captcha
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha ){
+    def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha, HttpServletRequest request){
+        if(!captchaService.verify(captcha, request.remoteAddr)) {
+            throw new IllegalArgumentException()
+        }
         LOG.info("Captcha ${captcha}")
         userDao.registerNewUser(newUserDTO)
     }

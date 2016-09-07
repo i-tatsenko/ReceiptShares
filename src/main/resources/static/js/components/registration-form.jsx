@@ -21,7 +21,7 @@ export default class RegistrationForm extends React.Component {
                                                          type='password'
                                                          name='passwordCheck'/></label>
                 </div>
-                <div className="g-recaptcha" data-sitekey="6Lc2gykTAAAAAK57km87fT_CMLt69qdfz931-sEJ"
+                <div className="g-recaptcha" data-sitekey="6LcZlikTAAAAABq_omyFFcB9Z3qwZsYIRO2iVwxO"
                      data-callback={captchaOk.bind(this)}></div>
                 <div>
                     <input className='form-control' type='button' value='Register' onClick={this.registerUser}/>
