@@ -1,9 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-// import ReactRouter from 'react-router'
 
 import Header from './header.jsx'
 import RegistrationForm from './registration-form.jsx'
+import LeftMenu from './left-menu.jsx'
+import Receipt from './receipt.jsx'
 
 var ReactRouter = require('react-router');
 
@@ -15,6 +16,14 @@ class WelcomePage extends React.Component {
     render() {
         return (
             <h1>Hello in app!</h1>
+        )
+    }
+}
+
+class Help extends React.Component {
+    render() {
+        return(
+            <h1>Application is under construction</h1>
         )
     }
 }
@@ -35,9 +44,18 @@ class MainPage extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{height: '100%'}}>
                 <Header register="/register" login="/login"/>
-                <div>
+                <div style={{
+                    float: 'left'
+                }} className="container-div">
+                    <LeftMenu currentLink="/current" helpLink="/help"/>
+                </div>
+                <div style={{
+                    float: 'left',
+                    marginLeft: '20px',
+                    width: 'auto'
+                }} className="container-div">
                     {this.props.children}
                 </div>
             </div>
@@ -52,6 +70,8 @@ ReactDOM.render(
         <Route path="/" component={MainPage}>
             <IndexRoute component={WelcomePage}/>
             <Route path="/register" component={RegistrationForm}/>
+            <Route path="/current" component={Receipt}/>
+            <Route path="/help" component={Help}/>
         </Route>
     </Router>,
     document.getElementById('container')

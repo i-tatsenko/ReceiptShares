@@ -36,6 +36,7 @@ public class ReceiptSharesApplication extends SpringBootServletInitializer {
     @ConditionalOnProperty(name = "receipt.shares.mode", havingValue = "dev")
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+                                            .setName("dev-test")
                                             .build();
     }
 

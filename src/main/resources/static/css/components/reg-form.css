@@ -1,0 +1,8 @@
+#reg-form-container {
+    margin-left: 50px;
+    margin-top: 30px;
+}
+
+#reg-form-container input[type='button'] {
+    margin-top: 30px;
+}
