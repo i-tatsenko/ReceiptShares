@@ -23,4 +23,6 @@ public class ReceiptSharesApplication extends SpringBootServletInitializer{
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
+
+
 }

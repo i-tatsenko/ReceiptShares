@@ -1,5 +1,6 @@
 package com.receiptshares.user.registration
 
+import com.receiptshares.external.captcha.CaptchaService
 import com.receiptshares.user.dao.UserDao
 import com.receiptshares.user.exceptions.EmailNotUniqueException
 import org.slf4j.Logger
@@ -14,31 +15,27 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-
 @Component
 @RestController
-@RequestMapping("/reg")
+@RequestMapping("/v1/reg")
 class RegistrationController {
 
     public static final Logger LOG = LoggerFactory.getLogger(RegistrationController)
 
     UserDao userDao
-    GoogleCaptcha captchaService
+    CaptchaService captchaService
 
     @Autowired
-    RegistrationController(UserDao userDao, GoogleCaptcha captcha) {
+    RegistrationController(UserDao userDao, CaptchaService captcha) {
         this.userDao = userDao
         this.captchaService = captcha
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha, HttpServletRequest request){
-        if(!captchaService.verify(captcha, request.remoteAddr)) {
+    def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha){
+        if(!captchaService.verify(captcha)) {
             throw new IllegalArgumentException()
         }
-        LOG.info("Captcha ${captcha}")
         userDao.registerNewUser(newUserDTO)
     }
 
