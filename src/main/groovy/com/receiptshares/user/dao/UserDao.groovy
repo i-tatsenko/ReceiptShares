@@ -1,11 +1,13 @@
 package com.receiptshares.user.dao
 
 import com.receiptshares.user.exceptions.EmailNotUniqueException
+import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
@@ -32,5 +34,13 @@ class UserDao {
         } catch (DataIntegrityViolationException div) {
             throw  new EmailNotUniqueException(newUser.email)
         }
+    }
+
+    User getByEmail(String email) {
+        def found = userRepo.findByEmail(email)
+        if (found) {
+            return new User(name: found.name, email: found.email, passwordHash: found.passwordHash)
+        }
+        return null
     }
 }
