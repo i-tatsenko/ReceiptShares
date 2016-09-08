@@ -13,7 +13,7 @@ export default class LeftMenu extends React.Component {
             <div id="left-menu">
                 <ul>
                     <li><IndexLink activeClassName='left-menu__active-li' to="/">Main</IndexLink></li>
-                    <li><Link target={} activeClassName='left-menu__active-li' to={this.props.currentLink}>Current Receipt</Link></li>
+                    <li><Link  activeClassName='left-menu__active-li' to={this.props.currentLink}>Current Receipt</Link></li>
                     <li><Link activeClassName='left-menu__active-li' to={this.props.helpLink}>Help</Link></li>
                 </ul>
             </div>

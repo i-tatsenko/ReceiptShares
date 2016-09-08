@@ -2,7 +2,16 @@ import React from 'react'
 require('style!css!../../css/components/reg-form.css');
 
 export default class RegistrationForm extends React.Component {
+
+    constructor(args) {
+        super(args);
+        this.state = {
+            formOk: false
+        }
+    }
+
     render() {
+        var disabled = !this.state.formOk;
         return (
             <div id="reg-form-container">
                 <h2>Register</h2>
@@ -29,12 +38,11 @@ export default class RegistrationForm extends React.Component {
                                                              name='passwordCheck'/></label>
                         <span className="help-block"/>
                     </div>
-                    <div className="g-recaptcha" data-sitekey="6LcZlikTAAAAABq_omyFFcB9Z3qwZsYIRO2iVwxO"
-                         data-callback={captchaOk.bind(this)}>
+                    <div id="captcha"/>
 
-                    </div>
                     <div>
-                        <input className='form-control' type='button' value='Register' onClick={this.registerUser}/>
+                        <input id="registration-form__register-button" className='form-control' type='button'
+                               value='Register' onClick={this.registerUser} disabled={disabled}/>
                     </div>
                 </form>
             </div>
@@ -61,8 +69,19 @@ export default class RegistrationForm extends React.Component {
         })
     }
 
-}
+    componentDidMount() {
+        if (typeof grecaptcha === 'undefined') {
+            setTimeout(() => this.renderCaptcha(), 100)
+        } else {
+            this.renderCaptcha();
+        }
+    }
 
-function captchaOk(resp) {
-    alert('Captch Ok ' + resp)
+    renderCaptcha() {
+        grecaptcha.render('captcha', {
+            sitekey: '6LcZlikTAAAAABq_omyFFcB9Z3qwZsYIRO2iVwxO',
+            callback: () => this.setState({formOk: true})
+        });
+    }
+
 }
