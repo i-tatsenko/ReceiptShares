@@ -1,4 +1,5 @@
 import React from 'react'
+import FormAlert from './form-alert.jsx';
 require('style!css!../../css/components/reg-form.css');
 
 export default class RegistrationForm extends React.Component {
@@ -6,7 +7,8 @@ export default class RegistrationForm extends React.Component {
     constructor(args) {
         super(args);
         this.state = {
-            formOk: false
+            formOk: false,
+            alertMessage : ''
         }
     }
 
@@ -15,7 +17,7 @@ export default class RegistrationForm extends React.Component {
         return (
             <div id="reg-form-container">
                 <h2>Register</h2>
-                <div id="reg-form-alert" className="alert alert-danger" hidden="true"/>
+                <FormAlert message={this.state.alertMessage}/>
                 <form id='register-form'>
                     <div className="form-group">
                         <label>Name <input id="newUserName" className='form-control' type='text' placeholder='Your name'
@@ -42,14 +44,14 @@ export default class RegistrationForm extends React.Component {
 
                     <div>
                         <input id="registration-form__register-button" className='form-control' type='button'
-                               value='Register' onClick={this.registerUser} disabled={disabled}/>
+                               value='Register' onClick={() => this.registerUser(this)}  disabled={disabled}/>
                     </div>
                 </form>
             </div>
         );
     }
 
-    registerUser() {
+    registerUser(component) {
         var form = $('#register-form').serialize();
         $.post({
             url: '/v1/open/reg',
@@ -64,7 +66,7 @@ export default class RegistrationForm extends React.Component {
                 divContainingEmail.addClass('has-error');
                 divContainingEmail.find('.help-block').text("Please choose another email.")
             } else {
-                $('#reg-form-alert').show().text('Something went wrong. Please reload page and try again')
+                component.setState({alertMessage: 'Something went wrong. Please reload page and try again'})
             }
         })
     }

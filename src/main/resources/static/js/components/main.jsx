@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { hashHistory } from 'react-router'
 import Header from './header.jsx'
 import RegistrationForm from './registration-form.jsx'
+import LoginForm from './login-form.jsx'
 import LeftMenu from './left-menu.jsx'
 import Receipt from './receipt.jsx'
 
@@ -73,6 +74,7 @@ ReactDOM.render(
             <Route path="/register" component={RegistrationForm}/>
             <Route path="/current" component={Receipt}/>
             <Route path="/help" component={Help}/>
+            <Route path="/login" component={LoginForm}/>
         </Route>
     </Router>,
     document.getElementById('container')

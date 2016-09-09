@@ -7,13 +7,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Component
 @RestController
@@ -24,11 +23,13 @@ class RegistrationController {
 
     UserDao userDao
     CaptchaService captchaService
+    AuthenticationManager authManager
 
     @Autowired
-    RegistrationController(UserDao userDao, CaptchaService captcha) {
+    RegistrationController(UserDao userDao, CaptchaService captcha, AuthenticationManager authManager) {
         this.userDao = userDao
         this.captchaService = captcha
+        this.authManager = authManager
     }
 
     @RequestMapping(value = "/reg", method = RequestMethod.POST)
@@ -37,6 +38,18 @@ class RegistrationController {
             throw new IllegalArgumentException()
         }
         userDao.registerNewUser(newUserDTO)
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    def login(String username, String password) {
+        boolean ok = false
+        try {
+            def auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password))
+             ok = auth.authenticated
+        } catch (AuthenticationException ae) {
+            ok = false
+        }
+            return ok ? ResponseEntity.ok().build() : ResponseEntity.notFound().build()
     }
 
     @ExceptionHandler(EmailNotUniqueException)
