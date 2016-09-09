@@ -18,5 +18,6 @@ class UserAuthService implements UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userDao.getByEmail(username)
+                .orElseThrow({new UsernameNotFoundException("No user with email: ${username}")})
     }
 }
