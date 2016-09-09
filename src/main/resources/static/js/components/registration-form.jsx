@@ -52,7 +52,7 @@ export default class RegistrationForm extends React.Component {
     registerUser() {
         var form = $('#register-form').serialize();
         $.post({
-            url: '/v1/reg',
+            url: '/v1/open/reg',
             data: form,
             dataType: 'html',
             success: function () {

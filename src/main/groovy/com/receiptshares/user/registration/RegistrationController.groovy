@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Component
 @RestController
-@RequestMapping("/v1/reg")
+@RequestMapping("/v1/open")
 class RegistrationController {
 
     public static final Logger LOG = LoggerFactory.getLogger(RegistrationController)
@@ -31,7 +31,7 @@ class RegistrationController {
         this.captchaService = captcha
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/reg", method = RequestMethod.POST)
     def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha){
         if(!captchaService.verify(captcha)) {
             throw new IllegalArgumentException()
