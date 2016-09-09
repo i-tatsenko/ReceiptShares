@@ -29,13 +29,13 @@ export default class RegistrationForm extends React.Component {
                     </div>
                     <div className="form-group">
                         <label>Password <input id="newUserPassword" className='form-control' type='password'
-                                               name='password'/> </label>
+                                               name='password' placeholder="Password"/> </label>
                         <span className="help-block"/>
                     </div>
                     <div className="form-group">
                         <label>Password one more time <input id="newUserPasswordCheck" className='form-control'
                                                              type='password'
-                                                             name='passwordCheck'/></label>
+                                                             name='passwordCheck' placeholder="Password check"/></label>
                         <span className="help-block"/>
                     </div>
                     <div id="captcha"/>

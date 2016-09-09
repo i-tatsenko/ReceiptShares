@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
+import { hashHistory } from 'react-router'
 import Header from './header.jsx'
 import RegistrationForm from './registration-form.jsx'
 import LeftMenu from './left-menu.jsx'
@@ -11,6 +11,7 @@ var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
+window.reactHistory = {hashHistory};
 
 class WelcomePage extends React.Component {
     render() {
@@ -66,7 +67,7 @@ class MainPage extends React.Component {
 }
 
 ReactDOM.render(
-    <Router>
+    <Router history={hashHistory}>
         <Route path="/" component={MainPage}>
             <IndexRoute component={WelcomePage}/>
             <Route path="/register" component={RegistrationForm}/>
