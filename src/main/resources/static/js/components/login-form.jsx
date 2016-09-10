@@ -1,5 +1,6 @@
 import React from 'react'
 import FormAlert from './form-alert.jsx';
+var ReactRouter = require('react-router');
 
 export default class LoginForm extends React.Component {
 
@@ -34,7 +35,7 @@ export default class LoginForm extends React.Component {
             url: '/v1/open/login',
             data: loginData,
             success() {
-                window.reactHistory.push("/");
+                ReactRouter.hashHistory.push("/current");
             }
         }).fail(() => component.setState({alertMessage: "Wrong credentials. Please try again later"}))
     }

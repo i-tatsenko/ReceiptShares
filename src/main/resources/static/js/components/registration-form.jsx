@@ -1,5 +1,6 @@
 import React from 'react'
 import FormAlert from './form-alert.jsx';
+var ReactRouter = require('react-router');
 require('style!css!../../css/components/reg-form.css');
 
 export default class RegistrationForm extends React.Component {
@@ -57,9 +58,7 @@ export default class RegistrationForm extends React.Component {
             url: '/v1/open/reg',
             data: form,
             dataType: 'html',
-            success: function () {
-                alert('You have been registered')
-            }
+            success: () => ReactRouter.hashHistory.push("/current")
         }).fail(function (error) {
             if (error.status == 409) {
                 var divContainingEmail = $('#newUserEmail').parents('.form-group');

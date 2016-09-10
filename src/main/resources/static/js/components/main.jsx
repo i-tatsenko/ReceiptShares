@@ -12,7 +12,6 @@ var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
-window.reactHistory = {hashHistory};
 
 class WelcomePage extends React.Component {
     render() {
