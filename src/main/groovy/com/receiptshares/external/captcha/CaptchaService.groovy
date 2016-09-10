@@ -1,7 +1,9 @@
 package com.receiptshares.external.captcha
 
+import rx.Observable
+
 interface CaptchaService {
 
-    boolean verify(String token)
+    Observable<Boolean> verify(String token)
 
 }

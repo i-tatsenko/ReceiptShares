@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
+import rx.Observable
 
 @Component
 class GoogleCaptcha implements CaptchaService {
@@ -14,8 +15,9 @@ class GoogleCaptcha implements CaptchaService {
 
     static final String BASE_URL = "https://www.google.com/recaptcha/api/siteverify"
     private static final String URL = BASE_URL + "?secret={secret}&response={token}"
-    RestTemplate restTemplate
+    static final int RETRIES_COUNT = 3
 
+    RestTemplate restTemplate
     @Value('${service.captcha.secret}')
     def String secret
 
@@ -24,10 +26,18 @@ class GoogleCaptcha implements CaptchaService {
         this.restTemplate = restTemplate
     }
 
-    def boolean verify(String token) {
-        CaptchaResponse result = restTemplate.postForObject(url, null, CaptchaResponse, [secret: secret, token: token])
-        LOG.trace("Received from google captcha: ${result}")
-        return result.success
+    def Observable<Boolean> verify(String token) {
+        return Observable.defer { askGoogle(token) }
+                         .doOnNext { LOG.trace("Captcha verified") }
+                         .retry({ count, exc -> !(exc instanceof CaptchaInvalidException) && count < RETRIES_COUNT })
+    }
+
+    private Observable<Boolean> askGoogle(String token) {
+        def result = restTemplate.postForObject(url, null, CaptchaResponse, [secret: secret, token: token])
+        if (!result.success) {
+            throw new CaptchaInvalidException()
+        }
+        Observable.just true
     }
 
     protected String getUrl() {

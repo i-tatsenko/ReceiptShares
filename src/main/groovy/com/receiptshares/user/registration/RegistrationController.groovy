@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.async.DeferredResult
+import rx.schedulers.Schedulers
 
 @Component
 @RestController
@@ -33,27 +36,41 @@ class RegistrationController {
     }
 
     @RequestMapping(value = "/reg", method = RequestMethod.POST)
-    def registerNewUser(NewUserDTO newUserDTO, @RequestParam("g-recaptcha-response") String captcha){
-        if(!captchaService.verify(captcha)) {
-            throw new IllegalArgumentException()
-        }
-        userDao.registerNewUser(newUserDTO)
+    DeferredResult<ResponseEntity> registerNewUser(NewUserDTO newUserDTO,
+                                                   @RequestParam("g-recaptcha-response") String captcha) {
+        def result = new DeferredResult<>()
+        captchaService.verify(captcha)
+                      .subscribeOn(Schedulers.io())
+                      .doOnNext { userDao.registerNewUser(newUserDTO) }
+                      .doOnNext { authUser(newUserDTO.email, newUserDTO.password) }
+                      .subscribe({ result.setResult(null) },
+                { ex -> result.setResult(responseForError(ex)) })
+
+        return result
+    }
+
+    private def responseForError(Throwable e) {
+        LOG.debug("Error while registration", e)
+        def status = HttpStatus.NOT_FOUND
+        if (e instanceof EmailNotUniqueException)
+            status = HttpStatus.CONFLICT
+        return ResponseEntity.status(status).build()
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     def login(String username, String password) {
-        boolean ok = false
+        boolean ok
         try {
-            def auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password))
-             ok = auth.authenticated
+            def auth = authUser(username, password)
+            ok = auth.authenticated
         } catch (AuthenticationException ae) {
             ok = false
         }
-            return ok ? ResponseEntity.ok().build() : ResponseEntity.notFound().build()
+        return ok ? ResponseEntity.ok().build() : ResponseEntity.notFound().build()
     }
 
-    @ExceptionHandler(EmailNotUniqueException)
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Email not unique")
-    def notUniqueEmail() {
+    private Authentication authUser(String username, String password) {
+        authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password))
     }
+
 }

@@ -4,6 +4,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.web.client.RestTemplate
+import rx.observers.TestSubscriber
 import spock.lang.Specification
 
 import static org.springframework.test.web.client.ExpectedCount.once
@@ -31,13 +32,37 @@ class GoogleCaptchaTest extends Specification {
         when:
         def actualResult = googleCaptcha.verify(token)
         then:
+        def subscriber = new TestSubscriber()
+        actualResult.subscribe(subscriber)
+        if (result) {
+            subscriber.assertNoErrors()
+            subscriber.assertReceivedOnNext([true])
+        }
+        else
+            subscriber.assertError(CaptchaInvalidException)
+
+        subscriber.awaitTerminalEvent()
         mockRest.verify()
-        actualResult == result
 
         where:
         token                        | result
         UUID.randomUUID().toString() | true
         UUID.randomUUID().toString() | false
+    }
+
+    def "when transport exception occurred request will be retried"() {
+        given:
+        def restTemplateMock = Mock(RestTemplate)
+        googleCaptcha.restTemplate = restTemplateMock
+        restTemplateMock.postForObject(*_) >>> [{throw new IOException()}, new CaptchaResponse(success: true)]
+
+        when:
+        def testSubscr = new TestSubscriber<>()
+        googleCaptcha.verify("").subscribe(testSubscr)
+
+        then:
+        testSubscr.assertNoErrors()
+        testSubscr.assertReceivedOnNext([true])
     }
 
 }
