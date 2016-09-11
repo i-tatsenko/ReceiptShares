@@ -1,8 +1,9 @@
-package com.receiptshares.user.registration
+package com.receiptshares.user
 
-import com.receiptshares.external.captcha.CaptchaService
 import com.receiptshares.user.dao.UserDao
-import com.receiptshares.user.exceptions.EmailNotUniqueException
+import com.receiptshares.user.registration.CaptchaService
+import com.receiptshares.user.registration.EmailNotUniqueException
+import com.receiptshares.user.registration.NewUserDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

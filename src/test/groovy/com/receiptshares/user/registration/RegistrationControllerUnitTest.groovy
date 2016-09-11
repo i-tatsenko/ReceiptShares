@@ -1,9 +1,7 @@
 package com.receiptshares.user.registration
 
-import com.receiptshares.external.captcha.CaptchaInvalidException
-import com.receiptshares.external.captcha.CaptchaService
+import com.receiptshares.user.RegistrationController
 import com.receiptshares.user.dao.UserDao
-import com.receiptshares.user.exceptions.EmailNotUniqueException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager

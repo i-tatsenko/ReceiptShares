@@ -1,5 +1,6 @@
 package com.receiptshares.external.captcha
 
+import com.receiptshares.user.registration.CaptchaInvalidException
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer

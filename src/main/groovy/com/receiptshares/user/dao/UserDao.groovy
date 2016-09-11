@@ -1,6 +1,6 @@
 package com.receiptshares.user.dao
 
-import com.receiptshares.user.exceptions.EmailNotUniqueException
+import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
 import org.slf4j.Logger

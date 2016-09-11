@@ -1,4 +1,4 @@
-package com.receiptshares.user.exceptions
+package com.receiptshares.user.registration
 
 import groovy.transform.CompileStatic
 

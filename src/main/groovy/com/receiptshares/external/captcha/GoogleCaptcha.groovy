@@ -1,5 +1,7 @@
 package com.receiptshares.external.captcha
 
+import com.receiptshares.user.registration.CaptchaInvalidException
+import com.receiptshares.user.registration.CaptchaService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

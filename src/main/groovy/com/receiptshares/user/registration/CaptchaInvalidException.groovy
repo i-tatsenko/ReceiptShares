@@ -1,4 +1,4 @@
-package com.receiptshares.external.captcha
+package com.receiptshares.user.registration
 
 class CaptchaInvalidException extends RuntimeException {
 }
