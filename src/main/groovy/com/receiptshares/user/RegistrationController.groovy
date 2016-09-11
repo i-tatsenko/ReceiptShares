@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.async.DeferredResult
@@ -43,7 +44,6 @@ class RegistrationController {
         captchaService.verify(captcha)
                       .subscribeOn(Schedulers.io())
                       .doOnNext { userDao.registerNewUser(newUserDTO) }
-                      .doOnNext { authUser(newUserDTO.email, newUserDTO.password) }
                       .subscribe({ result.setResult(null) },
                 { ex -> result.setResult(responseForError(ex)) })
 
@@ -57,21 +57,4 @@ class RegistrationController {
             status = HttpStatus.CONFLICT
         return ResponseEntity.status(status).build()
     }
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    def login(String username, String password) {
-        boolean ok
-        try {
-            def auth = authUser(username, password)
-            ok = auth.authenticated
-        } catch (AuthenticationException ae) {
-            ok = false
-        }
-        return ok ? ResponseEntity.ok().build() : ResponseEntity.notFound().build()
-    }
-
-    private Authentication authUser(String username, String password) {
-        authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password))
-    }
-
 }

@@ -58,7 +58,7 @@ export default class RegistrationForm extends React.Component {
             url: '/v1/open/reg',
             data: form,
             dataType: 'html',
-            success: () => ReactRouter.hashHistory.push("/current")
+            success: () => ReactRouter.hashHistory.push("/login")
         }).fail(function (error) {
             if (error.status == 409) {
                 var divContainingEmail = $('#newUserEmail').parents('.form-group');

@@ -13,7 +13,7 @@ export default class Receipt extends React.Component {
             <div>
                 <h3>Members</h3>
                 <div className="receipt__members">
-                    <h5>{this.props.rec}</h5>
+                    <h5>{this.state.rec}</h5>
                     <ul id="receipt-member__ul">
 
                     </ul>
@@ -24,9 +24,6 @@ export default class Receipt extends React.Component {
     }
 
     componentDidMount() {
-        $.get({
-            url: "/v1/rec/current",
-            success: (resp) => this.setState({rec: resp})
-        })
+        $.get('/v1/rec/current', resp => this.setState({rec: resp}))
     }
 }
