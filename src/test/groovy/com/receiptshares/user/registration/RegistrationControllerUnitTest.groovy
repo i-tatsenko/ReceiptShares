@@ -1,7 +1,7 @@
 package com.receiptshares.user.registration
 
 import com.receiptshares.user.RegistrationController
-import com.receiptshares.user.dao.UserDao
+import com.receiptshares.user.dao.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -15,7 +15,7 @@ import static java.util.UUID.randomUUID
 
 class RegistrationControllerUnitTest extends Specification {
 
-    def userDaoMock = Mock(UserDao)
+    def userDaoMock = Mock(UserService)
     def captchaMock = Mock(CaptchaService)
     def authManagerMock = Mock(AuthenticationManager)
     def underTest = new RegistrationController(userDaoMock, captchaMock, authManagerMock)

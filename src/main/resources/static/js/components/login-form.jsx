@@ -13,17 +13,20 @@ export default class LoginForm extends React.Component {
 
     render() {
         return (
-            <div>
-                <form id="login-form">
-                    <FormAlert message={this.state.alertMessage}/>
-                    <div className="form-group"><label>
-                        <input className="form-control" type="text" name="username" placeholder="Email"/>
-                    </label></div>
-                    <div className="form-group"><label>
-                        <input className="form-control" type="text" name="password" placeholder="Password"/>
-                    </label></div>
-                    <button className="btn btn-default" onClick={(event) => this.login(event, this)}>Login</button>
-                </form>
+            <div className="panel panel-primary">
+                <div className="panel-heading">Login</div>
+                <div className="panel-body">
+                    <form id="login-form">
+                        <FormAlert message={this.state.alertMessage}/>
+                        <div className="form-group"><label>
+                            <input className="form-control" type="text" name="username" placeholder="Email"/>
+                        </label></div>
+                        <div className="form-group"><label>
+                            <input className="form-control" type="text" name="password" placeholder="Password"/>
+                        </label></div>
+                        <button className="btn btn-default" onClick={(event) => this.login(event, this)}>Login</button>
+                    </form>
+                </div>
             </div>
         )
     }

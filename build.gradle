@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '1.4.0.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.4.0.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -15,31 +15,33 @@ apply plugin: 'groovy'
 apply plugin: 'spring-boot'
 
 jar {
-	baseName = 'receiptshares'
-	version = '0.0.1-SNAPSHOT'
+    baseName = 'receiptshares'
+    version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-social-facebook')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-websocket')
-	compile("org.springframework.boot:spring-boot-starter-jdbc")
-	compile("org.springframework.boot:spring-boot-starter-data-jpa")
-	compile("org.springframework.boot:spring-boot-devtools")
-	compile("io.reactivex:rxjava:1.1.10")
-	compile "org.codehaus.groovy:groovy:2.4.7"
-	compile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
-	runtime('com.h2database:h2')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('cglib:cglib-nodep:3.2.4')
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-social-facebook'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-websocket'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-devtools'
+    compile 'io.reactivex:rxjava:1.1.10'
+    compile 'org.codehaus.groovy:groovy:2.4.7'
+    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
+
+    runtime 'com.h2database:h2'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'cglib:cglib-nodep:3.2.4'
+    compile 'mysql:mysql-connector-java:5.1.9'
 }
 
 

@@ -55,6 +55,7 @@ class MainPage extends React.Component {
                 <div style={{
                     float: 'left',
                     marginLeft: '20px',
+                    marginTop: '20px',
                     width: 'auto'
                 }} className="container-div">
                     {this.props.children}

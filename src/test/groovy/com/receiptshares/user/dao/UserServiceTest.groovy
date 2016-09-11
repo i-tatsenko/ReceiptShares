@@ -8,10 +8,10 @@ import spock.lang.Specification
 
 import static java.util.UUID.randomUUID
 
-class UserDaoTest extends Specification {
+class UserServiceTest extends Specification {
     def userRepo = Mock(UserRepo)
     def encoderMock = Mock(PasswordEncoder)
-    def userDao = new UserDao(userRepo, encoderMock)
+    def userDao = new UserService(userRepo, encoderMock)
 
     def setup() {
         encoderMock.encode(_) >> { args -> args[0] + "encoded" }

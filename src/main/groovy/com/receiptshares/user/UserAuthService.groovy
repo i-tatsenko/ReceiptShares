@@ -1,17 +1,15 @@
 package com.receiptshares.user
 
-import com.receiptshares.user.dao.UserDao
+import com.receiptshares.user.dao.UserService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.stereotype.Component
 
-@Component
 class UserAuthService implements UserDetailsService {
 
-    def UserDao userDao
+    def UserService userDao
 
-    UserAuthService(UserDao userDao) {
+    UserAuthService(UserService userDao) {
         this.userDao = userDao
     }
 

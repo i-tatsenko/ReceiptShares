@@ -11,15 +11,15 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class UserDao {
+class UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDao)
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService)
 
     def UserRepo userRepo
     def PasswordEncoder passwordEncoder
 
     @Autowired
-    UserDao(UserRepo repo, PasswordEncoder passwordEncoder) {
+    UserService(UserRepo repo, PasswordEncoder passwordEncoder) {
         this.userRepo = repo
         this.passwordEncoder = passwordEncoder
     }
@@ -37,6 +37,6 @@ class UserDao {
 
     Optional<User> getByEmail(String email) {
         return Optional.ofNullable(userRepo.findByEmail(email))
-                .map({ found -> new User(name: found.name, email: found.email, passwordHash: found.passwordHash) })
+                .map({ found -> found as User })
     }
 }

@@ -1,4 +1,6 @@
 import React from 'react'
+import CurrentReceipt from './current-receipt.jsx';
+import CreateNewReceipt from './create-new-receipt.jsx';
 
 export default class Receipt extends React.Component {
 
@@ -8,18 +10,18 @@ export default class Receipt extends React.Component {
             rec: ''
         }
     }
-    render() {
-        return (
-            <div>
-                <h3>Members</h3>
-                <div className="receipt__members">
-                    <h5>{this.state.rec}</h5>
-                    <ul id="receipt-member__ul">
 
-                    </ul>
-                </div>
-                <h3>Your orders</h3>
-            </div>
+    render() {
+        var child;
+        if (this.state.rec) {
+            child = <CurrentReceipt receipt={this.state.rec}/>
+        } else {
+            child = <CreateNewReceipt/>
+        }
+        return (
+            <section>
+                {child}
+            </section>
         )
     }
 

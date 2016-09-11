@@ -1,6 +1,6 @@
 package com.receiptshares.user
 
-import com.receiptshares.user.dao.UserDao
+import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.registration.CaptchaService
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
@@ -10,10 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.async.DeferredResult
@@ -26,12 +22,12 @@ class RegistrationController {
 
     public static final Logger LOG = LoggerFactory.getLogger(RegistrationController)
 
-    UserDao userDao
+    UserService userDao
     CaptchaService captchaService
     AuthenticationManager authManager
 
     @Autowired
-    RegistrationController(UserDao userDao, CaptchaService captcha, AuthenticationManager authManager) {
+    RegistrationController(UserService userDao, CaptchaService captcha, AuthenticationManager authManager) {
         this.userDao = userDao
         this.captchaService = captcha
         this.authManager = authManager
