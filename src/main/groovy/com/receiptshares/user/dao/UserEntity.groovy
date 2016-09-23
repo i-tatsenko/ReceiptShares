@@ -22,7 +22,7 @@ class UserEntity {
 
     def String name
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     def String email
 
     def String passwordHash

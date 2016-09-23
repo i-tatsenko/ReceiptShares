@@ -38,10 +38,12 @@ dependencies {
     compile 'org.codehaus.groovy:groovy:2.4.7'
     compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
 
-    runtime 'com.h2database:h2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'cglib:cglib-nodep:3.2.4'
     compile 'mysql:mysql-connector-java:5.1.9'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
+
+
 }
 
 

@@ -7,15 +7,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 class UserAuthService implements UserDetailsService {
 
-    def UserService userDao
+    def UserService userService
 
-    UserAuthService(UserService userDao) {
-        this.userDao = userDao
+    UserAuthService(UserService userService) {
+        this.userService = userService
     }
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.getByEmail(username)
-                .orElseThrow({new UsernameNotFoundException("No user with email: ${username}")})
+        return userService.getByEmail(username)
+                          .orElseThrow({new UsernameNotFoundException("No user with email: ${username}")})
     }
 }

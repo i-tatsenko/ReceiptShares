@@ -48,14 +48,20 @@ class DevelopmentResourceFilter implements Filter {
     }
 
     private enum Resource {
-        HTML("html", "text/html"), JS("js", "application/x-javascript"), CSS("css", "text/css");
+        HTML("html", "text/html"), JS("js", "application/x-javascript"), CSS("css", "text/css"), WOFF2("woff2", "font/opentype", "fonts");
         private static final Log LOGGER = LogFactory.getLog(Resource.class);
         private String name;
         private String contentType;
+        private String location;
 
         Resource(String name, String contentType) {
+            this(name, contentType, name);
+        }
+
+        Resource(String name, String contentType, String location) {
             this.name = name;
             this.contentType = contentType;
+            this.location = location;
         }
 
         static Resource find(String uri) {
@@ -85,7 +91,7 @@ class DevelopmentResourceFilter implements Filter {
         }
 
         private Path getPath(String uri) {
-            return Paths.get(DevelopmentResourceFilter.resourceLocation + "/" + name + "/" + uri);
+            return Paths.get(DevelopmentResourceFilter.resourceLocation + "/" + location + "/" + uri);
         }
     }
 }

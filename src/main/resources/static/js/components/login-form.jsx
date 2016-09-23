@@ -1,5 +1,6 @@
 import React from 'react'
 import FormAlert from './form-alert.jsx';
+import FbLoginButton from './facebook-login-button.jsx';
 var ReactRouter = require('react-router');
 
 export default class LoginForm extends React.Component {
@@ -26,6 +27,10 @@ export default class LoginForm extends React.Component {
                         </label></div>
                         <button className="btn btn-default" onClick={(event) => this.login(event, this)}>Login</button>
                     </form>
+                    <div>
+                        <h2>Login with your social network account</h2>
+                        <FbLoginButton/>
+                    </div>
                 </div>
             </div>
         )
