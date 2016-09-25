@@ -2,6 +2,7 @@ import React from 'react'
 import FormAlert from './form-alert.jsx';
 var ReactRouter = require('react-router');
 require('style!css!../../css/components/reg-form.css');
+var Link = ReactRouter.Link;
 
 export default class RegistrationForm extends React.Component {
 
@@ -52,6 +53,8 @@ export default class RegistrationForm extends React.Component {
                                    value='Register' onClick={() => this.registerUser(this)} disabled={disabled}/>
                         </div>
                     </form>
+                    <hr/>
+                    <span>Have an account? <Link to="/login">Login</Link> here!</span>
                 </div>
             </div>
         );

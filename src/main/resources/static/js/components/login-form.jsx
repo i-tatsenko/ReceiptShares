@@ -2,6 +2,7 @@ import React from 'react'
 import FormAlert from './form-alert.jsx';
 import FbLoginButton from './facebook-login-button.jsx';
 var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
 
 export default class LoginForm extends React.Component {
 
@@ -28,9 +29,11 @@ export default class LoginForm extends React.Component {
                         <button className="btn btn-default" onClick={(event) => this.login(event, this)}>Login</button>
                     </form>
                     <div>
-                        <h2>Login with your social network account</h2>
+                        <h3>Login with your social network account</h3>
                         <FbLoginButton/>
                     </div>
+                    <hr/>
+                    <span><Link to="/register">Register</Link> if you have no account!</span>
                 </div>
             </div>
         )
@@ -43,8 +46,15 @@ export default class LoginForm extends React.Component {
             url: '/v1/open/login',
             data: loginData,
             success() {
-                ReactRouter.hashHistory.push("/current");
+                $.get({
+                    url: '/v1/me',
+                    success: resp => component.props.loginCallback(resp)
+                }).fail(() => component.loginFailed(component));
             }
-        }).fail(() => component.setState({alertMessage: "Wrong credentials. Please try again later"}))
+        }).fail(() => component.loginFailed(component))
+    }
+
+    loginFailed(component) {
+        component.setState({alertMessage: "Wrong credentials. Please try again later"})
     }
 }

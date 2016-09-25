@@ -48,7 +48,11 @@ class DevelopmentResourceFilter implements Filter {
     }
 
     private enum Resource {
-        HTML("html", "text/html"), JS("js", "application/x-javascript"), CSS("css", "text/css"), WOFF2("woff2", "font/opentype", "fonts");
+        HTML("html", "text/html"),
+        JS("js", "application/x-javascript"),
+        CSS("css", "text/css"),
+        WOFF2("woff2", "font/opentype", "fonts"),
+        SVG("svg", "image/svg+xml", "images");
         private static final Log LOGGER = LogFactory.getLog(Resource.class);
         private String name;
         private String contentType;

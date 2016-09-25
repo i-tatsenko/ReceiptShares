@@ -1,22 +1,26 @@
 .header {
-    height: 100px;
     background: #888888;
 }
 
-.header-user_action {
-    height:100%;
+.header > h1 {
+    margin-left: 20%;
+    vertical-align: middle;
+    width: auto;
+    float: left;
+}
+
+.header__user-profile {
     float: right;
-    margin-right: 50px;
+    margin-right: 20px;
+    display: inline;
+    width: auto;
 }
 
-.header-user_action div{
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.header-user_action__login {
-}
-
-.header-user_action__register {
+.header__user-avatar {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid whitesmoke;
+    border-radius: 25px;
+background-size: contain;
 }

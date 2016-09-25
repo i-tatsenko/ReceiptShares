@@ -1,6 +1,6 @@
 package com.receiptshares.user.registration
 
-import com.receiptshares.user.RegistrationController
+import com.receiptshares.user.UserController
 import com.receiptshares.user.dao.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,12 +13,12 @@ import spock.lang.Specification
 import static com.receiptshares.TestUtil.waitForResult
 import static java.util.UUID.randomUUID
 
-class RegistrationControllerUnitTest extends Specification {
+class UserControllerUnitTest extends Specification {
 
     def userDaoMock = Mock(UserService)
     def captchaMock = Mock(CaptchaService)
     def authManagerMock = Mock(AuthenticationManager)
-    def underTest = new RegistrationController(userDaoMock, captchaMock, authManagerMock)
+    def underTest = new UserController(userDaoMock, captchaMock, authManagerMock)
     private NewUserDTO userDto = new NewUserDTO(name: randomUUID().toString(), email: randomUUID().toString(), password: randomUUID().toString())
 
     def "when captcha ok and no user with such email registration ok and user is authorized"() {

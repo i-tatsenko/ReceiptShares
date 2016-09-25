@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { hashHistory } from 'react-router'
+import {hashHistory} from 'react-router'
 import Header from './header.jsx'
 import RegistrationForm from './registration-form.jsx'
 import LoginForm from './login-form.jsx'
@@ -23,7 +23,7 @@ class WelcomePage extends React.Component {
 
 class Help extends React.Component {
     render() {
-        return(
+        return (
             <h1>Application is under construction</h1>
         )
     }
@@ -31,22 +31,10 @@ class Help extends React.Component {
 
 class MainPage extends React.Component {
 
-    constructor(args) {
-        super(args);
-        this.state = {
-            currentPage: "welcomePage",
-            currentUser: null
-        }
-    }
-
-    showRegister() {
-        this.setState({currentPage: "login"})
-    }
-
     render() {
         return (
             <div style={{height: '100%'}}>
-                <Header register="/register" login="/login"/>
+                <Header register="/register" login="/login" user={this.props.user}/>
                 <div style={{
                     float: 'left'
                 }} className="container-div">
@@ -58,24 +46,55 @@ class MainPage extends React.Component {
                     marginTop: '20px',
                     width: 'auto'
                 }} className="container-div">
-                    {this.props.children}
+                    {this.renderChildren()}
                 </div>
             </div>
         )
+    }
 
+    renderChildren() {
+        let user = this.props.user;
+        return React.Children.map(this.props.children, child => {
+            console.log("Main:" + user);
+            return React.cloneElement(child, {user: user})
+        })
     }
 
 }
 
-ReactDOM.render(
-    <Router history={hashHistory}>
-        <Route path="/" component={MainPage}>
+function getMainLayout(user) {
+    var mainPageWrapper = React.createClass({
+        render: function () {
+            return (<MainPage user={user}/>)
+        }
+    });
+    return <Router history={hashHistory}>
+        <Route path="/" component={mainPageWrapper}>
             <IndexRoute component={WelcomePage}/>
             <Route path="/register" component={RegistrationForm}/>
             <Route path="/current" component={Receipt}/>
             <Route path="/help" component={Help}/>
             <Route path="/login" component={LoginForm}/>
         </Route>
-    </Router>,
-    document.getElementById('container')
-);
+    </Router>;
+}
+
+var loginLayout =
+    <Router history={hashHistory}>
+        <Route path="/" component={LoginForm}/>
+        <Route path="/login" component={LoginForm}/>
+        <Route path="/register" component={RegistrationForm}/>
+    </Router>;
+
+$.get({
+    url: '/v1/me',
+    success: function (resp) {
+        renderApp(getMainLayout(resp));
+    }
+}).fail(() => {
+    renderApp(loginLayout);
+});
+
+function renderApp(app) {
+    ReactDOM.render(app, document.getElementById('container'));
+}
