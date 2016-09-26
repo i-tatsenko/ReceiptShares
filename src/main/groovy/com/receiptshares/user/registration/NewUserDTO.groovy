@@ -1,13 +1,13 @@
 package com.receiptshares.user.registration
 
-import groovy.transform.CompileStatic
+import com.receiptshares.DuckTypeConversion
 import groovy.transform.EqualsAndHashCode
 
-@CompileStatic
 @EqualsAndHashCode
-class NewUserDTO {
+class NewUserDTO implements DuckTypeConversion {
 
     def String name
     def String password
     def String email
+    def byte[] avatar
 }

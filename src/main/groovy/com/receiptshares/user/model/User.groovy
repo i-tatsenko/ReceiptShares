@@ -1,6 +1,7 @@
 package com.receiptshares.user.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.receiptshares.DuckTypeConversion
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -10,13 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails
 @CompileStatic
 @EqualsAndHashCode(includes = ['email'])
 @ToString
-class User implements UserDetails {
+class User implements UserDetails, DuckTypeConversion {
 
     def long id
     def String email
     def String name
     @JsonIgnore
     def String passwordHash
+    def byte[] avatar
 
     @JsonIgnore
     @Override

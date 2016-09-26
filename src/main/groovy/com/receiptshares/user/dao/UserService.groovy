@@ -22,12 +22,12 @@ class UserService {
     }
 
     def registerNewUser(NewUserDTO newUser) {
-        def user = new UserEntity(name: newUser.name, email: newUser.email)
+        def user = newUser as UserEntity
         user.passwordHash = passwordEncoder.encode(newUser.password ?: randomPasswordGenerator())
 
         try {
             userRepo.save(user)
-        } catch (DataIntegrityViolationException div) {
+        } catch (DataIntegrityViolationException dive) {
             throw new EmailNotUniqueException(newUser.email)
         }
     }
