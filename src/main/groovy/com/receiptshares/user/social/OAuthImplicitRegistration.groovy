@@ -1,4 +1,4 @@
-package com.receiptshares.user
+package com.receiptshares.user.social
 
 import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.registration.EmailNotUniqueException

@@ -1,4 +1,4 @@
-package com.receiptshares.user
+package com.receiptshares.user.social
 
 import org.springframework.social.facebook.api.Facebook
 import org.springframework.social.facebook.api.ImageType

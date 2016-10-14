@@ -13,7 +13,7 @@ class UserService {
 
     def UserRepo userRepo
     def PasswordEncoder passwordEncoder
-    def Closure<String> randomPasswordGenerator = {UUID.randomUUID().toString()}
+    def Closure<String> randomPasswordGenerator = { UUID.randomUUID().toString() }
 
     @Autowired
     UserService(UserRepo repo, PasswordEncoder passwordEncoder) {

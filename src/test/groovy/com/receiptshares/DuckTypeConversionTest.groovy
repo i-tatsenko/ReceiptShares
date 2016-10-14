@@ -1,6 +1,7 @@
 package com.receiptshares
 
 import com.receiptshares.user.dao.UserEntity
+import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
 import spock.lang.Specification
 
@@ -16,5 +17,13 @@ class DuckTypeConversionTest extends Specification {
         then:
         entity.name == dto.name
         entity.email == dto.email
+    }
+
+    def "should not try to set readonly props"() {
+        when:
+        def user = dto as User
+        then:
+        user.name == dto.name
+        user.email == dto.email
     }
 }

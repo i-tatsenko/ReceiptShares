@@ -11,7 +11,7 @@ import static java.util.UUID.randomUUID
 class UserServiceTest extends Specification {
     def userRepo = Mock(UserRepo)
     def encoderMock = Mock(PasswordEncoder)
-    def userDao = new UserService(userRepo, encoderMock)
+    def userDao = new UserService(userRepo, encoderMock, null)
 
     def setup() {
         encoderMock.encode(_) >> { args -> args[0] + "encoded" }

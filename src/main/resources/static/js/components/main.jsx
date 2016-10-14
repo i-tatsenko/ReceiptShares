@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {hashHistory} from 'react-router'
-import Header from './header.jsx'
+import Header from './header/header.jsx'
 import RegistrationForm from './registration-form.jsx'
 import LoginForm from './login-form.jsx'
 import LeftMenu from './left-menu.jsx'
@@ -55,7 +55,6 @@ class MainPage extends React.Component {
     renderChildren() {
         let user = this.props.user;
         return React.Children.map(this.props.children, child => {
-            console.log("Main:" + user);
             return React.cloneElement(child, {user: user})
         })
     }
@@ -65,7 +64,10 @@ class MainPage extends React.Component {
 function getMainLayout(user) {
     var mainPageWrapper = React.createClass({
         render: function () {
-            return (<MainPage user={user}/>)
+            return (
+                <MainPage user={user}>
+                    {this.props.children}
+                </MainPage>)
         }
     });
     return <Router history={hashHistory}>

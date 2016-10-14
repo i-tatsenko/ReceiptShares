@@ -1,0 +1,13 @@
+.friend-list__friend-item .avatar {
+    float: left;
+}
+
+.friend-list__friend-item > h4 {
+    float: left;
+    padding: 5px;
+    cursor: default;
+}
+
+.friend-list__friend-item:hover {
+    background-color: lightblue;
+}

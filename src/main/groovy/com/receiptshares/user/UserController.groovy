@@ -4,6 +4,7 @@ import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.registration.CaptchaService
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
+import com.receiptshares.user.social.ConnectionService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -24,12 +25,14 @@ class UserController {
     UserService userDao
     CaptchaService captchaService
     AuthenticationManager authManager
+    ConnectionService connectionService
 
     @Autowired
-    UserController(UserService userDao, CaptchaService captcha, AuthenticationManager authManager) {
+    UserController(UserService userDao, CaptchaService captcha, AuthenticationManager authManager, ConnectionService connectionService) {
         this.userDao = userDao
         this.captchaService = captcha
         this.authManager = authManager
+        this.connectionService = connectionService
     }
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
@@ -47,6 +50,21 @@ class UserController {
                       .doOnNext { userDao.registerNewUser(newUserDTO) }
                       .subscribe({ result.setResult(null) },
                 { ex -> result.setResult(responseForError(ex)) })
+
+        return result
+    }
+
+    @RequestMapping(value = "/friends", method = RequestMethod.GET)
+    @ResponseBody
+    DeferredResult friends() {
+        def result = new DeferredResult()
+        def errorAction = {
+            log.debug("Can't get friends", it)
+            result.setResult([err: it.message])
+        }
+        connectionService.findFriendsForCurrentCustomer()
+                         .subscribeOn(Schedulers.io())
+                         .subscribe({ result.setResult(it) }, errorAction)
 
         return result
     }

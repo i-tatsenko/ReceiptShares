@@ -1,22 +1,23 @@
-package com.receiptshares.user;
+package com.receiptshares.user.social
 
-import com.receiptshares.user.dao.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.encrypt.Encryptors;
-import org.springframework.social.UserIdSource;
-import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
-import org.springframework.social.config.annotation.EnableSocial;
-import org.springframework.social.config.annotation.SocialConfigurer;
-import org.springframework.social.connect.ConnectionFactoryLocator;
-import org.springframework.social.connect.UsersConnectionRepository;
-import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
-import org.springframework.social.connect.web.ProviderSignInController;
-import org.springframework.social.facebook.connect.FacebookConnectionFactory;
+import com.receiptshares.user.dao.UserService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.encrypt.Encryptors
+import org.springframework.social.UserIdSource
+import org.springframework.social.config.annotation.ConnectionFactoryConfigurer
+import org.springframework.social.config.annotation.EnableSocial
+import org.springframework.social.config.annotation.SocialConfigurer
+import org.springframework.social.connect.ConnectionFactoryLocator
+import org.springframework.social.connect.UsersConnectionRepository
+import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository
+import org.springframework.social.connect.web.ProviderSignInController
+import org.springframework.social.facebook.connect.FacebookConnectionFactory
 
-import javax.sql.DataSource;
+import javax.sql.DataSource
 
 @Configuration
 @EnableSocial
@@ -41,13 +42,13 @@ public class UserConfiguration implements SocialConfigurer {
     @Override
     public void addConnectionFactories(ConnectionFactoryConfigurer connectionFactoryConfigurer, Environment env) {
         FacebookConnectionFactory fb = new FacebookConnectionFactory(env.getProperty("fb.app.id"), env.getProperty("fb.app.secret"));
-        fb.setScope("public_profile,email");
+        fb.setScope("public_profile,email,user_friends");
         connectionFactoryConfigurer.addConnectionFactory(fb);
     }
 
     @Override
     public UserIdSource getUserIdSource() {
-        return null;
+        return {SecurityContextHolder.context.authentication.principal.email};
     }
 
     /**

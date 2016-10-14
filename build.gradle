@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.0.RELEASE'
+        springBootVersion = '1.4.1.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -10,8 +10,8 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'java'
 apply plugin: 'spring-boot'
 
 jar {
@@ -34,7 +34,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.springframework.boot:spring-boot-devtools'
-    compile 'io.reactivex:rxjava:1.1.10'
+    compile 'io.reactivex:rxjava:1.2.1'
     compile 'org.codehaus.groovy:groovy:2.4.7'
     compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
 

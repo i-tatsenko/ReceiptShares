@@ -1,6 +1,5 @@
 package com.receiptshares;
 
-import com.receiptshares.user.UserServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +17,11 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final UserServiceConfiguration userServiceConfiguration;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityConfiguration(UserServiceConfiguration userServiceConfiguration) {
-        this.userServiceConfiguration = userServiceConfiguration;
+    public SecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -43,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected UserDetailsService userDetailsService() {
-        return userServiceConfiguration.userAuthService();
+        return userDetailsService;
     }
 
     @Bean
