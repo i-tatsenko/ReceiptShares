@@ -11,3 +11,13 @@
 .friend-list__friend-item:hover {
     background-color: lightblue;
 }
+
+.friend-list__friend-item {
+    padding: 0.5em;
+}
+
+.friend-list {
+    border: 2px solid #EEE;
+    margin-top: 0.5em;
+
+}

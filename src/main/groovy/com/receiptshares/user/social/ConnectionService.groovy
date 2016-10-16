@@ -1,6 +1,8 @@
 package com.receiptshares.user.social
 
 import com.receiptshares.user.dao.UserConnectionRepo
+import com.receiptshares.user.dao.UserRepo
+import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
@@ -13,12 +15,14 @@ class ConnectionService {
 
     def ConnectionRepository connectionRepository
     def UserConnectionRepo userConnectionRepo
+    def UserRepo userRepo
 
 
     @Autowired
-    ConnectionService(ConnectionRepository connectionRepository, UserConnectionRepo userConnectionRepo) {
+    ConnectionService(ConnectionRepository connectionRepository, UserConnectionRepo userConnectionRepo, UserRepo userRepo) {
         this.connectionRepository = connectionRepository
         this.userConnectionRepo = userConnectionRepo
+        this.userRepo = userRepo
     }
 
     Observable findFriendsForCurrentCustomer() {
@@ -30,13 +34,15 @@ class ConnectionService {
 
     private def getFacebookFriends(Facebook api) {
         def ids = api.friendOperations()
-           .friendProfiles
-           .collect { it.id }
+                     .friendProfiles
+                     .collect { it.id }
         return Observable.just(findUserDetailsByConnectionIds(ids))
     }
 
     def findUserDetailsByConnectionIds(List<String> ids) {
-        userConnectionRepo.findByProviderUserIdIn(ids)
-                          .collect { [email: it.userId, name: it.displayName, image: it.imageUrl] }
+        def emails = userConnectionRepo.findByProviderUserIdIn(ids)
+                                       .collect { it.userId }
+        return userRepo.findByEmailIn(emails)
+                .collect { it as User }
     }
 }
