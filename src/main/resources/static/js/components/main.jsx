@@ -61,6 +61,13 @@ class MainPage extends React.Component {
 
 }
 
+class RedirectComponent extends React.Component {
+    constructor(args) {
+        super(args);
+        ReactRouter.hashHistory.push("/");
+    }
+}
+
 function getMainLayout(user) {
     var mainPageWrapper = React.createClass({
         render: function () {
@@ -77,6 +84,7 @@ function getMainLayout(user) {
             <Route path="/current" component={Receipt}/>
             <Route path="/help" component={Help}/>
             <Route path="/login" component={LoginForm}/>
+            <Route path="*" component={RedirectComponent}/>
         </Route>
     </Router>;
 }
@@ -86,6 +94,7 @@ var loginLayout =
         <Route path="/" component={LoginForm}/>
         <Route path="/login" component={LoginForm}/>
         <Route path="/register" component={RegistrationForm}/>
+        <Route path="*" component={LoginForm}/>
     </Router>;
 
 $.get({

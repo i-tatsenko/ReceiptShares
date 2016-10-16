@@ -23,6 +23,6 @@ class UserEntity implements DuckTypeConversion {
 
     def String passwordHash
 
-    def byte[] avatar
+    def String avatarUrl
 
 }

@@ -9,5 +9,5 @@ class NewUserDTO implements DuckTypeConversion {
     def String name
     def String password
     def String email
-    def byte[] avatar
+    def String avatarUrl
 }

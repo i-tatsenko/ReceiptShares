@@ -18,7 +18,7 @@ class User implements UserDetails, DuckTypeConversion {
     def String name
     @JsonIgnore
     def String passwordHash
-    def byte[] avatar
+    def String avatarUrl
 
     @JsonIgnore
     @Override

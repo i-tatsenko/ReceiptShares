@@ -4,7 +4,7 @@ require('style!css!./header.css');
 
 export default class Header extends React.Component {
     render() {
-        let avatarLink = this.props.user.avatar ? "data:image;base64," + this.props.user.avatar : "/no-photo-avatar.svg";
+        let avatarLink = this.props.user.avatarUrl || "/no-photo-avatar.svg";
         return (
             <div className='header clearfix'>
                 <h1>Receipt Shares</h1>
