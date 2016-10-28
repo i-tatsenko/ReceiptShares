@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom'
 import {hashHistory} from 'react-router'
 import Header from './header/header.jsx'
 import RegistrationForm from './registration-form.jsx'
-import LoginForm from './login-form.jsx'
+import LoginForm from './login/login-form.jsx'
 import LeftMenu from './left-menu.jsx'
 import Receipt from './receipt.jsx'
+import Paper from 'material-ui/Paper';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var ReactRouter = require('react-router');
 
@@ -34,7 +36,7 @@ class MainPage extends React.Component {
     render() {
         return (
             <div style={{height: '100%'}}>
-                <Header register="/register" login="/login" user={this.props.user}/>
+                <Header user={this.props.user}/>
                 <div style={{
                     float: 'left'
                 }} className="container-div">
@@ -68,6 +70,27 @@ class RedirectComponent extends React.Component {
     }
 }
 
+class Mui extends React.Component {
+    constructor(args) {
+        super(args);
+    }
+
+    render() {
+        return (
+            <MuiThemeProvider>
+                <div className="container">
+                    <div className="col-lg-6 col-lg-offset-3">
+                        <Paper zDepth={3}>
+
+                            {this.props.children}
+                        </Paper>
+                    </div>
+                </div>
+            </MuiThemeProvider>
+        )
+    }
+}
+
 function getMainLayout(user) {
     var mainPageWrapper = React.createClass({
         render: function () {
@@ -89,13 +112,25 @@ function getMainLayout(user) {
     </Router>;
 }
 
+var loginComponent = React.createClass({
+    render() {
+        return (<LoginForm loginCallback={() => window.location = '/'}/>);
+    }
+});
+
 var loginLayout =
     <Router history={hashHistory}>
-        <Route path="/" component={LoginForm}/>
-        <Route path="/login" component={LoginForm}/>
-        <Route path="/register" component={RegistrationForm}/>
-        <Route path="*" component={LoginForm}/>
+        <Route path="/" component={Mui}>
+            <IndexRoute component={loginComponent}/>
+            <Route path="/login" component={loginComponent}/>
+            <Route path="/register" component={RegistrationForm}/>
+            <Route path="*" component={loginComponent}/>
+        </Route>
     </Router>;
+
+$(document).ajaxSend(function (event, jqXHR) {
+    jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))
+});
 
 $.get({
     url: '/v1/me',

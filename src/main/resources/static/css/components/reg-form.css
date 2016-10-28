@@ -1,3 +1,13 @@
-#reg-form-container input[type='button'] {
+#reg-form-container {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.reg-form__register-button {
     margin-top: 30px;
+}
+
+.reg-form__invite-to-login {
+    padding-bottom: 10px;
+    display: block;
 }

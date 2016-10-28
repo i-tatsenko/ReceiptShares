@@ -5,27 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Share receipts</title>
     <link rel="stylesheet" href="bootstrap.css">
-    <link rel="stylesheet" href="font-awesome.min.css">
-    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
-    <script src="lib/bootstrap.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script src="lib/js-cookie.js"></script>
     <style>
-        @font-face {
-            font-family: FontAwesome;
-            src: url(fontawesome-webfont.woff2);
-        }
 
         html, body, #container, .container-div {
             height: 100%;
-            font-family: FontAwesome, serif;
+            font-family: Roboto, serif;
         }
     </style>
-    <script>
-        $(document).ajaxSend(function(event, jqXHR) {
-            jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))
-        })
-    </script>
+
 </head>
 <body>
 <div id="container"></div>
