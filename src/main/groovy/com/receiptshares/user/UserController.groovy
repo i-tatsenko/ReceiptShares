@@ -9,7 +9,6 @@ import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -24,14 +23,12 @@ class UserController {
 
     UserService userDao
     CaptchaService captchaService
-    AuthenticationManager authManager
     ConnectionService connectionService
 
     @Autowired
-    UserController(UserService userDao, CaptchaService captcha, AuthenticationManager authManager, ConnectionService connectionService) {
+    UserController(UserService userDao, CaptchaService captcha, ConnectionService connectionService) {
         this.userDao = userDao
         this.captchaService = captcha
-        this.authManager = authManager
         this.connectionService = connectionService
     }
 

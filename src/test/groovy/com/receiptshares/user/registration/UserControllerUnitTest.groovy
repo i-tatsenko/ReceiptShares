@@ -2,10 +2,9 @@ package com.receiptshares.user.registration
 
 import com.receiptshares.user.UserController
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.social.ConnectionService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.web.context.request.async.DeferredResult
 import rx.Observable
 import spock.lang.Specification
@@ -17,8 +16,8 @@ class UserControllerUnitTest extends Specification {
 
     def userDaoMock = Mock(UserService)
     def captchaMock = Mock(CaptchaService)
-    def authManagerMock = Mock(AuthenticationManager)
-    def underTest = new UserController(userDaoMock, captchaMock, authManagerMock)
+    def connectionService = Mock(ConnectionService)
+    def underTest = new UserController(userDaoMock, captchaMock, connectionService)
     private NewUserDTO userDto = new NewUserDTO(name: randomUUID().toString(), email: randomUUID().toString(), password: randomUUID().toString())
 
     def "when captcha ok and no user with such email registration ok and user is authorized"() {
@@ -29,7 +28,6 @@ class UserControllerUnitTest extends Specification {
         waitForResult(result)
         then:
         1 * userDaoMock.registerNewUser(userDto)
-        1 * authManagerMock.authenticate(new UsernamePasswordAuthenticationToken(userDto.email, userDto.password))
     }
 
     def "when captcha not ok then no user is created and response is 404"() {
@@ -40,7 +38,6 @@ class UserControllerUnitTest extends Specification {
         waitForResult(result)
         then:
         0 * userDaoMock.registerNewUser(_)
-        0 * authManagerMock.authenticate(_)
         result.getResult().statusCode == HttpStatus.NOT_FOUND
     }
 
@@ -53,6 +50,5 @@ class UserControllerUnitTest extends Specification {
         waitForResult(result)
         then:
         result.getResult().statusCode == HttpStatus.CONFLICT
-        0 * authManagerMock.authenticate(_)
     }
 }
