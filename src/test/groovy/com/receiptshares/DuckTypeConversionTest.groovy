@@ -53,7 +53,7 @@ class DuckTypeConversionTest extends Specification {
 }
 
 class DayWithEnum implements DuckTypeConversion {
-    def DayOfWeek day;
+    def DayOfWeek day
 }
 
 class DayWithString implements DuckTypeConversion {

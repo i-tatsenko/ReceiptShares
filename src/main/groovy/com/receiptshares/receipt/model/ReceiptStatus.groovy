@@ -1,8 +1,6 @@
 package com.receiptshares.receipt.model
 
-import com.receiptshares.DuckTypeConversion
-
-enum ReceiptStatus implements DuckTypeConversion {
+enum ReceiptStatus {
     ACTIVE, NOT_ACTIVE
 
 }

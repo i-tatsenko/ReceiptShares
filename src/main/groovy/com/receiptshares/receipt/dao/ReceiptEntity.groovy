@@ -21,6 +21,7 @@ public class ReceiptEntity implements DuckTypeConversion {
     def Set<UserEntity> members
     @OneToMany
     def Set<OrderedItemEntity> orderedItems
+    @Column(nullable = false)
     def String status
 
 }
