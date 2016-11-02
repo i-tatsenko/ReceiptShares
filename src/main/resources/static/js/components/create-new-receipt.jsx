@@ -1,5 +1,5 @@
-import FriendList from './friend-list/friend-list.jsx';
-import Avatar from './avatar/avatar.jsx';
+import FriendList from "./friend-list/friend-list.jsx";
+import Avatar from "./avatar/avatar.jsx";
 
 export default class CreateNewReceipt extends React.Component {
 
@@ -7,7 +7,9 @@ export default class CreateNewReceipt extends React.Component {
         super(args);
         this.state = {
             friends: [],
-            friendsToInvite: []
+            friendsToInvite: [],
+            name: '',
+            place: ''
         }
     }
 
@@ -26,20 +28,47 @@ export default class CreateNewReceipt extends React.Component {
                 <div className="panel-heading"> Create new receipt</div>
                 <div className="panel-body">
                     <div className="form-group"><label>Receipt name
-                        <input type="text" className="form-control" name="name"/></label>
+                        <input type="text" className="form-control" name="name"
+                               onChange={this.updateStateFunction('name')}/></label>
                     </div>
                     <div className="form-group"><label>Place
-                        <input type="text" className="form-control" name="place"/></label>
+                        <input type="text" className="form-control" name="place"
+                               onChange={this.updateStateFunction('place')}/></label>
                     </div>
                     <div className="form-group">
                         <h2>Invite friends</h2>
                         {alreadyInvitedElement}
                         <FriendList friendSelected={this.friendSelected.bind(this)} friends={this.state.friends}/>
                     </div>
-                    <button className="btn btn-default">Create</button>
+                    <button className="btn btn-default  " onClick={() => this.createReceipt()}>Create</button>
                 </div>
             </section>
         )
+    }
+
+    updateStateFunction(key) {
+        return (event) => this.setState({[key]: event.target.value})
+    }
+
+    createReceipt() {
+        let state = this.state;
+        let data = {
+            place: {
+                name: state.place
+            },
+            name: state.name,
+            members: state.friends.map(val => Object.create({id: val}))
+        };
+        $.ajax({
+            url: '/v1/rec/create',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
+            method: 'post',
+            success: () => alert('created!'),
+            error: () => alert('failed!')
+        })
+
     }
 
     friendSelected(userId) {
