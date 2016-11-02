@@ -16,7 +16,7 @@ export default class Receipt extends React.Component {
         if (this.state.rec) {
             child = <CurrentReceipt receipt={this.state.rec}/>
         } else {
-            child = <CreateNewReceipt/>
+            child = <CreateNewReceipt {...this.props}/>
         }
         return (
             <section>

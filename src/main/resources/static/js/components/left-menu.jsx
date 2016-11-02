@@ -1,19 +1,23 @@
 import React from 'react'
-import NavLink from './nav-link.jsx';
-
-// require('style!css!../../css/components/left-menu.css');
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import Drawer from 'material-ui/Drawer';
+import {Link, IndexLink} from 'react-router'
+import AppBar from 'material-ui/AppBar';
 
 
 export default class LeftMenu extends React.Component {
     render() {
         return (
-            <div id="left-menu">
-                <ul className="nav nav-stacked nav-pills">
-                    <NavLink activeClassName='active' to="/">Main</NavLink>
-                    <NavLink activeClassName='active' to={this.props.currentLink}>Current Receipt</NavLink>
-                    <NavLink activeClassName='active' to={this.props.helpLink}>Help</NavLink>
-                </ul>
-            </div>
+            <Drawer open={this.props.open}>
+                <AppBar onLeftIconButtonTouchTap={this.props.closeMenu} />
+                <Menu>
+                    <MenuItem><IndexLink activeClassName='active' to="/">Main</IndexLink></MenuItem>
+                    <MenuItem><Link activeClassName='active' to={this.props.currentLink}>Current
+                        Receipt</Link></MenuItem>
+                    <MenuItem><Link activeClassName='active' to={this.props.helpLink}>Help</Link></MenuItem>
+                </Menu>
+            </Drawer>
         )
     }
 }

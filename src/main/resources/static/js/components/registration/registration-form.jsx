@@ -1,12 +1,12 @@
 import React from 'react';
 import {ReactRouter, Link, hashHistory} from 'react-router';
 
-import FormAlert from './form-alert.jsx';
+import FormAlert from '../form-alert.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-require('style!css!../../css/components/reg-form.css');
+require('style!css!./reg-form.css');
 
 export default class RegistrationForm extends React.Component {
 

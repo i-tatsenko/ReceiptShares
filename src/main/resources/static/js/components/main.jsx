@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {hashHistory} from "react-router";
-import Header from "./header/header.jsx";
-import RegistrationForm from "./registration-form.jsx";
+import RegistrationForm from "./registration/registration-form.jsx";
 import LoginForm from "./login/login-form.jsx";
 import LeftMenu from "./left-menu.jsx";
 import Receipt from "./receipt.jsx";
@@ -13,13 +12,11 @@ import ContentAdd from "material-ui/svg-icons/content/add";
 import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
 import injectTapEventPlugin from "react-tap-event-plugin";
-var ReactRouter = require('react-router');
+import AppBar from 'material-ui/AppBar';
+import {Router, Route, IndexRoute} from 'react-router'
 
 injectTapEventPlugin();
 
-var Router = ReactRouter.Router;
-var Route = ReactRouter.Route;
-var IndexRoute = ReactRouter.IndexRoute;
 
 class WelcomePage extends React.Component {
     render() {
@@ -39,21 +36,25 @@ class Help extends React.Component {
 
 class MainPage extends React.Component {
 
+    constructor(args) {
+        super(args);
+        this.state = {
+            menuOpen: false,
+            barTitle: 'Receipt Shares'
+        }
+    }
+
     render() {
         return (
             <Mui>
                 <div style={{height: '100%'}} className="clearfix">
-                    <Header user={this.props.user}/>
+                    <AppBar title={this.state.barTitle}
+                            onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
+                    <LeftMenu currentLink="/current" helpLink="/help" open={this.state.menuOpen}
+                              closeMenu={() => this.setState({menuOpen: false})}/>
                     <div style={{
-                        float: 'left'
-                    }} className="container-div">
-                        <LeftMenu currentLink="/current" helpLink="/help"/>
-                    </div>
-                    <div style={{
-                        float: 'left',
                         marginLeft: '20px',
                         marginTop: '20px',
-                        width: 'auto'
                     }} className="container-div">
                         {this.renderChildren()}
                     </div>
@@ -83,12 +84,18 @@ class MainPage extends React.Component {
     }
 
     renderChildren() {
+        let t = this;
         let user = this.props.user;
         return React.Children.map(this.props.children, child => {
-            return React.cloneElement(child, {user: user})
+            return React.cloneElement(child, {
+                    user,
+                    setTitle: function(title) {
+                        t.setState({barTitle: title})
+                    }
+                }
+            )
         })
     }
-
 }
 
 class RedirectComponent extends React.Component {

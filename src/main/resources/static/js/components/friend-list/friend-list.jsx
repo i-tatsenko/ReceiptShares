@@ -1,4 +1,6 @@
-import Avatar from '../avatar/avatar.jsx'
+import {List, ListItem} from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import Avatar from 'material-ui/Avatar';
 
 require('style!css!./friend-list.css');
 
@@ -20,15 +22,16 @@ export default React.createClass({
     render() {
         let friendSelected = this.props.friendSelected;
         return (
-            <div>
-                <button onClick={this.toggleFriends} className="btn btn-default">Add friends</button>
-                <div style={{display: 'none'}} id="friendList" className="friend-list">
-                    {this.props.friends.map(function (friend) {
-                        return <FriendListItem name={friend.name} key={friend.id} imageUrl={friend.avatarUrl}
-                                               id={friend.id} click={friendSelected}/>
-                    })}
-                </div>
-            </div>
+            <List>
+                {this.props.friends.map(friend => {
+                    return <ListItem primaryText={friend.name}
+                                     insetChildren={true}
+                                     onClick={() => friendSelected(friend.id)}
+                                     leftAvatar={<Avatar src={friend.avatarUrl}/>}
+                                     key={friend.id}
+                    />
+                })}
+            </List>
         )
     },
 
