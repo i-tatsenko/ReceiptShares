@@ -1,4 +1,6 @@
 import React from 'react';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
 
 export default class FbLoginButton extends React.Component {
 
@@ -11,10 +13,16 @@ export default class FbLoginButton extends React.Component {
     }
 
     render() {
-        console.log("State: " + JSON.stringify(this.state));
+        let medium = {
+            width: 96,
+            height: 96,
+            padding: 24,
+        };
         return (
             <form id="signInFacebook" action="/signin/facebook" method="POST" onSubmit={this.setCsrfToken}>
-                <button type="submit">Login FB</button>
+                <IconButton style={medium} type="submit" iconStyle={{fontSize:"48px"}}>
+                    <FontIcon className="fa fa-facebook-square"/>
+                </IconButton>
                 <input type="hidden" name="_csrf"/>
             </form>
         );

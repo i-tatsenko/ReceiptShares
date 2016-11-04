@@ -51,6 +51,7 @@ class DevelopmentResourceFilter implements Filter {
         HTML("html", "text/html"),
         JS("js", "application/x-javascript"),
         CSS("css", "text/css"),
+        AWESOME_WOFF2("fontawesome-webfont.woff2", "font/opentype", ""),
         WOFF2("woff2", "font/opentype", "fonts"),
         SVG("svg", "image/svg+xml", "images");
         private static final Log LOGGER = LogFactory.getLog(Resource.class);
