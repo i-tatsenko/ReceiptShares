@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {hashHistory} from "react-router";
+import {browserHistory} from "react-router";
 import RegistrationForm from "./registration/registration-form.jsx";
 import LoginForm from "./login/login-form.jsx";
 import LeftMenu from "./left-menu.jsx";
@@ -47,7 +47,7 @@ class MainPage extends React.Component {
     render() {
         return (
             <Mui>
-                <div style={{height: '100%'}} className="clearfix">
+                <div className="clearfix">
                     <AppBar title={this.state.barTitle}
                             onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
                     <LeftMenu currentLink="/current" helpLink="/help" open={this.state.menuOpen}
@@ -72,7 +72,7 @@ class MainPage extends React.Component {
                     }
                     onItemTouchTap={(event, item)=> {
                         console.log(item);
-                        hashHistory.push('/current')
+                        browserHistory.push('/current')
                     }}
                     anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                     targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}>
@@ -101,7 +101,7 @@ class MainPage extends React.Component {
 class RedirectComponent extends React.Component {
     constructor(args) {
         super(args);
-        ReactRouter.hashHistory.push("/");
+        ReactRouter.browserHistory.push("/");
     }
 }
 
@@ -113,9 +113,9 @@ class Mui extends React.Component {
     render() {
         return (
             <MuiThemeProvider>
-                <div className="container">
-                    <div className="col-lg-6 col-lg-offset-3">
-                        <Paper zDepth={3}>
+                <div className="container-div">
+                    <div id="main-component" className="col-lg-6 col-lg-offset-3 container-div">
+                        <Paper zDepth={3} className="container-div">
                             {this.props.children}
                         </Paper>
                     </div>
@@ -134,7 +134,7 @@ function getMainLayout(user) {
                 </MainPage>)
         }
     });
-    return <Router history={hashHistory}>
+    return <Router history={browserHistory}>
         <Route path="/" component={mainPageWrapper}>
             <IndexRoute component={WelcomePage}/>
             <Route path="/current" component={Receipt}/>
@@ -151,7 +151,7 @@ var loginComponent = React.createClass({
 });
 
 var loginLayout =
-    <Router history={hashHistory}>
+    <Router history={browserHistory}>
         <Route path="/" component={Mui}>
             <IndexRoute component={loginComponent}/>
             <Route path="/login" component={loginComponent}/>

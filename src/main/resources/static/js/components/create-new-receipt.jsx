@@ -43,9 +43,8 @@ export default class CreateNewReceipt extends React.Component {
                 <TextField hintText="Place" floatingLabelText="Where are you?" name="place"
                            onChange={this.updateStateFunction('place')}/>
                 <div>
-                    <h2>Invite friends</h2>
                     {alreadyInvitedElement}
-                    <FriendList friendSelected={this.friendSelected.bind(this)} friends={this.state.friends}/>
+                    <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)} friends={this.state.friends}/>
                 </div>
                 <Divider/>
                 <RaisedButton label="Create" primary={true} onClick={() => this.createReceipt()}/>

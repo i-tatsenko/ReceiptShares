@@ -30,6 +30,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .formLogin().loginProcessingUrl("/v1/open/login").successHandler(authSuccessHandler()).failureHandler(authFailureHandler())
             .and()
+            .logout().logoutUrl("/v1/open/logout").logoutSuccessUrl("/")
+            .and()
             .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .and()
             .antMatcher("/**").authorizeRequests()

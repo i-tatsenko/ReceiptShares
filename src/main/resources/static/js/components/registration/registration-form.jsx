@@ -1,5 +1,5 @@
 import React from 'react';
-import {ReactRouter, Link, hashHistory} from 'react-router';
+import {ReactRouter, Link, browserHistory} from 'react-router';
 
 import FormAlert from '../form-alert.jsx';
 import AppBar from 'material-ui/AppBar';
@@ -55,7 +55,7 @@ export default class RegistrationForm extends React.Component {
             url: '/v1/open/reg',
             data: form,
             dataType: 'html',
-            success: () => hashHistory.push("/login")
+            success: () => browserHistory.push("/login")
         }).fail(function (error) {
             if (error.status == 409) {
                 var divContainingEmail = $('#newUserEmail').parents('.form-group');

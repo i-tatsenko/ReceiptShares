@@ -1,6 +1,7 @@
 import {List, ListItem} from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
+import Subheader from 'material-ui/Subheader';
 
 require('style!css!./friend-list.css');
 
@@ -23,6 +24,7 @@ export default React.createClass({
         let friendSelected = this.props.friendSelected;
         return (
             <List>
+                <Subheader>{this.props.title}</Subheader>
                 {this.props.friends.map(friend => {
                     return <ListItem primaryText={friend.name}
                                      insetChildren={true}
