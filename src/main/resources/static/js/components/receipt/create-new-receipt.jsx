@@ -1,4 +1,4 @@
-import FriendList from "./friend-list/friend-list.jsx";
+import FriendList from "../friend-list/friend-list.jsx";
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';

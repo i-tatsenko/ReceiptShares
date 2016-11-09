@@ -18,10 +18,10 @@ class ReceiptController {
         this.receiptService = receiptService
     }
 
-    @RequestMapping(value = '/current', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = '/all', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     def current(Authentication user) {
-        return receiptService.currentReceiptsForUser(user.principal as User)
+        return receiptService.receiptsForUser(user.principal as User)
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

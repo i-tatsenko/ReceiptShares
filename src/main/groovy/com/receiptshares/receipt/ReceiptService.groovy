@@ -21,7 +21,7 @@ class ReceiptService {
         this.receiptRepository = receiptRepository
     }
 
-    def Collection<Receipt> currentReceiptsForUser(User user) {
+    def Collection<Receipt> receiptsForUser(User user) {
         return receiptRepository.findAllActiveReceipts(user as UserEntity)
                 .collect { it as Receipt }
     }

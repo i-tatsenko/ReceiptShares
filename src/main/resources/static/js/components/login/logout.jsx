@@ -4,7 +4,7 @@ export default React.createClass({
 
     render() {
         return (
-            <div onClick={() => this.logout()}>
+            <div onClick={this.logout}>
                 Logout
             </div>
         )

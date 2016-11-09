@@ -1,5 +1,5 @@
 import React from "react";
-import CurrentReceipt from "./current-receipt.jsx";
+import CurrentReceipt from "./receipt-card.jsx";
 import CreateNewReceipt from "./create-new-receipt.jsx";
 
 export default class Receipt extends React.Component {
