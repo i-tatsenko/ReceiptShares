@@ -1,31 +1,34 @@
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import Divider from 'material-ui/Divider';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
+import {chipStyle, chipWrapperStyle} from '../default-styles.jsx';
 
 export default class ReceiptCard extends React.Component {
 
     render() {
         let receipt = this.props.receipt;
-        receipt.members.push(receipt.owner);
-        return (
-            <Card>
-                <CardHeader title={receipt.name}
-                           subtitle={'by ' + receipt.owner.name}
-                           avatar={receipt.owner.avatarUrl}
-                />
-                <CardText>
-                    <p>Your Spendings: {this.userSpendings()}</p>
-                    <p>Total Spendings: {this.totalSpendings()}</p>
-                    <Divider/>
-                    Members
+        let members = receipt.members.length == 0 ? "" :
+            <section>
+                Members:
+                <div style={chipWrapperStyle}>
                     {receipt.members.map(user =>
-                        <Chip>
+                        <Chip key={'avatarlink' + user.avatarUrl} style={chipStyle}>
                             <Avatar src={user.avatarUrl}/>
                             {user.name}
                         </Chip>)}
+                </div>
+            </section>;
+        return (
+            <Card style={{marginBottom: '15px'}}>
+                <CardHeader title={receipt.name}
+                            subtitle={'by ' + receipt.owner.name}
+                            avatar={receipt.owner.avatarUrl}
+                />
+                <CardText expandable={false}>
+                    <p>Your Spendings: {this.userSpendings()}</p>
+                    <p>Total Spendings: {this.totalSpendings()}</p>
+                    {members}
                 </CardText>
-
             </Card>
         )
     }

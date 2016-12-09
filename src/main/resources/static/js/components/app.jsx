@@ -33,7 +33,7 @@ export default class App extends React.Component {
     render() {
         let ActionButton = () => <IconMenu
             style={{
-                position: 'absolute',
+                position: 'fixed',
                 right: '30px',
                 bottom: '20px'
             }}

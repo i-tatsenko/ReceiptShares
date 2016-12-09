@@ -4,6 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import {chipStyle, chipWrapperStyle} from '../default-styles.jsx'
 
 export default class CreateNewReceipt extends React.Component {
 
@@ -24,15 +25,16 @@ export default class CreateNewReceipt extends React.Component {
         if (this.state.friendsToInvite.length) {
             alreadyInvitedElement = <div>
                 <h4>Invite will be sent to</h4>
-                {this.state.friendsToInvite.map(function (user) {
-                    return (
-                        <Chip
-                            onRequestDelete={() => remove(user.id)}>
-                            <Avatar src={user.avatarUrl}/>
-                            {user.name}
-                        </Chip>
-                    );
-                })}
+                <div style={chipWrapperStyle}>
+                    {this.state.friendsToInvite.map(function (user) {
+                        return (
+                            <Chip onRequestDelete={() => remove(user.id)} style={chipStyle}>
+                                <Avatar src={user.avatarUrl}/>
+                                {user.name}
+                            </Chip>
+                        );
+                    })}
+                </div>
             </div>
         }
         return (
@@ -44,7 +46,8 @@ export default class CreateNewReceipt extends React.Component {
                            onChange={this.updateStateFunction('place')}/>
                 <div>
                     {alreadyInvitedElement}
-                    <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)} friends={this.state.friends}/>
+                    <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)}
+                                friends={this.state.friends}/>
                 </div>
                 <Divider/>
                 <RaisedButton label="Create" primary={true} onClick={() => this.createReceipt()}/>
