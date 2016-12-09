@@ -67,7 +67,7 @@ export default class CreateNewReceipt extends React.Component {
                 name: state.place
             },
             name: state.name,
-            members: state.friends.map(val => Object.create({id: val}))
+            members: state.friendsToInvite.map(friend => ({id: friend.id}))
         };
         $.ajax({
             url: '/v1/rec/create',
@@ -84,7 +84,7 @@ export default class CreateNewReceipt extends React.Component {
     friendSelected(id) {
         let from = this.state.friends.slice();
         let to = this.state.friendsToInvite.slice();
-        var found = from.find(u => u.id === id);
+        let found = from.find(u => u.id === id);
         if (!found) {
             return;
         }
@@ -99,7 +99,7 @@ export default class CreateNewReceipt extends React.Component {
     removeSelectedFriend(id) {
         let from = this.state.friendsToInvite.slice();
         let to = this.state.friends.slice();
-        var found = from.find(u => u.id === id);
+        let found = from.find(u => u.id === id);
         if (!found) {
             return;
         }
@@ -111,23 +111,9 @@ export default class CreateNewReceipt extends React.Component {
         });
     }
 
-    moveFriend(from, to, id) {
-        var found = from.find(u => u.id === id);
-        if (!found) {
-            return;
-        }
-        to.push(found);
-        from = from.filter(u => u.id !== id);
-        this.setState({
-            friends: from,
-            friendsToInvite: to
-        });
-    }
-
     componentWillMount() {
         let t = this;
         $.get('/v1/friends').done(function (r) {
-            r.forEach(i => i.id = i.email);
             t.setState({friends: r})
         })
     }

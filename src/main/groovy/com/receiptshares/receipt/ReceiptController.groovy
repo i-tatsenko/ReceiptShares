@@ -1,6 +1,6 @@
 package com.receiptshares.receipt
 
-import com.receiptshares.receipt.model.Receipt
+import com.receiptshares.receipt.model.Place
 import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -26,9 +26,10 @@ class ReceiptController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    def createNew(Authentication auth, @RequestBody Receipt receipt) {
+    def createNew(Authentication auth, @RequestBody Map requestBody) {
         def user = auth.principal as User
-        receipt.place.author = user
-        return receiptService.createNewReceipt(receipt.place, user as User, receipt.name, receipt.members)
+        def place = new Place(name: requestBody.place.name)
+        Collection<Long> memberIds = requestBody.members.collect({it.id as Long})
+        return receiptService.createNewReceipt(place, user as User, requestBody.name as String, memberIds)
     }
 }
