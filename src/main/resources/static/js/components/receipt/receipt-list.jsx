@@ -1,7 +1,6 @@
-import ReceiptCard from './receipt-card.jsx'
-import CircularProgress from 'material-ui/CircularProgress';
+import ReceiptCard from './receipt-card.jsx';
+import WaitingData from  '../waiting-data.jsx';
 
-let UpdatingReceipts = () => <CircularProgress size={80} thickness={5} style={{marginLeft: '50%'}}/>;
 let NoReceipts = () => <section>{"Here will be present list of your receipts"}</section>;
 
 
@@ -13,7 +12,7 @@ export default React.createClass({
 
     render() {
         if (this.props.receiptsList === null) {
-            return (<UpdatingReceipts/>)
+            return (<WaitingData/>)
         }
         if (this.props.receiptsList.length == 0) {
             return (<NoReceipts/>)
@@ -22,7 +21,7 @@ export default React.createClass({
         return (
             <section>
                 {this.props.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user.id}
-                key={'rec' + receipt.id}/>)}
+                                                                     key={'rec' + receipt.id}/>)}
             </section>
         )
     }

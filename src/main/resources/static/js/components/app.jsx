@@ -20,6 +20,10 @@ export default class App extends React.Component {
                 Receipts: '/',
                 Help: '/help',
                 logout: <Logout/>
+            },
+            additionalMenuItems: [],
+            actionItems: {
+                "New receipt": () => browserHistory.push('/new')
             }
         }
     }
@@ -31,6 +35,15 @@ export default class App extends React.Component {
 
 
     render() {
+        let actions = [];
+        for (let menuItem of this.state.additionalMenuItems) {
+            let menuItemNameName = menuItem.name;
+            actions.push(<MenuItem primaryText={menuItemNameName}
+                                   onTouchTap={() => menuItem.action()}
+                                   key={menuItemNameName}/>);
+        }
+        actions.push(<MenuItem primaryText={"New receipt"}
+                               onTouchTap={() => browserHistory.push('/new')}/>);
         let ActionButton = () => <IconMenu
             style={{
                 position: 'fixed',
@@ -42,13 +55,9 @@ export default class App extends React.Component {
                     <ContentAdd/>
                 </FloatingActionButton>
             }
-            onItemTouchTap={(event, item)=> {
-                console.log(item);
-                browserHistory.push('/new')
-            }}
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}>
-            <MenuItem primaryText="New receipt"/>
+            {actions}
         </IconMenu>;
 
         return (
@@ -80,6 +89,16 @@ export default class App extends React.Component {
                     receiptsList,
                     setTitle: function (title) {
                         t.setState({barTitle: title})
+                    },
+                    addMenuItems: function (items) {
+                        let menuItems = t.state.additionalMenuItems;
+                        menuItems.unshift(...items);
+                        t.setState({additionalMenuItems: menuItems})
+                    },
+                    removeMenuItems: function (itemNames) {
+                        let menuItems = t.state.additionalMenuItems;
+                        menuItems = menuItems.filter(item => !itemNames.contains(item.name));
+                        t.setState({additionalMenuItems: menuItems});
                     }
                 }
             )

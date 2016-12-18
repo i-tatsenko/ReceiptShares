@@ -16,7 +16,7 @@ import App from './app.jsx'
 injectTapEventPlugin();
 
 let Help = () => <h1>Application is under construction</h1>;
-var LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
+let LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
 
 
 class RedirectComponent extends React.Component {

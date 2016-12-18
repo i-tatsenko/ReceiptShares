@@ -1,7 +1,12 @@
 package com.receiptshares.receipt
 
+import com.receiptshares.receipt.dao.ItemEntity
+import com.receiptshares.receipt.dao.ItemRepository
+import com.receiptshares.receipt.dao.OrderItemRepository
+import com.receiptshares.receipt.dao.OrderedItemEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.ReceiptRepository
+import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.UserEntity
@@ -11,22 +16,25 @@ import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
 
 @Component
 @Slf4j
 class ReceiptService {
 
-    def ReceiptRepository receiptRepository
-    def UserRepo userRepo
+    ReceiptRepository receiptRepository
+    UserRepo userRepo
+    OrderItemRepository orderItemRepository
+    ItemRepository itemRepository
 
     @Autowired
-    public ReceiptService(ReceiptRepository receiptRepository, UserRepo userRepo) {
+    ReceiptService(ReceiptRepository receiptRepository, UserRepo userRepo) {
         this.receiptRepository = receiptRepository
         this.userRepo = userRepo
     }
 
-    def Collection<Receipt> receiptsForUser(User user) {
+    Collection<Receipt> receiptsForUser(User user) {
         return receiptRepository.findAllActiveReceipts(user as UserEntity)
                                 .collect { it as Receipt }
     }
@@ -40,6 +48,18 @@ class ReceiptService {
     }
 
     def findById(Long id) {
+        //TODO check security
         receiptRepository.findOne(id) as Receipt
+    }
+
+    def createNewItem(User user, Long receiptId, String name, Double price) {
+        //TODO check security
+        def receipt = receiptRepository.findOne(receiptId)
+        def item = itemRepository.save(new ItemEntity(name: name, price: price))
+        def userEntity = userRepo.findOne(user.id)
+        def orderItem = new OrderedItemEntity(user: userEntity, item: item, status: ItemStatus.ACTIVE.toString())
+        receipt.orderedItems.add(orderItem)
+        receiptRepository.save(receipt)
+        return orderItem
     }
 }

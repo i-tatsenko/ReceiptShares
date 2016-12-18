@@ -1,0 +1,18 @@
+.receipt-header__my-spendings-money, .receipt-header__total-money {
+    float: right;
+    font-size: 1.5em;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    vertical-align: top;
+}
+
+.receipt-header__total {
+    padding-top: 10px;
+}
+
+.receipt-header__spendings>div:after {
+    content: "";
+    clear: both;
+    display: table;
+}
