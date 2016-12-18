@@ -11,16 +11,23 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v1/rec")
 class ReceiptController {
 
-    def ReceiptService receiptService
+    ReceiptService receiptService
 
     @Autowired
     ReceiptController(ReceiptService receiptService) {
         this.receiptService = receiptService
     }
 
+    @RequestMapping(value = '/{id}', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    def receiptById(@PathVariable(name = "id") Long id) {
+        return receiptService.findById(id)
+    }
+
     @RequestMapping(value = '/all', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    def current(Authentication user) {
+    def allReceipts(Authentication user) {
+        //TODO return only common data
         return receiptService.receiptsForUser(user.principal as User)
     }
 
@@ -30,6 +37,7 @@ class ReceiptController {
         def user = auth.principal as User
         def place = new Place(name: requestBody.place.name)
         Collection<Long> memberIds = requestBody.members.collect({it.id as Long})
-        return receiptService.createNewReceipt(place, user as User, requestBody.name as String, memberIds)
+        def newReceiptId = receiptService.createNewReceipt(place, user as User, requestBody.name as String, memberIds)
+        return [id: newReceiptId]
     }
 }

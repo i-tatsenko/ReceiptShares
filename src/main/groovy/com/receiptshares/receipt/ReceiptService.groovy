@@ -36,6 +36,10 @@ class ReceiptService {
         def newReceiptEntity = newReceipt as ReceiptEntity
 
         newReceiptEntity.members = userRepo.findAll(members).toSet()
-        receiptRepository.save(newReceiptEntity)
+        return receiptRepository.save(newReceiptEntity).id
+    }
+
+    def findById(Long id) {
+        receiptRepository.findOne(id) as Receipt
     }
 }

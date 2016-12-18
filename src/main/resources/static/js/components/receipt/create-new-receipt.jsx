@@ -5,6 +5,8 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
 import {chipStyle, chipWrapperStyle} from '../default-styles.jsx'
+import {browserHistory} from "react-router";
+import Snackbar from 'material-ui/Snackbar';
 
 export default class CreateNewReceipt extends React.Component {
 
@@ -15,7 +17,8 @@ export default class CreateNewReceipt extends React.Component {
             friendsToInvite: [],
             name: '',
             place: '',
-            nameError: ''
+            nameError: '',
+            error: false
         }
     }
 
@@ -51,6 +54,12 @@ export default class CreateNewReceipt extends React.Component {
                 </div>
                 <Divider/>
                 <RaisedButton label="Create" primary={true} onClick={() => this.createReceipt()}/>
+                <Snackbar
+                    open={this.state.error}
+                    message="Can't create receipt. Please try one more time"
+                    autoHideDuration={4000}
+                    onRequestClose={() => this.setState({error: false})}
+                />
             </section>
         )
     }
@@ -78,8 +87,8 @@ export default class CreateNewReceipt extends React.Component {
             contentType: 'application/json',
             dataType: 'json',
             method: 'post',
-            success: () => alert('created!'),
-            error: () => alert('failed!')
+            success: (resp) => {debugger;browserHistory.push('/receipt/' + resp.id)},
+            error: () => this.setState({error: true})
         })
 
     }
