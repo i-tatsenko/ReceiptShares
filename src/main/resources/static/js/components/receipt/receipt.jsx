@@ -2,9 +2,7 @@ import React from "react";
 import WaitingData from "../waiting-data.jsx";
 import Divider from "material-ui/Divider";
 import ReceiptItem from "./receipt-item.jsx";
-import FlatButton from "material-ui/FlatButton";
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
+import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
 import "style!css!./receipt.css";
 export default class Receipt extends React.Component {
@@ -18,20 +16,12 @@ export default class Receipt extends React.Component {
 
         this.additionalActions = [{
             name: "Add new item",
-            action: this.openAddNewItemPopup.bind(this)
+            action: () => this.setState({addNewItemPopupOpened: true})
         }];
-    }
-
-    validateNewItem() {
-        return this.state.newItemName && !isNaN(this.state.newItemPrice);
     }
 
     closeAddNewItemPopup() {
         this.setState({addNewItemPopupOpened: false});
-    }
-
-    openAddNewItemPopup() {
-        this.setState({addNewItemPopupOpened: true});
     }
 
     render() {
@@ -53,65 +43,15 @@ export default class Receipt extends React.Component {
                     <Divider/>
                     Items:
                     <List>
-                        {receipt.orderedItems.map(item => <ReceiptItem item={item} key={item.id}/>)}
+                        {receipt.orderedItems.map(item => <ReceiptItem item={item} key={"receiptItem" + item.id}/>)}
                     </List>
                 </section>
-                {this.createAddNewItemDialog()}
+                <NewItemModal itemCreatedCallback={() => {
+                    this.closeAddNewItemPopup();
+                    this.getReceiptFromServer()
+                }} opened={this.state.addNewItemPopupOpened}
+                              closed={this.closeAddNewItemPopup.bind(this)}/>
             </section>);
-    }
-
-    createAddNewItemActions() {
-        return [
-            <FlatButton
-                label="Cancel"
-                primary={true}
-                onTouchTap={this.closeAddNewItemPopup.bind(this)}
-            />,
-            <FlatButton
-                label="Add"
-                primary={true}
-                keyboardFocused={true}
-                onTouchTap={this.createNewItem.bind(this)}
-                disabled={!this.validateNewItem()}
-            />
-        ]
-    }
-
-    createAddNewItemDialog() {
-        let t = this;
-        return (
-            <Dialog title="Add item" modal={false} open={this.state.addNewItemPopupOpened}
-                    actions={this.createAddNewItemActions()} onRequestClose={this.closeAddNewItemPopup.bind(this)}>
-                <TextField
-                    hintText="Item name"
-                    floatingLabelText="Name"
-                    name="name"
-                    onChange={e => t.setState({newItemName: e.target.value})}/>
-                <br/>
-                <TextField
-                    hintText="Item price"
-                    floatingLabelText="Price"
-                    name="price"
-                    onChange={e => t.setState({newItemPrice: e.target.value})}/>
-            </Dialog>
-        )
-    }
-
-    createNewItem() {
-        let data = JSON.stringify({
-            name: this.state.newItemName,
-            price: this.state.newItemPrice,
-            receiptId: this.state.rec.id
-        });
-        $.ajax({
-            type: "POST",
-            url: "/v1/rec/new-item",
-            data: data,
-            success: this.getReceiptFromServer.bind(this),
-            contentType: "application/json",
-            fail: () => alert("Can't add new item")
-        });
-        this.closeAddNewItemPopup();
     }
 
     calculateSpending() {
@@ -133,13 +73,13 @@ export default class Receipt extends React.Component {
         this.props.setTitle(receipt.name);
     }
 
+    getReceiptFromServer() {
+        $.get('/v1/rec/' + this.props.params.id, resp => this.setReceipt(resp));
+    }
+
     componentDidMount() {
         this.getReceiptFromServer();
         this.props.addMenuItems(this.additionalActions);
-    }
-
-    getReceiptFromServer() {
-        $.get('/v1/rec/' + this.props.params.id, resp => this.setReceipt(resp));
     }
 
     componentWillUnmount() {
