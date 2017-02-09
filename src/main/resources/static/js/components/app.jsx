@@ -15,7 +15,6 @@ export default class App extends React.Component {
         this.state = {
             menuOpen: false,
             barTitle: 'Receipt Shares',
-            receiptsList: null,
             menuItems: {
                 Receipts: '/',
                 Help: '/help',
@@ -28,12 +27,6 @@ export default class App extends React.Component {
         }
     }
 
-    componentWillMount() {
-        let t = this;
-        $.get('/v1/rec/all').done((resp) => t.setState({receiptsList: resp}));
-    }
-
-
     render() {
         let actions = [];
         for (let menuItem of this.state.additionalMenuItems) {
@@ -43,7 +36,7 @@ export default class App extends React.Component {
                                    key={menuItemNameName}/>);
         }
         actions.push(<MenuItem primaryText={"New receipt"}
-                               onTouchTap={() => browserHistory.push('/new')}/>);
+                               onTouchTap={() => browserHistory.push('/new')} key="new_receipt"/>);
         let ActionButton = () => <IconMenu
             style={{
                 position: 'absolute',
@@ -82,11 +75,9 @@ export default class App extends React.Component {
     renderChildren() {
         let t = this;
         let user = this.props.user;
-        let receiptsList = this.state.receiptsList;
         return React.Children.map(this.props.children, child => {
             return React.cloneElement(child, {
                     user,
-                    receiptsList,
                     setTitle: function (title) {
                         t.setState({barTitle: title})
                     },

@@ -7,24 +7,30 @@ let NoReceipts = () => <section className="receipt-list__no-receipts">{"Here wil
 
 export default React.createClass({
 
-    constructor(args) {
-        this.props.setTitle("Receipts");
+    getInitialState() {
+        return {};
     },
 
     render() {
-        if (this.props.receiptsList === null) {
+        if (!this.state.receiptsList) {
             return (<WaitingData/>)
         }
-        if (this.props.receiptsList.length == 0) {
+        if (this.state.receiptsList.length == 0) {
             return (<NoReceipts/>)
         }
         let user = this.props.user;
         return (
             <section>
-                {this.props.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user.id}
+                {this.state.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user.id}
                                                                      key={'rec' + receipt.id}/>)}
             </section>
         )
+    },
+
+    componentWillMount() {
+        this.props.setTitle("Receipts");
+        let t = this;
+        $.get('/v1/rec/all').done(resp => t.setState({receiptsList: resp}));
     }
 })
 

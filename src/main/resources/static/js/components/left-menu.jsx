@@ -34,10 +34,10 @@ export default class LeftMenu extends React.Component {
     }
 
     createForLink(linkHeader, link) {
-        return (<MenuItem onClick={this.props.closeMenu} onTouchTap={() => browserHistory.push(link)}>{linkHeader}</MenuItem>)
+        return (<MenuItem onClick={this.props.closeMenu} onTouchTap={() => browserHistory.push(link)} key={link}>{linkHeader}</MenuItem>)
     }
 
     createForObject(object) {
-        return (<MenuItem onClick={this.props.closeMenu} >{object}</MenuItem>)
+        return (<MenuItem onClick={this.props.closeMenu} key={object}>{object}</MenuItem>)
     }
 }
