@@ -19,20 +19,20 @@ class ReceiptController {
         this.receiptService = receiptService
     }
 
-    @RequestMapping(value = '/{id}', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/{id}', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     def receiptById(@PathVariable(name = "id") Long id) {
         return receiptService.findById(id)
     }
 
-    @RequestMapping(value = '/all', method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/all', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     def allReceipts(Authentication user) {
         //TODO return only common data
         return receiptService.receiptsForUser(user.principal as User)
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     def createNew(Authentication auth, @RequestBody Map requestBody) {
         def user = auth.principal as User
@@ -42,13 +42,13 @@ class ReceiptController {
         return [id: newReceiptId]
     }
 
-    @RequestMapping(value = "/new-item", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/new-item", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    def createNewItem(Authentication auth, params) {
+    def createNewItem(Authentication auth, @RequestBody Map body) {
         def user = auth.principal as User
-        def receiptId = params.receptId as Long
-        def name = params.name as String
-        def price = params.price as Double
+        def receiptId = body.receiptId as Long
+        def name = body.name as String
+        def price = body.price as Double
         return receiptService.createNewItem(user, receiptId, name, price) as OrderedItem
     }
 }

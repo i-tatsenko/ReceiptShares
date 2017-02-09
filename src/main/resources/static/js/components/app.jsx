@@ -28,15 +28,10 @@ export default class App extends React.Component {
     }
 
     render() {
-        let actions = [];
-        for (let menuItem of this.state.additionalMenuItems) {
-            let menuItemNameName = menuItem.name;
-            actions.push(<MenuItem primaryText={menuItemNameName}
-                                   onTouchTap={() => menuItem.action()}
-                                   key={menuItemNameName}/>);
-        }
-        actions.push(<MenuItem primaryText={"New receipt"}
-                               onTouchTap={() => browserHistory.push('/new')} key="new_receipt"/>);
+        let actions = this.state.additionalMenuItems;
+        actions.push({name: "New receipt", action: () => browserHistory.push('/new')});
+        let menuItems = actions.map(action => <MenuItem primaryText={action.name} onTouchTap={action.action} key={action.name}/>);
+
         let ActionButton = () => <IconMenu
             style={{
                 position: 'absolute',
@@ -50,7 +45,7 @@ export default class App extends React.Component {
             }
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
             targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}>
-            {actions}
+            {menuItems}
         </IconMenu>;
 
         return (
@@ -88,7 +83,7 @@ export default class App extends React.Component {
                     },
                     removeMenuItems: function (itemNames) {
                         let menuItems = t.state.additionalMenuItems;
-                        menuItems = menuItems.filter(item => !itemNames.contains(item.name));
+                        menuItems = menuItems.filter(item => !itemNames.includes(item.name));
                         t.setState({additionalMenuItems: menuItems});
                     }
                 }

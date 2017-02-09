@@ -1,4 +1,8 @@
-.receipt-header__my-spendings-money, .receipt-header__total-money {
+.receipt {
+    padding-bottom: 50px;
+}
+
+.receipt-header__my-spending-money, .receipt-header__total-money {
     float: right;
     font-size: 1.5em;
     padding-right: 10px;
@@ -11,7 +15,7 @@
     padding-top: 10px;
 }
 
-.receipt-header__spendings>div:after {
+.receipt-header__spending>div:after {
     content: "";
     clear: both;
     display: table;
