@@ -1,14 +1,15 @@
-import ReceiptCard from './receipt-card.jsx';
-import WaitingData from  '../waiting-data.jsx';
+import ReceiptCard from "./receipt-card.jsx";
+import WaitingData from "../waiting-data.jsx";
+require("style!css!./receipt.css");
 
-let NoReceipts = () => <section>{"Here will be present list of your receipts"}</section>;
+let NoReceipts = () => <section className="receipt-list__no-receipts">{"Here will be present list of your receipts"}</section>;
 
 
 export default React.createClass({
 
-    // constructor(args) {
-    //     this.props.setTitle("Receipts");
-    // },
+    constructor(args) {
+        this.props.setTitle("Receipts");
+    },
 
     render() {
         if (this.props.receiptsList === null) {

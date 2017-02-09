@@ -16,3 +16,8 @@
     clear: both;
     display: table;
 }
+
+.receipt-list__no-receipts {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}

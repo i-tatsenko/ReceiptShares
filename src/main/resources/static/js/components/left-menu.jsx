@@ -1,8 +1,8 @@
-import React from 'react'
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
+import React from "react";
+import Menu from "material-ui/Menu";
+import MenuItem from "material-ui/MenuItem";
+import Drawer from "material-ui/Drawer";
+import AppBar from "material-ui/AppBar";
 import {browserHistory} from "react-router";
 
 export default class LeftMenu extends React.Component {
@@ -15,7 +15,7 @@ export default class LeftMenu extends React.Component {
             }
         }
         return (
-            <Drawer open={this.props.open}>
+            <Drawer {...this.props} >
                 <AppBar onLeftIconButtonTouchTap={this.props.closeMenu}/>
                 <Menu>
                     {items}

@@ -3,8 +3,8 @@ import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
-import AppBar from 'material-ui/AppBar';
-import Logout from './login/logout.jsx'
+import AppBar from "material-ui/AppBar";
+import Logout from "./login/logout.jsx";
 import {browserHistory} from "react-router";
 
 
@@ -46,7 +46,7 @@ export default class App extends React.Component {
                                onTouchTap={() => browserHistory.push('/new')}/>);
         let ActionButton = () => <IconMenu
             style={{
-                position: 'fixed',
+                position: 'absolute',
                 right: '30px',
                 bottom: '20px'
             }}
@@ -62,7 +62,7 @@ export default class App extends React.Component {
 
         return (
             <section>
-                <div className="clearfix">
+                <div className="clearfix" style={{position: "relative"}}>
                     <AppBar title={this.state.barTitle}
                             onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
                     <LeftMenu open={this.state.menuOpen} links={this.state.menuItems}
