@@ -43,14 +43,16 @@ export default class Receipt extends React.Component {
                     <Divider/>
                     Items:
                     <List>
-                        {receipt.orderedItems.map(item => <ReceiptItem item={item} key={"receiptItem" + item.id}/>)}
+                        {this.renderItems()}
                     </List>
                 </section>
                 <NewItemModal itemCreatedCallback={() => {
                     this.closeAddNewItemPopup();
                     this.getReceiptFromServer()
-                }} opened={this.state.addNewItemPopupOpened}
-                              closed={this.closeAddNewItemPopup.bind(this)}/>
+                }}
+                              opened={this.state.addNewItemPopupOpened}
+                              closed={this.closeAddNewItemPopup.bind(this)}
+                              receiptId={this.state.rec.id}/>
             </section>);
     }
 
@@ -68,13 +70,27 @@ export default class Receipt extends React.Component {
         return {total, mySpending};
     }
 
-    setReceipt(receipt) {
-        this.setState({rec: receipt});
-        this.props.setTitle(receipt.name);
+    renderItems() {
+        let items = [];
+        for (let item of this.state.rec.orderedItems) {
+            let foundItem = items.find(present => present.user.id = item.user.id && present.item.id == item.item.id);
+            if (foundItem) {
+                foundItem.sum += foundItem.item.price;
+                foundItem.count++
+            } else {
+                items.push(item);
+                item.sum = item.item.price;
+                item.count = 1;
+            }
+        }
+        return items.map(item => <ReceiptItem item={item} key={"receiptItem" + item.id}/>)
     }
 
     getReceiptFromServer() {
-        $.get('/v1/rec/' + this.props.params.id, resp => this.setReceipt(resp));
+        $.get('/v1/rec/' + this.props.params.id, resp => {
+            this.setState({rec: resp});
+            this.props.setTitle(resp.name);
+        });
     }
 
     componentDidMount() {
