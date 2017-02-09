@@ -1,12 +1,12 @@
 import FriendList from "../friend-list/friend-list.jsx";
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
-import Chip from 'material-ui/Chip';
-import {chipStyle, chipWrapperStyle} from '../default-styles.jsx'
+import TextField from "material-ui/TextField";
+import RaisedButton from "material-ui/RaisedButton";
+import Divider from "material-ui/Divider";
+import Avatar from "material-ui/Avatar";
+import Chip from "material-ui/Chip";
+import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import {browserHistory} from "react-router";
-import Snackbar from 'material-ui/Snackbar';
+import Snackbar from "material-ui/Snackbar";
 
 export default class CreateNewReceipt extends React.Component {
 
@@ -87,7 +87,7 @@ export default class CreateNewReceipt extends React.Component {
             contentType: 'application/json',
             dataType: 'json',
             method: 'post',
-            success: (resp) => {debugger;browserHistory.push('/receipt/' + resp.id)},
+            success: (resp) => {browserHistory.push('/receipt/' + resp.id)},
             error: () => this.setState({error: true})
         })
 

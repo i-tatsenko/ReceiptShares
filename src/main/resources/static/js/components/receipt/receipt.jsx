@@ -1,9 +1,8 @@
 import React from "react";
-import WaitingData from  '../waiting-data.jsx';
-import Divider from 'material-ui/Divider';
-import ReceiptItem from './receipt-item.jsx';
-
-import 'style!css!./receipt.css';
+import WaitingData from "../waiting-data.jsx";
+import Divider from "material-ui/Divider";
+import ReceiptItem from "./receipt-item.jsx";
+import "style!css!./receipt.css";
 export default class Receipt extends React.Component {
 
     constructor(args) {
@@ -55,7 +54,6 @@ export default class Receipt extends React.Component {
     }
 
     componentWillUnmount() {
-        debugger;
         this.props.removeMenuItems(["Action 1", "Action 2"]);
     }
 }

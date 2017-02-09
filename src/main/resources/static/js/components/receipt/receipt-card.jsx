@@ -1,7 +1,8 @@
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import Chip from 'material-ui/Chip';
-import Avatar from 'material-ui/Avatar';
-import {chipStyle, chipWrapperStyle} from '../default-styles.jsx';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from "material-ui/Card";
+import Chip from "material-ui/Chip";
+import Avatar from "material-ui/Avatar";
+import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
+import {browserHistory} from "react-router";
 
 export default class ReceiptCard extends React.Component {
 
@@ -19,7 +20,7 @@ export default class ReceiptCard extends React.Component {
                 </div>
             </section>;
         return (
-            <Card style={{marginBottom: '15px'}}>
+            <Card style={{marginBottom: '15px'}} onTouchTap={this.goToReceipt.bind(this)}>
                 <CardHeader title={receipt.name}
                             subtitle={'by ' + receipt.owner.name}
                             avatar={receipt.owner.avatarUrl}
@@ -31,6 +32,10 @@ export default class ReceiptCard extends React.Component {
                 </CardText>
             </Card>
         )
+    }
+
+    goToReceipt() {
+        browserHistory.push("/receipt/" + this.props.receipt.id);
     }
 
     userSpendings() {
