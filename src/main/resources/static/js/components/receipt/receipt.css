@@ -25,3 +25,17 @@
     margin-top: 10px;
     margin-bottom: 30px;
 }
+
+.receipt-item {
+    position: relative;
+}
+
+.receipt-item__actions {
+    position: absolute;
+    display: flex;
+    right: 20px;
+    align-items: center;
+}
+.receipt-item-actions__action {
+    padding: 10px
+}

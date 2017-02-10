@@ -8,6 +8,7 @@ export default class ReceiptCard extends React.Component {
 
     render() {
         let receipt = this.props.receipt;
+        let {total, mySpending} = this.calculateSpending();
         let members = receipt.members.length == 0 ? "" :
             <section>
                 Members:
@@ -26,8 +27,8 @@ export default class ReceiptCard extends React.Component {
                             avatar={receipt.owner.avatarUrl}
                 />
                 <CardText expandable={false}>
-                    <p>Your Spendings: {this.userSpendings()}</p>
-                    <p>Total Spendings: {this.totalSpendings()}</p>
+                    <p>Your Part: {mySpending}</p>
+                    <p>Total: {total}</p>
                     {members}
                 </CardText>
             </Card>
@@ -38,17 +39,16 @@ export default class ReceiptCard extends React.Component {
         browserHistory.push("/receipt/" + this.props.receipt.id);
     }
 
-    userSpendings() {
-        let userId = this.props.user.id;
-        return this.props.receipt
-            .orderedItems
-            .filter(item => item.user.id === userId)
-            .reduce((l, c) => l + c, 0)
-    }
-
-    totalSpendings() {
-        return this.props.receipt
-            .orderedItems
-            .reduce((l, c) => l + c, 0)
+    calculateSpending() {
+        let total = 0;
+        let mySpending = 0;
+        console.log("User id: ", this.props.user.id);
+        for (let item of this.props.receipt.orderedItems) {
+            if (item.user.id === this.props.user.id) {
+                mySpending += item.item.price;
+            }
+            total += item.item.price;
+        }
+        return {total, mySpending};
     }
 }

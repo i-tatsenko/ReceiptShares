@@ -5,6 +5,7 @@ import com.receiptshares.receipt.model.Place
 import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -22,7 +23,9 @@ class ReceiptController {
     @GetMapping(value = '/{id}', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     def receiptById(@PathVariable(name = "id") Long id) {
-        return receiptService.findById(id)
+        def receipt = receiptService.findById(id)
+        receipt.orderedItems = receipt.orderedItems.findAll {it.status == "ACTIVE"}
+        return receipt
     }
 
     @GetMapping(value = '/all', produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,5 +53,11 @@ class ReceiptController {
         def name = body.name as String
         def price = body.price as Double
         return receiptService.createNewItem(user, receiptId, name, price) as OrderedItem
+    }
+
+    @PostMapping("/item/add")
+    def addItem(Authentication auth, @RequestBody Map body) {
+        receiptService.addItem(auth.principal as User, body.receiptId as Long, body.itemId as Long)
+        return ResponseEntity.ok().build()
     }
 }

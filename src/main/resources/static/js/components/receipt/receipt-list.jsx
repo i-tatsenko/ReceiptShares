@@ -21,7 +21,7 @@ export default React.createClass({
         let user = this.props.user;
         return (
             <section>
-                {this.state.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user.id}
+                {this.state.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user}
                                                                      key={'rec' + receipt.id}/>)}
             </section>
         )

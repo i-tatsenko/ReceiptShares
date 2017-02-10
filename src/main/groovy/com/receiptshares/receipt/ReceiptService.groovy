@@ -50,13 +50,24 @@ class ReceiptService {
 
     def createNewItem(User user, Long receiptId, String name, Double price) {
         //TODO check security
-        def receipt = receiptRepository.findOne(receiptId)
         def item = itemRepository.save(new ItemEntity(name: name, price: price))
+        OrderedItemEntity orderItem = createOrderedItem(user, item, receiptId)
+        return orderItem
+    }
+
+    def addItem(User user, Long receiptId, Long itemId) {
+        def itemEntity = itemRepository.findOne(itemId)
+        createOrderedItem(user, itemEntity, receiptId)
+    }
+
+    private OrderedItemEntity createOrderedItem(User user, ItemEntity item, Long receiptId) {
         def userEntity = userRepo.findOne(user.id)
         def orderItem = new OrderedItemEntity(user: userEntity, item: item, status: ItemStatus.ACTIVE.toString())
         orderItemRepository.save(orderItem)
+        def receipt = receiptRepository.findOne(receiptId)
         receipt.orderedItems.add(orderItem)
         receiptRepository.save(receipt)
+
         return orderItem
     }
 }
