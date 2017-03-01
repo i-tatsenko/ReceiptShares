@@ -10,6 +10,7 @@ import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
+import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
 
@@ -32,11 +33,11 @@ public class ReceiptSharesApplication extends SpringBootServletInitializer {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "receipt.shares.mode", havingValue = "dev")
     public DataSource dataSource() {
         System.setProperty("spring.jpa.database-platform", "com.receiptshares.SQLiteDialect");
         return new DataSourceBuilder(ClassLoader.getSystemClassLoader())
                 .driverClassName("org.sqlite.JDBC")
+                .type(SQLiteDataSource.class)
                 .url("jdbc:sqlite:dev.db")
                 .build();
     }
