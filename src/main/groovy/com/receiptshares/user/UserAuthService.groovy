@@ -1,6 +1,7 @@
 package com.receiptshares.user
 
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.model.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -15,7 +16,9 @@ class UserAuthService implements UserDetailsService {
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.getByEmail(username)
-                          .orElseThrow({new UsernameNotFoundException("No user with email: ${username}")})
+        def user = userService.getByEmail(username).block()
+        if (!user)
+            throw new UsernameNotFoundException("No user with email: ${username}")
+        return user
     }
 }

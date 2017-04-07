@@ -1,8 +1,9 @@
 package com.receiptshares.user.dao
 
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import reactor.core.publisher.Flux
 
-interface UserConnectionRepo extends CrudRepository<UserConnectionEntity, String> {
+interface UserConnectionRepo extends ReactiveCrudRepository<UserConnectionEntity, String> {
 
-    Collection<UserConnectionEntity> findByProviderUserIdIn(Collection<String> providerUserId)
+    Flux<UserConnectionEntity> findByProviderUserIdIn(Collection<String> providerUserId)
 }

@@ -8,6 +8,7 @@ import org.springframework.social.connect.Connection
 import org.springframework.social.connect.web.SignInAdapter
 import org.springframework.stereotype.Service
 import org.springframework.web.context.request.NativeWebRequest
+import reactor.core.publisher.Mono
 
 
 @Service
@@ -22,11 +23,10 @@ class OAuthSingInAdapter implements SignInAdapter {
 
     @Override
     String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
-        SecurityContextHolder.getContext().authentication = userService.getByEmail(userId)
-                                                                       .map { new UserAuthentication(it) }
-                                                                       .orElseThrow {
-            new IllegalArgumentException("There is no user with email: " + userId)
-        }
+        UserAuthentication authentication = userService.getByEmail(userId).map({ new UserAuthentication(it) }).get()
+        if (!authentication)
+            throw new IllegalArgumentException("There is no user with email: " + userId)
+        SecurityContextHolder.getContext().authentication = authentication
         return null
     }
 }

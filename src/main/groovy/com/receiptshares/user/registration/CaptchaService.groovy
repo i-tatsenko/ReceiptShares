@@ -1,9 +1,10 @@
 package com.receiptshares.user.registration
 
-import rx.Observable
+import reactor.core.publisher.Mono
+
 
 interface CaptchaService {
 
-    Observable<Boolean> verify(String token)
+    Mono<Boolean> verify(Mono<String> token)
 
 }

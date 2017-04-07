@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import rx.Observable
+import reactor.core.publisher.Mono
 
 @Component
 class GoogleCaptcha implements CaptchaService {
@@ -28,18 +28,21 @@ class GoogleCaptcha implements CaptchaService {
         this.restTemplate = restTemplate
     }
 
-    def Observable<Boolean> verify(String token) {
-        return Observable.defer { askGoogle(token) }
-                         .doOnNext { LOG.trace("Captcha verified") }
-                         .retry({ count, exc -> !(exc instanceof CaptchaInvalidException) && count < RETRIES_COUNT })
+    Mono<Boolean> verify(Mono<String> token) {
+        return token.map { t -> askGoogle(t) }
+                    .doOnNext { LOG.trace("Captcha verified") }
+                    .retry(RETRIES_COUNT)
+                    .map({ result ->
+            if (!result) {
+                throw new CaptchaInvalidException()
+            }
+            return result
+        })
     }
 
-    private Observable<Boolean> askGoogle(String token) {
+    private Boolean askGoogle(String token) {
         def result = restTemplate.postForObject(url, null, CaptchaResponse, [secret: secret, token: token])
-        if (!result.success) {
-            throw new CaptchaInvalidException()
-        }
-        Observable.just true
+        return result.success
     }
 
     protected String getUrl() {

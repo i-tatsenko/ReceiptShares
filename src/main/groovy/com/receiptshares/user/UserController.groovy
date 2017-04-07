@@ -1,6 +1,7 @@
 package com.receiptshares.user
 
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.CaptchaService
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
@@ -13,6 +14,8 @@ import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.async.DeferredResult
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import rx.schedulers.Schedulers
 
 @Component
@@ -39,36 +42,21 @@ class UserController {
     }
 
     @RequestMapping(value = "/open/reg", method = RequestMethod.POST)
-    DeferredResult<ResponseEntity> registerNewUser(NewUserDTO newUserDTO,
-                                                   @RequestParam("g-recaptcha-response") String captcha) {
-        def result = new DeferredResult<>()
-        captchaService.verify(captcha)
-                      .subscribeOn(Schedulers.io())
-                      .doOnNext { userDao.registerNewUser(newUserDTO) }
-                      .subscribe({ result.setResult(null) },
-                { ex -> result.setResult(responseForError(ex)) })
-
-        return result
+    Mono<Boolean> registerNewUser(NewUserDTO newUserDTO,
+                               @RequestParam("g-recaptcha-response") Mono<String> captcha) {
+        return captchaService.verify(captcha)
+                             .doOnNext({result->userDao.registerNewUser(newUserDTO)})
     }
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET)
     @ResponseBody
-    DeferredResult friends() {
-        def result = new DeferredResult()
-        def errorAction = {
-            log.debug("Can't get friends", it)
-            result.setResult([err: it.message])
-        }
-        connectionService.findFriendsForCurrentCustomer()
-                         .subscribeOn(Schedulers.io())
-                         .subscribe({ result.setResult(it) }, errorAction)
-
-        return result
+    Flux<User> friends() {
+        return connectionService.findFriendsForCurrentCustomer()
     }
 
     private static def responseForError(Throwable e) {
         log.debug("Error while registration", e)
-        def status = HttpStatus.NOT_FOUND
+        def status = HttpStatus.BAD_REQUEST
         if (e instanceof EmailNotUniqueException)
             status = HttpStatus.CONFLICT
         return ResponseEntity.status(status).build()

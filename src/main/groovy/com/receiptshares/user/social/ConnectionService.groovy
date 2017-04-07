@@ -8,7 +8,13 @@ import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
 import org.springframework.social.facebook.api.Facebook
 import org.springframework.stereotype.Service
+import org.springframework.util.CollectionUtils
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import rx.Observable
+
+import static java.util.stream.Collectors.toList
 
 @Service
 class ConnectionService {
@@ -25,24 +31,25 @@ class ConnectionService {
         this.userRepo = userRepo
     }
 
-    Observable findFriendsForCurrentCustomer() {
-        Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook)
-        if (!connection)
-            return Observable.empty()
-        Observable.defer { getFacebookFriends(connection.api) }
+    Flux<User> findFriendsForCurrentCustomer() {
+        return Mono.defer({ -> connectionRepository.findPrimaryConnection(Facebook) })
+                   .subscribeOn(Schedulers.elastic())
+                   .flatMap({ connection -> getFacebookFriends(connection.api) })
     }
 
-    private def getFacebookFriends(Facebook api) {
-        def ids = api.friendOperations()
-                     .friendProfiles
-                     .collect { it.id }
-        return Observable.just(findUserDetailsByConnectionIds(ids))
+    private Flux<User> getFacebookFriends(Facebook api) {
+        return Mono.just(api.friendOperations())
+                   .map { facebook -> facebook.friendProfiles }
+                   .map { friends -> friends.collect({ it.id }) }
+                   .flatMap({ friendsId -> findUserDetailsByConnectionIds(friendsId) })
     }
 
-    def findUserDetailsByConnectionIds(List<String> ids) {
-        def emails = userConnectionRepo.findByProviderUserIdIn(ids)
-                                       .collect { it.userId }
+    Flux<User> findUserDetailsByConnectionIds(List<String> ids) {
+        List<String> emails = userConnectionRepo.findByProviderUserIdIn(ids)
+                                                .map({ user -> user.id })
+                                                .toStream()
+                                                .collect(toList())
         return userRepo.findByEmailIn(emails)
-                .collect { it as User }
+                       .map { it as User }
     }
 }

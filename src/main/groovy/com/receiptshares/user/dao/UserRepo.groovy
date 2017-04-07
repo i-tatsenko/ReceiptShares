@@ -1,10 +1,12 @@
 package com.receiptshares.user.dao
 
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
-interface UserRepo extends CrudRepository<UserEntity, Long>{
+interface UserRepo extends ReactiveCrudRepository<UserEntity, Long> {
 
-    UserEntity findByEmail(String email)
+    Mono<UserEntity> findByEmail(String email)
 
-    List<UserEntity> findByEmailIn(Collection<String> emails)
+    Flux<UserEntity> findByEmailIn(Collection<String> emails)
 }

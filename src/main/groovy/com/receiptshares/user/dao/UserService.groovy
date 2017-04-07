@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 
 @Component
 class UserService {
@@ -21,19 +22,16 @@ class UserService {
         this.passwordEncoder = passwordEncoder
     }
 
-    def registerNewUser(NewUserDTO newUser) {
+    Mono<User> registerNewUser(NewUserDTO newUser) {
         def user = newUser as UserEntity
         user.passwordHash = passwordEncoder.encode(newUser.password ?: randomPasswordGenerator())
-
-        try {
-            userRepo.save(user)
-        } catch (DataIntegrityViolationException dive) {
-            throw new EmailNotUniqueException(newUser.email)
-        }
+        return userRepo.save(user)
+                       .map({ u -> u as User })
+                       .mapError(DataIntegrityViolationException, { error -> new EmailNotUniqueException(newUser.email) })
     }
 
-    Optional<User> getByEmail(String email) {
-        return Optional.ofNullable(userRepo.findByEmail(email))
+    Mono<User> getByEmail(String email) {
+        return userRepo.findByEmail(email)
                        .map({ found -> found as User })
     }
 }
