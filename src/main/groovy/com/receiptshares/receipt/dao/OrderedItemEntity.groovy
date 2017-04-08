@@ -1,6 +1,7 @@
 package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
+import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.user.dao.UserEntity
 
 import javax.persistence.*
@@ -17,4 +18,10 @@ class OrderedItemEntity implements DuckTypeConversion {
     @OneToOne(targetEntity = ItemEntity)
     def ItemEntity item
     def String status
+
+    OrderedItemEntity(UserEntity userEntity, ItemEntity itemEntity) {
+        this.user = userEntity
+        this.item = itemEntity
+        this.status = ItemStatus.ACTIVE.toString()
+    }
 }
