@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import rx.Observable
 
 import static java.util.stream.Collectors.toList
 

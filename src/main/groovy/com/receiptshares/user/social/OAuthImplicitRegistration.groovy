@@ -21,7 +21,7 @@ class OAuthImplicitRegistration implements ConnectionSignUp {
         def profile = connection.fetchUserProfile()
         try {
             def dto = new NewUserDTO(email: profile.email, name: profile.name, avatarUrl: connection.imageUrl)
-            userService.registerNewUser(dto)
+            userService.registerNewUser(dto).block()
             return profile.email
         } catch (EmailNotUniqueException enue) {
             log.debug("Can't implicitly register new user", enue)

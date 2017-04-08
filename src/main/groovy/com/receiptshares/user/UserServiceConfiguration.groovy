@@ -21,7 +21,7 @@ class UserServiceConfiguration {
 
     @Bean
     UserDetailsService userAuthService() {
-        return new UserAuthService(userDao());
+        return new UserAuthService(userDao())
     }
 
     @Bean
@@ -31,6 +31,6 @@ class UserServiceConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder()
     }
 }

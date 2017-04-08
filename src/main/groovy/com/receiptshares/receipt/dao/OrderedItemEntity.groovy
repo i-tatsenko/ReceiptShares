@@ -3,11 +3,13 @@ package com.receiptshares.receipt.dao
 import com.receiptshares.DuckTypeConversion
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.user.dao.UserEntity
+import groovy.transform.InheritConstructors
 
 import javax.persistence.*
 
 @Entity
 @Table(name = "orderItem")
+@InheritConstructors
 class OrderedItemEntity implements DuckTypeConversion {
 
     @Id
