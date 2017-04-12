@@ -1,19 +1,16 @@
 package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
+import groovy.transform.CompileStatic
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.Table
-
-@Entity
-@Table(name = "item")
+@Document
+@CompileStatic
 class ItemEntity implements DuckTypeConversion {
 
     @Id
-    @GeneratedValue
-    def Long id
+    def BigInteger id
     def String name
     def double price
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.encrypt.Encryptors
 import org.springframework.social.UserIdSource
@@ -13,23 +14,24 @@ import org.springframework.social.config.annotation.EnableSocial
 import org.springframework.social.config.annotation.SocialConfigurer
 import org.springframework.social.connect.ConnectionFactoryLocator
 import org.springframework.social.connect.UsersConnectionRepository
-import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository
+import org.springframework.social.connect.mongo.ConnectionConverter
+import org.springframework.social.connect.mongo.MongoConnectionService
+import org.springframework.social.connect.mongo.MongoUsersConnectionRepository
 import org.springframework.social.connect.web.ProviderSignInController
 import org.springframework.social.facebook.connect.FacebookConnectionFactory
 
-import javax.sql.DataSource
 
 @Configuration
 @EnableSocial
 public class UserConfiguration implements SocialConfigurer {
 
-    private DataSource dataSource;
-    private UserService userService;
+    private UserService userService
+    private ReactiveMongoTemplate mongoTemplate
 
     @Autowired
-    public UserConfiguration(DataSource dataSource, UserService userService) {
-        this.dataSource = dataSource;
+    public UserConfiguration(UserService userService, ReactiveMongoTemplate mongoTemplate) {
         this.userService = userService;
+        this.mongoTemplate = mongoTemplate
     }
 
     @Bean
@@ -57,8 +59,10 @@ public class UserConfiguration implements SocialConfigurer {
      */
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
-        JdbcUsersConnectionRepository repository = new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator, Encryptors.noOpText());
-        repository.setConnectionSignUp(new OAuthImplicitRegistration(userService));
-        return repository;
+        def encryptor = Encryptors.noOpText()
+        def service = new MongoConnectionService(mongoTemplate, new ConnectionConverter(connectionFactoryLocator, encryptor))
+        UsersConnectionRepository repository = new MongoUsersConnectionRepository(service, connectionFactoryLocator, encryptor)
+        repository.setConnectionSignUp(new OAuthImplicitRegistration(userService))
+        return repository
     }
 }

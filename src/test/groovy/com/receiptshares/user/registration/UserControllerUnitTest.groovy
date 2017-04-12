@@ -6,7 +6,7 @@ import com.receiptshares.user.social.ConnectionService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult
-import rx.Observable
+import reactor.core.publisher.Mono
 import spock.lang.Specification
 
 import static com.receiptshares.TestUtil.waitForResult
@@ -22,7 +22,7 @@ class UserControllerUnitTest extends Specification {
 
     def "when captcha ok and no user with such email registration ok and user is authorized"() {
         given:
-        captchaMock.verify(_) >> Observable.just(true)
+        captchaMock.verify(_) >> Mono.just(true)
         when:
         def result = underTest.registerNewUser(userDto, "")
         waitForResult(result)

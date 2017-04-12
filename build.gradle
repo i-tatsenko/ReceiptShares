@@ -39,18 +39,28 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-social-facebook'
     compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.springframework.boot:spring-boot-devtools'
-    compile 'org.codehaus.groovy:groovy:2.4.7'
-    compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
-    compile("org.springframework.boot:spring-boot-devtools")
+    compile 'org.mongodb:mongodb-driver-reactivestreams'
+    compile ('org.fuzzydb:spring-social-mongo:0.9.0') {
+        exclude group: 'org.slf4j'
+        exclude group: 'log4j'
+        exclude group: 'org.mongodb'
+        exclude group: 'org.hibernate'
+        exclude group: 'org.springframework'
+        exclude group: 'org.springframework.data'
+        exclude group: 'org.springframework.security'
+        exclude group: 'org.springframework.social'
+    }
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    compile 'org.codehaus.groovy:groovy:2.4.10'
+    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
+
+
+
     testCompile 'cglib:cglib-nodep:3.2.4'
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 
 
 }

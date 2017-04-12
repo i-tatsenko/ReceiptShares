@@ -1,20 +1,16 @@
 package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
-import com.receiptshares.user.dao.UserEntity
 import groovy.transform.CompileStatic
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-import javax.persistence.*
-
-@Entity
-@Table(name = "place")
 @CompileStatic
+@Document
 class PlaceEntity implements DuckTypeConversion {
 
     @Id
-    @GeneratedValue
-    def Long id
+    def BigInteger id
     def String name
-    @OneToOne(targetEntity = UserEntity)
-    def UserEntity author
+    def BigInteger author
 }

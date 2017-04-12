@@ -3,26 +3,27 @@ package com.receiptshares.user.dao
 import com.receiptshares.DuckTypeConversion
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.mapping.Document
 
 import javax.persistence.*
 
-@Entity
-@Table(name = "user")
 @CompileStatic
 @ToString
+@Document
 class UserEntity implements DuckTypeConversion {
 
     @Id
-    @GeneratedValue
-    def Long id
+    BigInteger id
 
-    def String name
+    String name
 
-    @Column(unique = true, nullable = false)
-    def String email
+    @Indexed(unique = true)
+    String email
 
-    def String passwordHash
+    String passwordHash
 
-    def String avatarUrl
+    String avatarUrl
 
 }

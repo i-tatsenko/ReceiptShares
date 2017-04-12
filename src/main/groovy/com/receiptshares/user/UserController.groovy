@@ -41,7 +41,7 @@ class UserController {
 
     @RequestMapping(value = "/open/reg", method = RequestMethod.POST)
     Mono<Boolean> registerNewUser(NewUserDTO newUserDTO,
-                               @RequestParam("g-recaptcha-response") Mono<String> captcha) {
+                               @RequestParam("g-recaptcha-response") String captcha) {
         return captchaService.verify(captcha)
                              .doOnNext({result->userDao.registerNewUser(newUserDTO)})
     }
@@ -52,11 +52,5 @@ class UserController {
         return connectionService.findFriendsForCurrentCustomer()
     }
 
-    private static def responseForError(Throwable e) {
-        log.debug("Error while registration", e)
-        def status = HttpStatus.BAD_REQUEST
-        if (e instanceof EmailNotUniqueException)
-            status = HttpStatus.CONFLICT
-        return ResponseEntity.status(status).build()
-    }
+
 }

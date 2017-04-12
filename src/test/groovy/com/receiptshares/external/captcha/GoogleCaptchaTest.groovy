@@ -5,7 +5,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.web.client.RestTemplate
-import rx.observers.TestSubscriber
 import spock.lang.Specification
 
 import static org.springframework.test.web.client.ExpectedCount.once
@@ -33,7 +32,7 @@ class GoogleCaptchaTest extends Specification {
         when:
         def actualResult = googleCaptcha.verify(token)
         then:
-        def subscriber = new TestSubscriber()
+        def subscriber = new Object()
         actualResult.subscribe(subscriber)
         if (result) {
             subscriber.assertNoErrors()
@@ -58,7 +57,7 @@ class GoogleCaptchaTest extends Specification {
         restTemplateMock.postForObject(*_) >>> [{throw new IOException()}, new CaptchaResponse(success: true)]
 
         when:
-        def testSubscr = new TestSubscriber<>()
+        def testSubscr = new Object()()
         googleCaptcha.verify("").subscribe(testSubscr)
 
         then:

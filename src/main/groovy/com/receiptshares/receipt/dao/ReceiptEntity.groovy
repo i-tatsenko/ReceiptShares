@@ -1,27 +1,21 @@
 package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
-import com.receiptshares.user.dao.UserEntity
+import groovy.transform.CompileStatic
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-import javax.persistence.*
-
-@Entity
-@Table(name = "receipt")
-public class ReceiptEntity implements DuckTypeConversion {
+@Document
+@CompileStatic
+class ReceiptEntity implements DuckTypeConversion {
 
     @Id
-    @GeneratedValue
-    def Long id
-    def String name
-    @ManyToOne(cascade = CascadeType.ALL)
-    def PlaceEntity place
-    @ManyToOne
-    def UserEntity owner
-    @ManyToMany
-    def Set<UserEntity> members
-    @OneToMany
-    def Set<OrderedItemEntity> orderedItems
-    @Column(nullable = false)
-    def String status
+    BigInteger id
+    String name
+    BigInteger place
+    BigInteger owner
+    Set<BigInteger> members
+    Set<BigInteger> orderedItems
+    String status
 
 }

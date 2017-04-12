@@ -28,11 +28,11 @@ class GoogleCaptcha implements CaptchaService {
         this.restTemplate = restTemplate
     }
 
-    Mono<Boolean> verify(Mono<String> token) {
-        return token.map { t -> askGoogle(t) }
-                    .doOnNext { LOG.trace("Captcha verified") }
-                    .retry(RETRIES_COUNT)
-                    .map({ result ->
+    Mono<Boolean> verify(String token) {
+        return Mono.defer({ -> askGoogle(token) })
+                   .doOnNext { LOG.trace("Captcha verified") }
+                   .retry(RETRIES_COUNT)
+                   .map({ result ->
             if (!result) {
                 throw new CaptchaInvalidException()
             }
@@ -41,6 +41,7 @@ class GoogleCaptcha implements CaptchaService {
     }
 
     private Boolean askGoogle(String token) {
+        //TODO migrate to reactive http client
         def result = restTemplate.postForObject(url, null, CaptchaResponse, [secret: secret, token: token])
         return result.success
     }
