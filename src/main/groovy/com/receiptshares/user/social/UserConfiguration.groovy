@@ -1,11 +1,14 @@
 package com.receiptshares.user.social
 
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.social.mongo.ConnectionConverter
+import com.receiptshares.user.social.mongo.MongoConnectionService
+import com.receiptshares.user.social.mongo.MongoUsersConnectionRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.encrypt.Encryptors
 import org.springframework.social.UserIdSource
@@ -14,9 +17,6 @@ import org.springframework.social.config.annotation.EnableSocial
 import org.springframework.social.config.annotation.SocialConfigurer
 import org.springframework.social.connect.ConnectionFactoryLocator
 import org.springframework.social.connect.UsersConnectionRepository
-import org.springframework.social.connect.mongo.ConnectionConverter
-import org.springframework.social.connect.mongo.MongoConnectionService
-import org.springframework.social.connect.mongo.MongoUsersConnectionRepository
 import org.springframework.social.connect.web.ProviderSignInController
 import org.springframework.social.facebook.connect.FacebookConnectionFactory
 
@@ -26,10 +26,10 @@ import org.springframework.social.facebook.connect.FacebookConnectionFactory
 public class UserConfiguration implements SocialConfigurer {
 
     private UserService userService
-    private ReactiveMongoTemplate mongoTemplate
+    private MongoTemplate mongoTemplate
 
     @Autowired
-    public UserConfiguration(UserService userService, ReactiveMongoTemplate mongoTemplate) {
+    public UserConfiguration(UserService userService, MongoTemplate mongoTemplate) {
         this.userService = userService;
         this.mongoTemplate = mongoTemplate
     }

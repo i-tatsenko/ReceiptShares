@@ -36,23 +36,20 @@ repositories {
 
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile ('org.springframework.boot:spring-boot-starter-security') {
+        exclude group: "org.springframework", module: "spring-aop"
+        exclude group: "org.springframework", module: "spring-beans"
+        exclude group: "org.springframework", module: "spring-context"
+        exclude group: "org.springframework", module: "spring-core"
+        exclude group: "org.springframework", module: "spring-expression"
+        exclude group: "org.springframework", module: "spring-web"
+    }
     compile 'org.springframework.boot:spring-boot-starter-social-facebook'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.mongodb:mongodb-driver-reactivestreams'
-    compile ('org.fuzzydb:spring-social-mongo:0.9.0') {
-        exclude group: 'org.slf4j'
-        exclude group: 'log4j'
-        exclude group: 'org.mongodb'
-        exclude group: 'org.hibernate'
-        exclude group: 'org.springframework'
-        exclude group: 'org.springframework.data'
-        exclude group: 'org.springframework.security'
-        exclude group: 'org.springframework.social'
-    }
 
     compile 'org.codehaus.groovy:groovy:2.4.10'
     compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
