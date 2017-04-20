@@ -1,24 +1,16 @@
 package com.receiptshares.external.captcha
 
+import com.receiptshares.MockClientHttpConnector
 import com.receiptshares.user.registration.CaptchaInvalidException
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
-import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.web.client.RestTemplate
 import reactor.test.StepVerifier
 import spock.lang.Specification
 
-import static org.springframework.test.web.client.ExpectedCount.once
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
-
 class GoogleCaptchaTest extends Specification {
 
-    RestTemplate restTemplate = new RestTemplate()
-    MockRestServiceServer mockRest = MockRestServiceServer.bindTo(restTemplate).build()
+    MockClientHttpConnector mockConnector = new MockClientHttpConnector()
 
-    GoogleCaptcha googleCaptcha = new GoogleCaptcha(restTemplate)
+    GoogleCaptcha googleCaptcha = new GoogleCaptcha(mockConnector)
     def String secret = UUID.randomUUID().toString()
 
     def setup() {
@@ -27,10 +19,7 @@ class GoogleCaptchaTest extends Specification {
 
     def "expect google receive requests in right format"() {
         given:
-        mockRest
-        mockRest.expect(once(), requestTo("${googleCaptcha.BASE_URL}?secret=${secret}&response=${token}"))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"success\": ${result}}", MediaType.APPLICATION_JSON))
+        mockConnector.mockPost("${googleCaptcha.BASE_URL}?secret=${secret}&response=${token}", "{\"success\": ${result}}")
         when:
         def actualResult = StepVerifier.create(googleCaptcha.verify(token))
         then:
@@ -42,7 +31,6 @@ class GoogleCaptchaTest extends Specification {
             actualResult.expectError(CaptchaInvalidException)
                         .verify()
         }
-        mockRest.verify()
 
         where:
         token                        | result
