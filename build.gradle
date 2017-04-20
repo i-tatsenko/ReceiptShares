@@ -58,7 +58,7 @@ dependencies {
 
     testCompile 'cglib:cglib-nodep:3.2.4'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-
+    testCompile 'io.projectreactor.addons:reactor-test:3.1.0.BUILD-SNAPSHOT'
 
 }
 

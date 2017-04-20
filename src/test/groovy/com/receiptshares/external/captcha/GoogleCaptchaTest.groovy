@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.web.client.RestTemplate
+import reactor.test.StepVerifier
 import spock.lang.Specification
 
 import static org.springframework.test.web.client.ExpectedCount.once
@@ -26,22 +27,21 @@ class GoogleCaptchaTest extends Specification {
 
     def "expect google receive requests in right format"() {
         given:
+        mockRest
         mockRest.expect(once(), requestTo("${googleCaptcha.BASE_URL}?secret=${secret}&response=${token}"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess("{\"success\": ${result}}", MediaType.APPLICATION_JSON))
         when:
-        def actualResult = googleCaptcha.verify(token)
+        def actualResult = StepVerifier.create(googleCaptcha.verify(token))
         then:
-        def subscriber = new Object()
-        actualResult.subscribe(subscriber)
         if (result) {
-            subscriber.assertNoErrors()
-            subscriber.assertReceivedOnNext([true])
+            actualResult.expectNext(result)
+                        .expectComplete()
+                        .verify()
+        } else {
+            actualResult.expectError(CaptchaInvalidException)
+                        .verify()
         }
-        else
-            subscriber.assertError(CaptchaInvalidException)
-
-        subscriber.awaitTerminalEvent()
         mockRest.verify()
 
         where:
@@ -54,7 +54,7 @@ class GoogleCaptchaTest extends Specification {
         given:
         def restTemplateMock = Mock(RestTemplate)
         googleCaptcha.restTemplate = restTemplateMock
-        restTemplateMock.postForObject(*_) >>> [{throw new IOException()}, new CaptchaResponse(success: true)]
+        restTemplateMock.postForObject(*_) >>> [{ throw new IOException() }, new CaptchaResponse(success: true)]
 
         when:
         def testSubscr = new Object()()
