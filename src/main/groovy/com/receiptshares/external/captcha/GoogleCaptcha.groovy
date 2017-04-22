@@ -43,7 +43,6 @@ class GoogleCaptcha implements CaptchaService {
         return askGoogle(token)
                 .doOnNext { LOG.trace("Captcha verified") }
                 .map(this.&processResponse)
-                .retry(RETRIES_COUNT, { ex -> !(ex instanceof CaptchaInvalidException) })
     }
 
     private Boolean processResponse(CaptchaResponse response) {
@@ -64,6 +63,7 @@ class GoogleCaptcha implements CaptchaService {
                         .accept(MediaType.APPLICATION_JSON)
                         .retrieve()
                         .bodyToMono(CaptchaResponse)
+                        .retry(RETRIES_COUNT)
     }
 
 }

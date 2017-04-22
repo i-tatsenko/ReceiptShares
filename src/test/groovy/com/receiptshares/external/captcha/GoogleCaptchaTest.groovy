@@ -1,8 +1,7 @@
 package com.receiptshares.external.captcha
 
-import com.receiptshares.MockClientHttpConnector
 import com.receiptshares.user.registration.CaptchaInvalidException
-import org.springframework.web.client.RestTemplate
+import com.receiptshares.util.MockClientHttpConnector
 import reactor.test.StepVerifier
 import spock.lang.Specification
 
@@ -11,7 +10,7 @@ class GoogleCaptchaTest extends Specification {
     MockClientHttpConnector mockConnector = new MockClientHttpConnector()
 
     GoogleCaptcha googleCaptcha = new GoogleCaptcha(mockConnector)
-    def String secret = UUID.randomUUID().toString()
+    String secret = UUID.randomUUID().toString()
 
     def setup() {
         googleCaptcha.secret = secret
@@ -19,7 +18,7 @@ class GoogleCaptchaTest extends Specification {
 
     def "expect google receive requests in right format"() {
         given:
-        mockConnector.mockPost("${googleCaptcha.BASE_URL}?secret=${secret}&response=${token}", "{\"success\": ${result}}")
+        mockConnector.stubPost(getCaptchaVerifyUri(token), createApiResponse(result))
         when:
         def actualResult = StepVerifier.create(googleCaptcha.verify(token))
         then:
@@ -40,17 +39,25 @@ class GoogleCaptchaTest extends Specification {
 
     def "when transport exception occurred request will be retried"() {
         given:
-        def restTemplateMock = Mock(RestTemplate)
-        googleCaptcha.restTemplate = restTemplateMock
-        restTemplateMock.postForObject(*_) >>> [{ throw new IOException() }, new CaptchaResponse(success: true)]
+        def token = UUID.randomUUID().toString()
+        mockConnector.stubPostErrorThenSuccess(getCaptchaVerifyUri(token), new IOException(), createApiResponse(true))
+        mockConnector.stubPost(getCaptchaVerifyUri(token), "{\"success\": true}")
 
         when:
-        def testSubscr = new Object()()
-        googleCaptcha.verify("").subscribe(testSubscr)
+        def result = StepVerifier.create(googleCaptcha.verify(token))
 
         then:
-        testSubscr.assertNoErrors()
-        testSubscr.assertReceivedOnNext([true])
+        result.expectNext(true)
+              .expectComplete()
+              .verify()
+    }
+
+    private GString getCaptchaVerifyUri(String token) {
+        "${googleCaptcha.BASE_URL}?secret=${secret}&response=${token}"
+    }
+
+    private static String createApiResponse(boolean result) {
+        "{\"success\": ${result}}"
     }
 
 }
