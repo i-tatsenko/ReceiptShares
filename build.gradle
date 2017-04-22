@@ -52,13 +52,14 @@ dependencies {
     compile 'org.mongodb:mongodb-driver-reactivestreams'
 
     compile 'org.codehaus.groovy:groovy:2.4.10'
-    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
 
 
 
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-4'
     testCompile 'cglib:cglib-nodep:3.2.4'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'io.projectreactor.addons:reactor-test:3.1.0.BUILD-SNAPSHOT'
+    testCompile 'org.mockito:mockito-core:2.7.22'
 
 }
 

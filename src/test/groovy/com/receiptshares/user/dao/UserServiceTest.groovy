@@ -1,51 +1,66 @@
 package com.receiptshares.user.dao
 
+import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
-import spock.lang.Specification
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 
-import static java.util.UUID.randomUUID
+import static org.junit.Assert.assertEquals
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.anyString
+import static org.mockito.Mockito.when
 
-class UserServiceTest extends Specification {
-    def userRepo = Mock(UserRepo)
-    def encoderMock = Mock(PasswordEncoder)
-    def userDao = new UserService(userRepo, encoderMock)
+@RunWith(MockitoJUnitRunner)
+class UserServiceTest {
 
-    def setup() {
-        encoderMock.encode(_) >> { args -> args[0] + "encoded" }
+    private static final String PASSWORD_HASH = "encoded password"
+
+    @Mock
+    UserRepo userRepo
+    @Mock
+    PasswordEncoder encoderMock
+
+    def name = "name"
+    def email = "email@email.com"
+
+    def userDao
+
+    @Before
+    void setup() {
+        when(encoderMock.encode(anyString())).thenReturn(PASSWORD_HASH)
+        when(userRepo.save(any(UserEntity))).thenAnswer({ invocation -> Mono.just(invocation.arguments[0]) })
+        userDao = new UserService(userRepo, encoderMock)
     }
 
-    def "when saving new user password must be encrypted"() {
-        when:
-        userDao.registerNewUser(new NewUserDTO(name: name, email: email, password: password))
+    @Test
+    void "when saving new user password must be encrypted"() {
+        Mono<User> result = userDao.registerNewUser(new NewUserDTO(name: name, email: email, password: "some password"))
 
-        then:
-        1 * userRepo.save(_) >> { arg->
-            def user = arg[0]
-            assert user.name == name
-            assert user.email == email
-            assert user.passwordHash == passwordHash
-        }
+        def matcher = StepVerifier.create(result)
 
-        where:
-        name         | email        | password     | passwordHash
-        randomUuid() | randomUuid() | randomUuid() | password + "encoded"
+        matcher.assertNext({ user ->
+            assertEquals(name, user.name)
+            assertEquals(email, user.email)
+            assertEquals(PASSWORD_HASH, user.passwordHash)
+        })
+               .verifyComplete()
     }
 
-    def "when saving user with non unique email exception should be thrown"() {
-        given:
-        userRepo.save(_) >> {throw new DataIntegrityViolationException(null)}
-        def email = randomUuid()
-        when:
-        userDao.registerNewUser(new NewUserDTO(password: 'somePassword', email: email))
-        then:
-        EmailNotUniqueException exc = thrown()
-        exc.email == email
+    @Test
+    void "when saving user with non unique email exception should be thrown"() {
+        when(userRepo.save(any(UserEntity))).thenReturn(Mono.error(new DataIntegrityViolationException(null)))
+
+        def result = StepVerifier.create(userDao.registerNewUser(new NewUserDTO(password: 'somePassword', email: email)))
+        result.expectError(EmailNotUniqueException)
+              .verify()
     }
 
-    private static String randomUuid() {
-        randomUUID().toString()
-    }
 }

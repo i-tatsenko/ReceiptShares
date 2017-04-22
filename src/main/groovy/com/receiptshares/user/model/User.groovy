@@ -13,12 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails
 @ToString
 class User implements UserDetails, DuckTypeConversion {
 
-    def long id
-    def String email
-    def String name
+    BigInteger id
+    String email
+    String name
     @JsonIgnore
-    def String passwordHash
-    def String avatarUrl
+    String passwordHash
+    String avatarUrl
 
     @JsonIgnore
     @Override
