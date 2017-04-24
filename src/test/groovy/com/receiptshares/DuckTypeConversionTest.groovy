@@ -3,49 +3,44 @@ package com.receiptshares
 import com.receiptshares.user.dao.UserEntity
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
-import spock.lang.Specification
+import org.junit.jupiter.api.Test
 
 import java.time.DayOfWeek
 
 import static java.util.UUID.randomUUID
 
-class DuckTypeConversionTest extends Specification {
+class DuckTypeConversionTest {
 
     def dto =  new NewUserDTO(email: randomUUID().toString(), name: randomUUID().toString(), password: randomUUID().toString())
 
-    def "should copying all common properties"(){
-        when:
+    @Test
+    void "should copying all common properties"(){
         def entity = dto as UserEntity
-        then:
         entity.name == dto.name
         entity.email == dto.email
     }
 
-    def "should not try to set readonly props"() {
-        when:
+    @Test
+    void "should not try to set readonly props"() {
         def user = dto as User
-        then:
         user.name == dto.name
         user.email == dto.email
     }
 
-    def "should recursively set all duck typing props"() {
+    @Test
+    void "should recursively set all duck typing props"() {
         def testOuterA = "outerA" + randomUUID().toString()
         def testInnerA = 'innerA' + randomUUID().toString()
-        given:
         def outerA = new OuterA(str: testOuterA, duck: new InnerA(str: testInnerA))
-        when:
         OuterB result = outerA as OuterB
-        then:
         result.str == testOuterA
         result.duck.str == testInnerA
     }
 
-    def "enums should be replaced with strings and vice versa"() {
-        when:
+    @Test
+    void "enums should be replaced with strings and vice versa"() {
         def dayString = new DayWithEnum(day: DayOfWeek.MONDAY) as DayWithString
         def dayEnum = new DayWithString(day: "SATURDAY") as DayWithEnum
-        then:
         dayString.day == 'MONDAY'
         dayEnum.day == DayOfWeek.SATURDAY
     }

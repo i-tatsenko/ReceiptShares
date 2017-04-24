@@ -2,21 +2,24 @@ package com.receiptshares.external.captcha
 
 import com.receiptshares.user.registration.CaptchaInvalidException
 import com.receiptshares.util.MockClientHttpConnector
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier
-import spock.lang.Specification
 
-class GoogleCaptchaTest extends Specification {
+class GoogleCaptchaTest  {
 
     MockClientHttpConnector mockConnector = new MockClientHttpConnector()
 
     GoogleCaptcha googleCaptcha = new GoogleCaptcha(mockConnector)
     String secret = UUID.randomUUID().toString()
 
-    def setup() {
+    @BeforeEach
+    void setup() {
         googleCaptcha.secret = secret
     }
 
-    def "expect google receive requests in right format"() {
+    @Test
+    void "expect google receive requests in right format"() {
         given:
         mockConnector.stubPost(getCaptchaVerifyUri(token), createApiResponse(result))
         when:
@@ -37,7 +40,8 @@ class GoogleCaptchaTest extends Specification {
         UUID.randomUUID().toString() | false
     }
 
-    def "when transport exception occurred request will be retried"() {
+    @Test
+    void "when transport exception occurred request will be retried"() {
         given:
         def token = UUID.randomUUID().toString()
         mockConnector.stubPostErrorThenSuccess(getCaptchaVerifyUri(token), new IOException(), createApiResponse(true))

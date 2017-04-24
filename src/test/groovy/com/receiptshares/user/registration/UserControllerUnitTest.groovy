@@ -2,53 +2,77 @@ package com.receiptshares.user.registration
 
 import com.receiptshares.user.UserController
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.model.User
 import com.receiptshares.user.social.ConnectionService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.async.DeferredResult
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import reactor.core.publisher.Mono
-import spock.lang.Specification
+import reactor.test.StepVerifier
 
-import static com.receiptshares.TestUtil.waitForResult
-import static java.util.UUID.randomUUID
+import static org.junit.Assert.assertEquals
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.anyString
+import static org.mockito.Mockito.verifyZeroInteractions
+import static org.mockito.Mockito.when
 
-class UserControllerUnitTest extends Specification {
+class UserControllerUnitTest {
 
-    def userDaoMock = Mock(UserService)
-    def captchaMock = Mock(CaptchaService)
-    def connectionService = Mock(ConnectionService)
-    def underTest = new UserController(userDaoMock, captchaMock, connectionService)
-    private NewUserDTO userDto = new NewUserDTO(name: randomUUID().toString(), email: randomUUID().toString(), password: randomUUID().toString())
+    @Mock
+    UserService userService
+    @Mock
+    CaptchaService captchaMock
+    @Mock
+    ConnectionService connectionService
 
-    def "when captcha ok and no user with such email registration ok and user is authorized"() {
-        given:
-        captchaMock.verify(_) >> Mono.just(true)
-        when:
+    UserController underTest
+
+    private Map userParams = [name: "userName", email: "userEmail"]
+
+    private NewUserDTO userDto = new NewUserDTO(userParams)
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.initMocks(this)
+        when(userService.registerNewUser(userDto)).thenReturn(Mono.just(new User(userParams)))
+        when(captchaMock.verify(anyString())).thenReturn(Mono.just(true))
+        underTest = new UserController(userService, captchaMock, connectionService)
+    }
+
+
+    @Test
+    void when_captcha_ok_and_no_user_with_such_email_registration_ok_and_user_is_authorized() {
         def result = underTest.registerNewUser(userDto, "")
-        waitForResult(result)
-        then:
-        1 * userDaoMock.registerNewUser(userDto)
+
+        StepVerifier.create(result)
+                    .assertNext({ user ->
+            assertEquals(userParams.name, user.name)
+            assertEquals(userParams.email, user.email)
+        }).thenAwait()
+                    .verifyComplete()
+
     }
 
-    def "when captcha not ok then no user is created and response is 404"() {
-        given:
-        captchaMock.verify(_) >> {Observable.error(new CaptchaInvalidException())}
-        when:
-        DeferredResult<ResponseEntity> result = underTest.registerNewUser(userDto, "")
-        waitForResult(result)
-        then:
-        0 * userDaoMock.registerNewUser(_)
-        result.getResult().statusCode == HttpStatus.NOT_FOUND
+    @Test
+    void when_captcha_not_ok_then_no_user_is_created_and_response_is_404() {
+        when(captchaMock.verify(anyString())).thenReturn(Mono.error(new CaptchaInvalidException()))
+
+        def result = underTest.registerNewUser(userDto, "")
+        StepVerifier.create(result)
+                    .expectError(CaptchaInvalidException)
+                    .verify()
+
+        verifyZeroInteractions(userService)
     }
 
-    def "when captcha ok and there is user with such email, then status is 409"() {
-        given:
-        captchaMock.verify(_) >> Observable.just(true)
-        userDaoMock.registerNewUser(_) >> {throw new EmailNotUniqueException("")}
-        when:
+    @Test
+    void when_captcha_ok_and_there_is_user_with_such_email_then_status_is_409() {
+        when(userService.registerNewUser(any(NewUserDTO))).thenReturn(Mono.error(new EmailNotUniqueException("")))
+
         def result = underTest.registerNewUser(new NewUserDTO(), "")
-        waitForResult(result)
-        then:
-        result.getResult().statusCode == HttpStatus.CONFLICT
+        StepVerifier.create(result)
+                    .expectError(EmailNotUniqueException)
+                    .verify()
     }
 }

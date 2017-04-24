@@ -3,13 +3,10 @@ package com.receiptshares.user
 import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.CaptchaService
-import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
 import com.receiptshares.user.social.ConnectionService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -22,13 +19,13 @@ import reactor.core.publisher.Mono
 @Slf4j
 class UserController {
 
-    UserService userDao
+    UserService userService
     CaptchaService captchaService
     ConnectionService connectionService
 
     @Autowired
-    UserController(UserService userDao, CaptchaService captcha, ConnectionService connectionService) {
-        this.userDao = userDao
+    UserController(UserService userService, CaptchaService captcha, ConnectionService connectionService) {
+        this.userService = userService
         this.captchaService = captcha
         this.connectionService = connectionService
     }
@@ -40,10 +37,11 @@ class UserController {
     }
 
     @RequestMapping(value = "/open/reg", method = RequestMethod.POST)
-    Mono<Boolean> registerNewUser(NewUserDTO newUserDTO,
-                               @RequestParam("g-recaptcha-response") String captcha) {
+    Mono<User> registerNewUser(NewUserDTO newUserDTO,
+                                  @RequestParam("g-recaptcha-response") String captcha) {
         return captchaService.verify(captcha)
-                             .doOnNext({result->userDao.registerNewUser(newUserDTO)})
+                             .then(Mono.defer({ userService.registerNewUser(newUserDTO) }))
+
     }
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET)
