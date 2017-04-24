@@ -6,6 +6,7 @@ import com.receiptshares.user.registration.NewUserDTO
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import reactor.core.publisher.Mono
@@ -32,6 +33,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.initMocks(this)
         when(encoderMock.encode(anyString())).thenReturn(PASSWORD_HASH)
         when(userRepo.save(any(UserEntity))).thenAnswer({ invocation -> Mono.just(invocation.arguments[0]) })
         underTest = new UserService(userRepo, encoderMock)

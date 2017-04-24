@@ -80,7 +80,8 @@ dependencies {
     testCompile 'io.projectreactor.addons:reactor-test:3.1.0.BUILD-SNAPSHOT'
     testCompile 'org.mockito:mockito-core:2.7.22'
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
+    testCompile 'org.junit.jupiter:junit-jupiter-params:5.0.0-M4'
 
 }
 

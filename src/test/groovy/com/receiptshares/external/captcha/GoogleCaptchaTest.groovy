@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier
 
-class GoogleCaptchaTest  {
+class GoogleCaptchaTest {
 
     MockClientHttpConnector mockConnector = new MockClientHttpConnector()
 
@@ -19,38 +19,35 @@ class GoogleCaptchaTest  {
     }
 
     @Test
-    void "expect google receive requests in right format"() {
-        given:
-        mockConnector.stubPost(getCaptchaVerifyUri(token), createApiResponse(result))
-        when:
-        def actualResult = StepVerifier.create(googleCaptcha.verify(token))
-        then:
-        if (result) {
-            actualResult.expectNext(result)
-                        .expectComplete()
-                        .verify()
-        } else {
-            actualResult.expectError(CaptchaInvalidException)
-                        .verify()
-        }
+    void shouldReturnPositiveResultWhenCaptchaIsOk() {
+        String token = UUID.randomUUID().toString()
+        mockConnector.stubPost(getCaptchaVerifyUri(token), createApiResponse(true))
 
-        where:
-        token                        | result
-        UUID.randomUUID().toString() | true
-        UUID.randomUUID().toString() | false
+        def result = googleCaptcha.verify(token)
+        StepVerifier.create(result)
+                    .expectNext(true)
+                    .verifyComplete()
     }
 
     @Test
-    void "when transport exception occurred request will be retried"() {
-        given:
+    void shouldReturnErrorResultWhenCaptchaIsNotOk() {
+        String token = UUID.randomUUID().toString()
+        mockConnector.stubPost(getCaptchaVerifyUri(token), createApiResponse(false))
+
+        def result = googleCaptcha.verify(token)
+        StepVerifier.create(result)
+                    .expectError(CaptchaInvalidException)
+                    .verify()
+    }
+
+    @Test
+    void whenTransportExceptionOccurredRequestWillBeRetried() {
         def token = UUID.randomUUID().toString()
         mockConnector.stubPostErrorThenSuccess(getCaptchaVerifyUri(token), new IOException(), createApiResponse(true))
         mockConnector.stubPost(getCaptchaVerifyUri(token), "{\"success\": true}")
 
-        when:
         def result = StepVerifier.create(googleCaptcha.verify(token))
 
-        then:
         result.expectNext(true)
               .expectComplete()
               .verify()
