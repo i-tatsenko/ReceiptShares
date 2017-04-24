@@ -42,13 +42,12 @@ class ConnectionService {
                    .flatMap({ friendsId -> findUserDetailsByConnectionIds(friendsId) })
     }
 
-    Flux<User> findUserDetailsByConnectionIds(List<String> ids) {
+    Flux<User> findUserDetailsByConnectionIds(List<String> providerIds) {
         //TODO refactor provider name
-        List<String> emails = userConnectionRepo.findUserIdsConnectedTo("facebook", ids as Set)
-                                                .map({ user -> user.id })
-                                                .toStream()
-                                                .collect(toList())
-        return userRepo.findByEmailIn(emails)
+        List<Long> indernalIds = userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)
+                                                   .collect(Long.&valueOf)
+
+        return userRepo.findAll(indernalIds)
                        .map { it as User }
     }
 }

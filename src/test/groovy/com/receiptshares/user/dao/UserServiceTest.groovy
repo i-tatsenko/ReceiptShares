@@ -26,10 +26,9 @@ class UserServiceTest {
     @Mock
     PasswordEncoder encoderMock
 
-    def name = "name"
-    def email = "email@email.com"
+    def userParams = [name: "name", email: "email@email.com", password: "some password"]
 
-    def underTest
+    UserService underTest
 
     @BeforeEach
     void setup() {
@@ -41,13 +40,13 @@ class UserServiceTest {
 
     @Test
     void "when saving new user password must be encrypted"() {
-        Mono<User> result = underTest.registerNewUser(new NewUserDTO(name: name, email: email, password: "some password"))
+        Mono<User> result = underTest.registerNewUser(new NewUserDTO(userParams))
 
         def matcher = StepVerifier.create(result)
 
         matcher.assertNext({ user ->
-            assertEquals(name, user.name)
-            assertEquals(email, user.email)
+            assertEquals(userParams.name, user.name)
+            assertEquals(userParams.email, user.email)
             assertEquals(PASSWORD_HASH, user.passwordHash)
         })
                .verifyComplete()
@@ -57,9 +56,24 @@ class UserServiceTest {
     void "when saving user with non unique email exception should be thrown"() {
         when(userRepo.save(any(UserEntity))).thenReturn(Mono.error(new DataIntegrityViolationException(null)))
 
-        def result = StepVerifier.create(underTest.registerNewUser(new NewUserDTO(password: 'somePassword', email: email)))
+        def result = StepVerifier.create(underTest.registerNewUser(new NewUserDTO(userParams)))
         result.expectError(EmailNotUniqueException)
               .verify()
+    }
+
+    @Test
+    void "shouldReturnFoundByEmailUser"() {
+        def params = userParams
+        params.remove("password")
+        when(userRepo.findByEmail(userParams.email)) thenReturn(Mono.just(new UserEntity(params)))
+
+        def result = underTest.getByEmail(userParams.email)
+
+        StepVerifier.create(result)
+                    .assertNext({ user ->
+            assertEquals(userParams.name, user.name)
+            assertEquals(userParams.email, user.email)
+        })
     }
 
 }
