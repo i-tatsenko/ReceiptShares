@@ -53,11 +53,6 @@ class GoogleCaptcha implements CaptchaService {
     }
 
     private Mono<CaptchaResponse> askGoogle(String token) {
-//        def result = restTemplate.postForObject(url, null, CaptchaResponse, [secret: secret, token: token])
-//        if (!result.success) {
-//            throw new CaptchaInvalidException()
-//        }
-//        return result.success
         return webClient.post()
                         .uri(QUERY_TEMPLATE, [secret: secret, token: token])
                         .accept(MediaType.APPLICATION_JSON)

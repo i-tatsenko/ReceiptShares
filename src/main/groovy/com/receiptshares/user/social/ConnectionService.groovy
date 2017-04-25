@@ -1,6 +1,5 @@
 package com.receiptshares.user.social
 
-
 import com.receiptshares.user.dao.UserRepo
 import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-
-import static java.util.stream.Collectors.toList
 
 @Service
 class ConnectionService {
@@ -30,16 +27,10 @@ class ConnectionService {
     }
 
     Flux<User> findFriendsForCurrentCustomer() {
-        return Mono.defer({ -> connectionRepository.findPrimaryConnection(Facebook) })
+        return Mono.defer({ -> Mono.just(connectionRepository.findPrimaryConnection(Facebook)) })
                    .subscribeOn(Schedulers.elastic())
-                   .flatMap({ connection -> getFacebookFriends(connection.api) })
-    }
-
-    private Flux<User> getFacebookFriends(Facebook api) {
-        return Mono.just(api.friendOperations())
-                   .map { facebook -> facebook.friendProfiles }
-                   .map { friends -> friends.collect({ it.id }) }
-                   .flatMap({ friendsId -> findUserDetailsByConnectionIds(friendsId) })
+                   .map({ fb -> fb.api.friendOperations().getFriendIds() })
+                   .flatMapMany(this.&findUserDetailsByConnectionIds)
     }
 
     Flux<User> findUserDetailsByConnectionIds(List<String> providerIds) {

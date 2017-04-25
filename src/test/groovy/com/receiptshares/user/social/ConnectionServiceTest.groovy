@@ -6,17 +6,16 @@ import com.receiptshares.user.model.User
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
 import org.springframework.social.connect.UsersConnectionRepository
+import org.springframework.social.facebook.api.Facebook
+import org.springframework.social.facebook.api.FriendOperations
+import org.springframework.social.facebook.api.PagedList
 import reactor.core.publisher.Flux
 
 import static org.assertj.core.api.Assertions.assertThat
-import static org.mockito.ArgumentMatchers.anyList
-import static org.mockito.ArgumentMatchers.anyListOf
-import static org.mockito.ArgumentMatchers.anySet
-import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.when
 
 class ConnectionServiceTest {
@@ -30,11 +29,12 @@ class ConnectionServiceTest {
 
     ConnectionService underTest
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.initMocks(this)
-        underTest = new ConnectionService(connectionRepository, userConnectionRepo, userRepo)
-    }
+    @Mock
+    Connection facebookConnection
+    @Mock
+    Facebook facebookApi
+    @Mock
+    FriendOperations friendOperations
 
     def userParams = [
             [id: 1, email: "email1@em.ail"],
@@ -42,14 +42,32 @@ class ConnectionServiceTest {
             [id: 3, email: "email3@em.ail"],
     ]
 
+    def providerIds = ["prov1", "prov2", "prov3"]
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.initMocks(this)
+        underTest = new ConnectionService(connectionRepository, userConnectionRepo, userRepo)
+        when(userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)).thenReturn(["1", "2", "3"] as Set)
+        when(userRepo.findAll([1L, 2L, 3L])).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
+    }
+
     @Test
     void shouldReturnUsersWithProviderIds() {
-        when(userConnectionRepo.findUserIdsConnectedTo(eq("facebook"), anySet())).thenReturn(["1", "2", "3"] as Set)
-        when(userRepo.findAll(anyList())).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
-
-        Flux<User> result = underTest.findUserDetailsByConnectionIds(["prov1", "prov2", "prov3"])
+        Flux<User> result = underTest.findUserDetailsByConnectionIds(providerIds)
         def actualUsers = result.collectList().block()
         assertThat(actualUsers).containsAll(createUsers(User))
+    }
+
+    @Test
+    void shouldReturnFacebookFriends() {
+        when(connectionRepository.findPrimaryConnection(Facebook)).thenReturn(facebookConnection)
+        when(facebookConnection.getApi()).thenReturn(facebookApi)
+        when(facebookApi.friendOperations()).thenReturn(friendOperations)
+        when(friendOperations.getFriendIds()).thenReturn(new PagedList<String>(providerIds, null, null))
+
+        def result = underTest.findFriendsForCurrentCustomer().collectList().block()
+        assertThat(result).containsAll(createUsers(User))
     }
 
     private <T> Collection<T> createUsers(Class<T> usersClass) {

@@ -1,11 +1,11 @@
 package com.receiptshares.user.social
 
 import com.receiptshares.user.dao.UserService
-import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
 import groovy.util.logging.Slf4j
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionSignUp
+import reactor.core.publisher.Mono
 
 @Slf4j
 class OAuthImplicitRegistration implements ConnectionSignUp {
@@ -19,13 +19,10 @@ class OAuthImplicitRegistration implements ConnectionSignUp {
     @Override
     String execute(Connection<?> connection) {
         def profile = connection.fetchUserProfile()
-        try {
-            def dto = new NewUserDTO(email: profile.email, name: profile.name, avatarUrl: connection.imageUrl)
-            userService.registerNewUser(dto).block()
-            return profile.email
-        } catch (EmailNotUniqueException enue) {
-            log.debug("Can't implicitly register new user", enue)
-            return null
-        }
+        def dto = new NewUserDTO(email: profile.email, name: profile.name, avatarUrl: connection.imageUrl)
+        return userService.registerNewUser(dto)
+                          .map({ user -> user.email })
+                          .onErrorResume({ Mono.empty() })
+                          .block()
     }
 }
