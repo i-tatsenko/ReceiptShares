@@ -1,12 +1,14 @@
 package com.receiptshares.user.social
 
+import com.receiptshares.MockitoExtension
 import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.UserProfile
 import reactor.core.publisher.Mono
@@ -15,6 +17,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.when
 
+@ExtendWith(MockitoExtension)
 class OAuthImplicitRegistrationTest {
 
     @Mock
@@ -28,12 +31,11 @@ class OAuthImplicitRegistrationTest {
 
     private String email = "em@ail.com"
 
+    @InjectMocks
     OAuthImplicitRegistration underTest
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.initMocks(this)
-        underTest = new OAuthImplicitRegistration(userService)
         when(connection.fetchUserProfile()).thenReturn(userProfile)
         when(registeredUser.email).thenReturn(email)
     }

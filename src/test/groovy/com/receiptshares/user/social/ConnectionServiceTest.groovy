@@ -1,12 +1,14 @@
 package com.receiptshares.user.social
 
+import com.receiptshares.MockitoExtension
 import com.receiptshares.user.dao.UserEntity
 import com.receiptshares.user.dao.UserRepo
 import com.receiptshares.user.model.User
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
 import org.springframework.social.connect.UsersConnectionRepository
@@ -18,6 +20,7 @@ import reactor.core.publisher.Flux
 import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.Mockito.when
 
+@ExtendWith(MockitoExtension)
 class ConnectionServiceTest {
 
     @Mock
@@ -27,6 +30,7 @@ class ConnectionServiceTest {
     @Mock
     UserRepo userRepo
 
+    @InjectMocks
     ConnectionService underTest
 
     @Mock
@@ -46,8 +50,6 @@ class ConnectionServiceTest {
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.initMocks(this)
-        underTest = new ConnectionService(connectionRepository, userConnectionRepo, userRepo)
         when(userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)).thenReturn(["1", "2", "3"] as Set)
         when(userRepo.findAll([1L, 2L, 3L])).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
     }

@@ -14,9 +14,9 @@ import reactor.core.scheduler.Schedulers
 @Service
 class ConnectionService {
 
-    ConnectionRepository connectionRepository
-    UsersConnectionRepository userConnectionRepo
-    UserRepo userRepo
+    private ConnectionRepository connectionRepository
+    private UsersConnectionRepository userConnectionRepo
+    private UserRepo userRepo
 
 
     @Autowired

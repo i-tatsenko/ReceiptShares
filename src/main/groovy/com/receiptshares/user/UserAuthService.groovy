@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class UserAuthService implements UserDetailsService {
 
-    def UserService userService
+    private UserService userService
 
     @Autowired
     UserAuthService(UserService userService) {

@@ -1,12 +1,14 @@
 package com.receiptshares.user.dao
 
+import com.receiptshares.MockitoExtension
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import reactor.core.publisher.Mono
@@ -17,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any
 import static org.mockito.ArgumentMatchers.anyString
 import static org.mockito.Mockito.when
 
+@ExtendWith(MockitoExtension)
 class UserServiceTest {
 
     private static final String PASSWORD_HASH = "encoded password"
@@ -28,14 +31,13 @@ class UserServiceTest {
 
     def userParams = [name: "name", email: "email@email.com", password: "some password"]
 
+    @InjectMocks
     UserService underTest
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.initMocks(this)
         when(encoderMock.encode(anyString())).thenReturn(PASSWORD_HASH)
         when(userRepo.save(any(UserEntity))).thenAnswer({ invocation -> Mono.just(invocation.arguments[0]) })
-        underTest = new UserService(userRepo, encoderMock)
     }
 
     @Test
@@ -62,7 +64,7 @@ class UserServiceTest {
     }
 
     @Test
-    void "shouldReturnFoundByEmailUser"() {
+    void shouldReturnFoundByEmailUser() {
         def params = userParams
         params.remove("password")
         when(userRepo.findByEmail(userParams.email)) thenReturn(Mono.just(new UserEntity(params)))

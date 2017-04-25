@@ -18,15 +18,14 @@ import reactor.core.publisher.Mono
 class GoogleCaptcha implements CaptchaService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCaptcha)
-
-    static final String BASE_URL = "https://www.google.com/recaptcha/api/siteverify"
+    private static final String BASE_URL = "https://www.google.com/recaptcha/api/siteverify"
     private static final String QUERY_TEMPLATE ="?secret={secret}&response={token}"
-    static final int RETRIES_COUNT = 3
+    private static final int RETRIES_COUNT = 3
 
-    final WebClient webClient
+    private final WebClient webClient
 
     @Value('${service.captcha.secret}')
-    def String secret
+    private String secret
 
     GoogleCaptcha() {
         this(new ReactorClientHttpConnector())

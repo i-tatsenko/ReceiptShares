@@ -19,9 +19,9 @@ import reactor.core.publisher.Mono
 @Slf4j
 class UserController {
 
-    UserService userService
-    CaptchaService captchaService
-    ConnectionService connectionService
+    private UserService userService
+    private CaptchaService captchaService
+    private ConnectionService connectionService
 
     @Autowired
     UserController(UserService userService, CaptchaService captcha, ConnectionService connectionService) {

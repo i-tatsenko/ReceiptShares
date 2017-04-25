@@ -4,29 +4,28 @@ import com.receiptshares.receipt.dao.*
 import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
-import com.receiptshares.user.dao.UserEntity
 import com.receiptshares.user.dao.UserRepo
 import com.receiptshares.user.model.User
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-import java.util.function.BiFunction
 import java.util.function.Function
 
-import static com.receiptshares.Util.pickLast
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
 
 @Component
 @Slf4j
+@CompileStatic
 class ReceiptService {
 
-    ReceiptRepository receiptRepository
-    UserRepo userRepo
-    OrderItemRepository orderItemRepository
-    ItemRepository itemRepository
+    private ReceiptRepository receiptRepository
+    private UserRepo userRepo
+    private OrderItemRepository orderItemRepository
+    private ItemRepository itemRepository
 
     @Autowired
     ReceiptService(ReceiptRepository receiptRepository, UserRepo userRepo, OrderItemRepository orderItemRepository, ItemRepository itemRepository) {
@@ -37,7 +36,7 @@ class ReceiptService {
     }
 
     Flux<Receipt> receiptsForUser(User user) {
-        return receiptRepository.findAllActiveReceipts(user as UserEntity)
+        return receiptRepository.findAllActiveReceipts(user.id)
                                 .map { it as Receipt }
     }
 
@@ -45,48 +44,38 @@ class ReceiptService {
         //TODO find place in DB
         def newReceipt = new Receipt(place: place, owner: owner, status: ACTIVE, name: name)
         def newReceiptEntity = newReceipt as ReceiptEntity
+        newReceiptEntity.members = new HashSet<>(members.collect(BigInteger.&valueOf))
 
-        userRepo.findAll(members)
-                .collectList()
-                .and({ memberEntities ->
-            newReceiptEntity.members = memberEntities
-            receiptRepository.save(newReceiptEntity)
-        } as Function, pickLast())
-                .map({ it as Receipt })
+        receiptRepository.save(newReceiptEntity)
+                         .map({ it as Receipt })
     }
 
     Mono<Receipt> findById(Long id) {
         //TODO check security
-        receiptRepository.findOne(id).map({ it as Receipt })
+        receiptRepository.findOne(id)
+                         .map({ it as Receipt })
     }
 
     Mono<OrderedItem> createNewItem(User user, Long receiptId, String name, Double price) {
         //TODO check security
         //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
-                             .and({ item -> createOrderedItem(user, item, receiptId) } as Function, pickLast())
+                             .map({ ItemEntity item -> createOrderedItem(user, item, receiptId) } as Function)
                              .map({ it as OrderedItem })
     }
 
     Mono<OrderedItemEntity> addItem(User user, Long receiptId, Long itemId) {
         return itemRepository.findOne(itemId)
-                             .and({ item -> createOrderedItem(user, item, receiptId) } as Function, pickLast())
+                             .map({ ItemEntity item -> createOrderedItem(user, item, receiptId) } as Function)
     }
 
     private Mono<OrderedItemEntity> createOrderedItem(User user, ItemEntity item, Long receiptId) {
-        Function<UserEntity, Mono<OrderedItemEntity>> createOrderedItemEntity = { userEntity ->
-            orderItemRepository.save(new OrderedItemEntity(userEntity, item))
-        }
-
-        return userRepo.findOne(user.id)
-                       .and(createOrderedItemEntity, pickLast())
-                       .and(receiptRepository.findOne(receiptId), this.&addOrderedItem as BiFunction)
+        return receiptRepository.
+                findOne(receiptId).
+                flatMap({ ReceiptEntity receipt ->
+                    receipt.members << BigInteger.valueOf(receiptId)
+                    receiptRepository.save(receipt)
+                } as Function).
+                then(orderItemRepository.save(new OrderedItemEntity(user.id, item.id)))
     }
-
-    private OrderedItemEntity addOrderedItem(ReceiptEntity receipt, OrderedItemEntity orderedItem) {
-        receipt.orderedItems.add(orderedItem)
-        receiptRepository.save(receipt)
-        return orderedItem
-    }
-
 }

@@ -1,13 +1,15 @@
 package com.receiptshares.user.registration
 
+import com.receiptshares.MockitoExtension
 import com.receiptshares.user.UserController
 import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.model.User
 import com.receiptshares.user.social.ConnectionService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
@@ -17,6 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString
 import static org.mockito.Mockito.verifyZeroInteractions
 import static org.mockito.Mockito.when
 
+@ExtendWith(MockitoExtension)
 class UserControllerUnitTest {
 
     @Mock
@@ -26,6 +29,7 @@ class UserControllerUnitTest {
     @Mock
     ConnectionService connectionService
 
+    @InjectMocks
     UserController underTest
 
     private Map userParams = [name: "userName", email: "userEmail"]
@@ -34,10 +38,8 @@ class UserControllerUnitTest {
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.initMocks(this)
         when(userService.registerNewUser(userDto)).thenReturn(Mono.just(new User(userParams)))
         when(captchaMock.verify(anyString())).thenReturn(Mono.just(true))
-        underTest = new UserController(userService, captchaMock, connectionService)
     }
 
 

@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono
 @CompileStatic
 class UserService {
 
-    UserRepo userRepo
-    PasswordEncoder passwordEncoder
+    private UserRepo userRepo
+    private PasswordEncoder passwordEncoder
     Closure<String> randomPasswordGenerator = { UUID.randomUUID().toString() }
 
     @Autowired

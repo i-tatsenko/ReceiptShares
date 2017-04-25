@@ -2,7 +2,6 @@ package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
 import com.receiptshares.receipt.model.ItemStatus
-import com.receiptshares.user.dao.UserEntity
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import org.springframework.data.annotation.Id
@@ -19,9 +18,9 @@ class OrderedItemEntity implements DuckTypeConversion {
     BigInteger item
     String status
 
-    OrderedItemEntity(UserEntity userEntity, ItemEntity itemEntity) {
-        this.user = userEntity.id
-        this.item = itemEntity.id
+    OrderedItemEntity(BigInteger ownerId, BigInteger itemId) {
+        this.user = ownerId
+        this.item = itemId
         this.status = ItemStatus.ACTIVE.toString()
     }
 }
