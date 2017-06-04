@@ -52,7 +52,7 @@ class ReceiptService {
 
     Mono<Receipt> findById(Long id) {
         //TODO check security
-        receiptRepository.findOne(id)
+        receiptRepository.findById(id)
                          .map({ it as Receipt })
     }
 
@@ -65,13 +65,13 @@ class ReceiptService {
     }
 
     Mono<OrderedItemEntity> addItem(User user, Long receiptId, Long itemId) {
-        return itemRepository.findOne(itemId)
+        return itemRepository.findById(itemId)
                              .map({ ItemEntity item -> createOrderedItem(user, item, receiptId) } as Function)
     }
 
     private Mono<OrderedItemEntity> createOrderedItem(User user, ItemEntity item, Long receiptId) {
         return receiptRepository.
-                findOne(receiptId).
+                findById(receiptId).
                 flatMap({ ReceiptEntity receipt ->
                     receipt.members << BigInteger.valueOf(receiptId)
                     receiptRepository.save(receipt)

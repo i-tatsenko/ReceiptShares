@@ -3,6 +3,7 @@ package com.receiptshares;
 import com.mongodb.MongoClientURI;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
@@ -13,14 +14,20 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 @Configuration
 public class DataAccessConfiguration extends AbstractReactiveMongoConfiguration {
 
+    @Value("${data.db.mongo.url}")
+    private String mongoUrl;
+
+    @Value("${data.db.mongo.name}")
+    private String dbName;
+
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://localhost:27017");
+        return MongoClients.create(mongoUrl);
     }
 
     @Override
     protected String getDatabaseName() {
-        return "receiptshares";
+        return dbName;
     }
 
     @Override
@@ -30,7 +37,7 @@ public class DataAccessConfiguration extends AbstractReactiveMongoConfiguration 
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(new SimpleMongoDbFactory(new MongoClientURI("mongodb://localhost:27017/" + getDatabaseName())));
+        return new MongoTemplate(new SimpleMongoDbFactory(new MongoClientURI(mongoUrl + '/' + getDatabaseName())));
     }
 
 

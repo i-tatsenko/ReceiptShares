@@ -51,7 +51,7 @@ class ConnectionServiceTest {
     @BeforeEach
     void setup() {
         when(userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)).thenReturn(["1", "2", "3"] as Set)
-        when(userRepo.findAll([1L, 2L, 3L])).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
+        when(userRepo.findAllById([1L, 2L, 3L])).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
     }
 
     @Test

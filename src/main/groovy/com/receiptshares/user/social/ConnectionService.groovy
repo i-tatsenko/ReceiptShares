@@ -3,6 +3,7 @@ package com.receiptshares.user.social
 import com.receiptshares.user.dao.UserRepo
 import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
 import org.springframework.social.connect.UsersConnectionRepository
 import org.springframework.social.facebook.api.Facebook
@@ -27,7 +28,9 @@ class ConnectionService {
     }
 
     Flux<User> findFriendsForCurrentCustomer() {
-        return Mono.defer({ -> Mono.just(connectionRepository.findPrimaryConnection(Facebook)) })
+        def connection = connectionRepository.findPrimaryConnection(Facebook)
+        return Mono.defer({ ->
+            Mono.just(connection) })
                    .subscribeOn(Schedulers.elastic())
                    .map({ fb -> fb.api.friendOperations().getFriendIds() })
                    .flatMapMany(this.&findUserDetailsByConnectionIds)
@@ -38,7 +41,7 @@ class ConnectionService {
         List<Long> indernalIds = userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)
                                                    .collect(Long.&valueOf)
 
-        return userRepo.findAll(indernalIds)
+        return userRepo.findAllById(indernalIds)
                        .map { it as User }
     }
 }

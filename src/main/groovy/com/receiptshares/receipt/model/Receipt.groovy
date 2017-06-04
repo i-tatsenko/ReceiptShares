@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class Receipt implements DuckTypeConversion {
 
-    def Long id
+    def String id
     def String name
     def Place place
     def User owner

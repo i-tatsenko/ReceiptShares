@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import java.time.DayOfWeek
 
 import static java.util.UUID.randomUUID
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 
 class DuckTypeConversionTest {
 
@@ -16,15 +17,15 @@ class DuckTypeConversionTest {
     @Test
     void "should copying all common properties"(){
         def entity = dto as UserEntity
-        entity.name == dto.name
-        entity.email == dto.email
+        assertThat(entity.name).isEqualTo(dto.name)
+        assertThat(entity.email).isEqualTo(dto.email)
     }
 
     @Test
     void "should not try to set readonly props"() {
         def user = dto as User
-        user.name == dto.name
-        user.email == dto.email
+        assertThat(user.name).isEqualTo(dto.name)
+        assertThat(user.email).isEqualTo(dto.email)
     }
 
     @Test
@@ -33,42 +34,61 @@ class DuckTypeConversionTest {
         def testInnerA = 'innerA' + randomUUID().toString()
         def outerA = new OuterA(str: testOuterA, duck: new InnerA(str: testInnerA))
         OuterB result = outerA as OuterB
-        result.str == testOuterA
-        result.duck.str == testInnerA
+        assertThat(result.str).isEqualTo(testOuterA)
+        assertThat(result.duck.str).isEqualTo(testInnerA)
     }
 
     @Test
     void "enums should be replaced with strings and vice versa"() {
         def dayString = new DayWithEnum(day: DayOfWeek.MONDAY) as DayWithString
         def dayEnum = new DayWithString(day: "SATURDAY") as DayWithEnum
-        dayString.day == 'MONDAY'
-        dayEnum.day == DayOfWeek.SATURDAY
+        assertThat(dayString.day).isEqualTo('MONDAY')
+        assertThat(dayEnum.day).isEqualTo(DayOfWeek.SATURDAY)
+    }
+
+    @Test
+    void "should set null long to null bigint"() {
+        def result = new LongId() as BigIntId
+        assertThat(result.id).isNull()
+    }
+
+    @Test
+    void "shoud set long to big int"() {
+
     }
 
 }
 
 class DayWithEnum implements DuckTypeConversion {
-    def DayOfWeek day
+    DayOfWeek day
 }
 
 class DayWithString implements DuckTypeConversion {
-    def String day
+    String day
 }
 
 class OuterA implements DuckTypeConversion {
-    def String str
-    def InnerA duck
+    String str
+    InnerA duck
 }
 
 class InnerA implements DuckTypeConversion {
-    def String str
+    String str
 }
 
 class OuterB implements DuckTypeConversion {
-    def String str
-    def InnerB duck
+    String str
+    InnerB duck
 }
 
 class InnerB implements DuckTypeConversion {
-    def String str
+    String str
+}
+
+class LongId implements DuckTypeConversion {
+    Long id
+}
+
+class BigIntId implements DuckTypeConversion {
+    BigInteger id
 }

@@ -23,34 +23,34 @@ import org.springframework.social.facebook.connect.FacebookConnectionFactory
 
 @Configuration
 @EnableSocial
-public class UserConfiguration implements SocialConfigurer {
+class UserConfiguration implements SocialConfigurer {
 
     private UserService userService
     private MongoTemplate mongoTemplate
 
     @Autowired
-    public UserConfiguration(UserService userService, MongoTemplate mongoTemplate) {
-        this.userService = userService;
+    UserConfiguration(UserService userService, MongoTemplate mongoTemplate) {
+        this.userService = userService
         this.mongoTemplate = mongoTemplate
     }
 
     @Bean
-    public ProviderSignInController providerSignInController(ConnectionFactoryLocator locator,
-                                                             UsersConnectionRepository repo,
-                                                             OAuthSingInAdapter singInAdapter) {
-        return new ProviderSignInController(locator, repo, singInAdapter);
+    ProviderSignInController providerSignInController(ConnectionFactoryLocator locator,
+                                                      UsersConnectionRepository repo,
+                                                      OAuthSingInAdapter singInAdapter) {
+        return new ProviderSignInController(locator, repo, singInAdapter)
     }
 
     @Override
-    public void addConnectionFactories(ConnectionFactoryConfigurer connectionFactoryConfigurer, Environment env) {
-        FacebookConnectionFactory fb = new FacebookConnectionFactory(env.getProperty("fb.app.id"), env.getProperty("fb.app.secret"));
-        fb.setScope("public_profile,email,user_friends");
-        connectionFactoryConfigurer.addConnectionFactory(fb);
+    void addConnectionFactories(ConnectionFactoryConfigurer connectionFactoryConfigurer, Environment env) {
+        FacebookConnectionFactory fb = new FacebookConnectionFactory(env.getProperty("fb.app.id"), env.getProperty("fb.app.secret"))
+        fb.setScope("public_profile,email,user_friends")
+        connectionFactoryConfigurer.addConnectionFactory(fb)
     }
 
     @Override
-    public UserIdSource getUserIdSource() {
-        return {SecurityContextHolder.context.authentication.principal.email};
+    UserIdSource getUserIdSource() {
+        return {SecurityContextHolder.context.authentication.principal.email}
     }
 
     /**
@@ -58,7 +58,7 @@ public class UserConfiguration implements SocialConfigurer {
      * spring-social-core-1.1.4.RELEASE.jar!/org/springframework/social/connect/jdbc/JdbcUsersConnectionRepository.sql
      */
     @Override
-    public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
+    UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
         def encryptor = Encryptors.noOpText()
         def service = new MongoConnectionService(mongoTemplate, new ConnectionConverter(connectionFactoryLocator, encryptor))
         UsersConnectionRepository repository = new MongoUsersConnectionRepository(service, connectionFactoryLocator, encryptor)

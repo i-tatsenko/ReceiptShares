@@ -22,13 +22,12 @@ class OAuthSingInAdapter implements SignInAdapter {
 
     @Override
     String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
-        def authenticated = userService.getByEmail(userId)
+        UserAuthentication authentication = userService.getByEmail(userId)
                                        .map({ new UserAuthentication(it) })
-                                       .doOnNext(authenticator.&authenticate)
-                                       .hasElement()
                                        .block()
-        if (!authenticated)
+        if (!authentication)
             throw new IllegalArgumentException("There is no user with email: ${userId}")
+        authenticator.authenticate(authentication)
         return null
     }
 

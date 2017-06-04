@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class OrderedItem implements DuckTypeConversion {
 
-    def Long id
+    def String id
     def User user
     def Item item
     def ItemStatus status
