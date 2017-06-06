@@ -36,4 +36,9 @@ class UserService {
         return userRepo.findByEmail(email)
                        .map({ found -> found as User })
     }
+
+    Mono<User> getById(String userId) {
+        return userRepo.findById(userId)
+                       .map({ it as User })
+    }
 }

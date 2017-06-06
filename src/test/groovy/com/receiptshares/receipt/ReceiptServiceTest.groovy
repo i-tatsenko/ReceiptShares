@@ -33,8 +33,7 @@ class ReceiptServiceTest {
     @InjectMocks
     ReceiptService underTest
 
-    @Mock
-    BigInteger userId
+    String userId = "userId"
     @Mock
     ReceiptEntity receiptEntity
     @Mock

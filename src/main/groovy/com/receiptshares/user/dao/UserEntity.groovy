@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 class UserEntity implements DuckTypeConversion {
 
     @Id
-    BigInteger id
+    String id
 
     String name
 

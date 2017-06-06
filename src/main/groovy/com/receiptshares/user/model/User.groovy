@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails
 @ToString
 class User implements UserDetails, DuckTypeConversion {
 
-    BigInteger id
+    String id
     String email
     String name
     @JsonIgnore

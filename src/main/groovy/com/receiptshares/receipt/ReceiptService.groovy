@@ -2,7 +2,6 @@ package com.receiptshares.receipt
 
 import com.receiptshares.receipt.dao.*
 import com.receiptshares.receipt.model.OrderedItem
-import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.UserRepo
 import com.receiptshares.user.model.User
@@ -26,13 +25,16 @@ class ReceiptService {
     private UserRepo userRepo
     private OrderItemRepository orderItemRepository
     private ItemRepository itemRepository
+    private PlaceRepository placeRepository
 
     @Autowired
-    ReceiptService(ReceiptRepository receiptRepository, UserRepo userRepo, OrderItemRepository orderItemRepository, ItemRepository itemRepository) {
+    ReceiptService(ReceiptRepository receiptRepository, UserRepo userRepo, OrderItemRepository orderItemRepository,
+                   ItemRepository itemRepository, PlaceRepository placeRepository) {
         this.receiptRepository = receiptRepository
         this.userRepo = userRepo
         this.orderItemRepository = orderItemRepository
         this.itemRepository = itemRepository
+        this.placeRepository = placeRepository
     }
 
     Flux<Receipt> receiptsForUser(User user) {
@@ -40,23 +42,29 @@ class ReceiptService {
                                 .map { it as Receipt }
     }
 
-    Mono<Receipt> createNewReceipt(Place place, User owner, String name, Collection<Long> members) {
+    Mono<Receipt> createNewReceipt(String placeName, String ownerId, String name, Collection<String> members) {
         //TODO find place in DB
-        def newReceipt = new Receipt(place: place, owner: owner, status: ACTIVE, name: name)
-        def newReceiptEntity = newReceipt as ReceiptEntity
-        newReceiptEntity.members = new HashSet<>(members.collect(BigInteger.&valueOf))
-
-        receiptRepository.save(newReceiptEntity)
-                         .map({ it as Receipt })
+        return placeRepository.save(new PlaceEntity(name: placeName))
+                              .map({ PlaceEntity place ->
+            ReceiptEntity.builder()
+                         .ownerId(ownerId)
+                         .placeId(place.id)
+                         .status(ACTIVE.toString())
+                         .name(name)
+                         .memberIds(new HashSet<String>(members))
+                         .build()
+        })
+                              .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
+                              .map({ it as Receipt })
     }
 
-    Mono<Receipt> findById(Long id) {
+    Mono<Receipt> findById(String id) {
         //TODO check security
         receiptRepository.findById(id)
                          .map({ it as Receipt })
     }
 
-    Mono<OrderedItem> createNewItem(User user, Long receiptId, String name, Double price) {
+    Mono<OrderedItem> createNewItem(User user, String receiptId, String name, Double price) {
         //TODO check security
         //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
@@ -64,16 +72,16 @@ class ReceiptService {
                              .map({ it as OrderedItem })
     }
 
-    Mono<OrderedItemEntity> addItem(User user, Long receiptId, Long itemId) {
+    Mono<OrderedItemEntity> addItem(User user, String receiptId, String itemId) {
         return itemRepository.findById(itemId)
                              .map({ ItemEntity item -> createOrderedItem(user, item, receiptId) } as Function)
     }
 
-    private Mono<OrderedItemEntity> createOrderedItem(User user, ItemEntity item, Long receiptId) {
+    private Mono<OrderedItemEntity> createOrderedItem(User user, ItemEntity item, String receiptId) {
         return receiptRepository.
                 findById(receiptId).
                 flatMap({ ReceiptEntity receipt ->
-                    receipt.members << BigInteger.valueOf(receiptId)
+                    receipt.memberIds << String.valueOf(receiptId)
                     receiptRepository.save(receipt)
                 } as Function).
                 then(orderItemRepository.save(new OrderedItemEntity(user.id, item.id)))

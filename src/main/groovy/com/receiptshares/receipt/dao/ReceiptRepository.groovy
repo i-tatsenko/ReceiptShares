@@ -4,8 +4,8 @@ import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
 
-interface ReceiptRepository extends ReactiveCrudRepository<ReceiptEntity, Long> {
+interface ReceiptRepository extends ReactiveCrudRepository<ReceiptEntity, String> {
 
-    @Query('{$and: [{\'owner\': ?0}, {\'status\': \'ACTIVE\'}]}')
-    Flux<ReceiptEntity> findAllActiveReceipts(BigInteger ownerId)
+    @Query('{$and: [{\'ownerId\': ?0}, {\'status\': \'ACTIVE\'}]}')
+    Flux<ReceiptEntity> findAllActiveReceipts(String ownerId)
 }

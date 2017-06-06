@@ -28,18 +28,17 @@ class ConnectionService {
     }
 
     Flux<User> findFriendsForCurrentCustomer() {
-        def connection = connectionRepository.findPrimaryConnection(Facebook)
+        Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook)
         return Mono.defer({ ->
             Mono.just(connection) })
                    .subscribeOn(Schedulers.elastic())
                    .map({ fb -> fb.api.friendOperations().getFriendIds() })
-                   .flatMapMany(this.&findUserDetailsByConnectionIds)
+                   .flatMapMany({ ids -> findUserDetailsByConnectionIds(ids) })
     }
 
     Flux<User> findUserDetailsByConnectionIds(List<String> providerIds) {
         //TODO refactor provider name
-        List<Long> indernalIds = userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)
-                                                   .collect(Long.&valueOf)
+        Set<String> indernalIds = userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)
 
         return userRepo.findAllById(indernalIds)
                        .map { it as User }

@@ -2,7 +2,6 @@ package com.receiptshares.receipt
 
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
-import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.model.User
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,9 +41,8 @@ class ReceiptController {
     @ResponseBody
     Mono<Receipt> createNew(Authentication auth, @RequestBody Map requestBody) {
         def user = auth.principal as User
-        def place = new Place(name: requestBody.place.name)
-        Collection<Long> memberIds = requestBody.members.collect({ it.id as Long })
-        return receiptService.createNewReceipt(place, user as User, requestBody.name as String, memberIds)
+        Collection<String> memberIds = requestBody.members
+        return receiptService.createNewReceipt(requestBody.place.name as String, user.id, requestBody.name as String, memberIds)
     }
 
     @PostMapping(value = "/new-item", produces = MediaType.APPLICATION_JSON_VALUE)

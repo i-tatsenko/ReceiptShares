@@ -21,7 +21,7 @@ class OAuthImplicitRegistration implements ConnectionSignUp {
         def profile = connection.fetchUserProfile()
         def dto = new NewUserDTO(email: profile.email, name: profile.name, avatarUrl: connection.imageUrl)
         return userService.registerNewUser(dto)
-                          .map({ user -> user.email })
+                          .map({ user -> user.id })
                           .onErrorResume({ Mono.empty() })
                           .block()
     }

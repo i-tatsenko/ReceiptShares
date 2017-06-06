@@ -13,14 +13,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 class OrderedItemEntity implements DuckTypeConversion {
 
     @Id
-    BigInteger id
-    BigInteger user
-    BigInteger item
+    String id
+    String userId
+    String itemId
     String status
 
-    OrderedItemEntity(BigInteger ownerId, BigInteger itemId) {
-        this.user = ownerId
-        this.item = itemId
+    OrderedItemEntity(String ownerId, String itemId) {
+        this.userId = ownerId
+        this.itemId = itemId
         this.status = ItemStatus.ACTIVE.toString()
     }
 }

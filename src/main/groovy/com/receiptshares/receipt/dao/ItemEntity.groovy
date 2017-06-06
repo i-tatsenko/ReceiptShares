@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 class ItemEntity implements DuckTypeConversion {
 
     @Id
-    def BigInteger id
+    def String id
     def String name
     def double price
 }

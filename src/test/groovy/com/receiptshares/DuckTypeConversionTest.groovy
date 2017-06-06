@@ -90,5 +90,5 @@ class LongId implements DuckTypeConversion {
 }
 
 class BigIntId implements DuckTypeConversion {
-    BigInteger id
+    String id
 }

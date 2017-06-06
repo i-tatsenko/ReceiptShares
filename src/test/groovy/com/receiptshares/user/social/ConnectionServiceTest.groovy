@@ -41,9 +41,9 @@ class ConnectionServiceTest {
     FriendOperations friendOperations
 
     def userParams = [
-            [id: 1, email: "email1@em.ail"],
-            [id: 2, email: "email2@em.ail"],
-            [id: 3, email: "email3@em.ail"],
+            [id: "1", email: "email1@em.ail"],
+            [id: "2", email: "email2@em.ail"],
+            [id: "3", email: "email3@em.ail"],
     ]
 
     def providerIds = ["prov1", "prov2", "prov3"]
@@ -51,7 +51,7 @@ class ConnectionServiceTest {
     @BeforeEach
     void setup() {
         when(userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)).thenReturn(["1", "2", "3"] as Set)
-        when(userRepo.findAllById([1L, 2L, 3L])).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
+        when(userRepo.findAllById(["1", "2", "3"] as Set)).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
     }
 
     @Test

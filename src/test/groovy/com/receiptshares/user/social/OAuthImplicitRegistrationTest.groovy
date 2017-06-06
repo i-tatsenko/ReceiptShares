@@ -29,7 +29,7 @@ class OAuthImplicitRegistrationTest {
     @Mock
     private UserProfile userProfile
 
-    private String email = "em@ail.com"
+    private String id = UUID.randomUUID().toString()
 
     @InjectMocks
     OAuthImplicitRegistration underTest
@@ -37,14 +37,14 @@ class OAuthImplicitRegistrationTest {
     @BeforeEach
     void setup() {
         when(connection.fetchUserProfile()).thenReturn(userProfile)
-        when(registeredUser.email).thenReturn(email)
+        when(registeredUser.id).thenReturn(id)
     }
 
     @Test
     void shouldReturnRegisteredUserEmail() {
         when(userService.registerNewUser(any(NewUserDTO))).thenReturn(Mono.just(registeredUser))
 
-        assertThat(underTest.execute(connection)).isEqualTo(email)
+        assertThat(underTest.execute(connection)).isEqualTo(id)
     }
 
     @Test

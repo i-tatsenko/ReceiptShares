@@ -50,7 +50,7 @@ class UserConfiguration implements SocialConfigurer {
 
     @Override
     UserIdSource getUserIdSource() {
-        return {SecurityContextHolder.context.authentication.principal.email}
+        return { SecurityContextHolder.context.authentication.principal.id }
     }
 
     /**
