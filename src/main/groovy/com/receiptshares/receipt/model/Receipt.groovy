@@ -1,17 +1,16 @@
 package com.receiptshares.receipt.model
 
 import com.receiptshares.DuckTypeConversion
-import com.receiptshares.user.model.User
 import groovy.transform.CompileStatic
 
 @CompileStatic
 class Receipt implements DuckTypeConversion {
 
-    def String id
-    def String name
-    def Place place
-    def User owner
-    def Set<User> members
-    def Set<OrderedItem> orderedItems
-    def ReceiptStatus status
+    String id
+    String name
+    String placeId
+    String ownerId
+    Set<String> memberIds
+    Set<String> orderedItemIds
+    ReceiptStatus status
 }

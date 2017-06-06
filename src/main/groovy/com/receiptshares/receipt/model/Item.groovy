@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class Item implements DuckTypeConversion {
 
-    def Long id
-    def String name
-    def double price
+    String id
+    String name
+    double price
 }

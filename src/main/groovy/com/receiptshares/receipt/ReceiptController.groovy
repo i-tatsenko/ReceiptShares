@@ -24,7 +24,7 @@ class ReceiptController {
 
     @GetMapping(value = '/{id}', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Flux<OrderedItem> receiptById(@PathVariable(name = "id") Long id) {
+    Flux<OrderedItem> receiptById(@PathVariable(name = "id") String id) {
         return receiptService.findById(id)
                              .flatMap({ Flux.fromIterable(it.orderedItems) })
                              .filter({ it.status == ItemStatus.ACTIVE })
@@ -49,7 +49,7 @@ class ReceiptController {
     @ResponseBody
     Mono<OrderedItem> createNewItem(Authentication auth, @RequestBody Map body) {
         def user = auth.principal as User
-        def receiptId = body.receiptId as Long
+        def receiptId = body.receiptId
         def name = body.name as String
         def price = body.price as Double
         return receiptService.createNewItem(user, receiptId, name, price)
@@ -57,7 +57,7 @@ class ReceiptController {
 
     @PostMapping("/item/add")
     Mono<Void> addItem(Authentication auth, @RequestBody Map body) {
-        return receiptService.addItem(auth.principal as User, body.receiptId as Long, body.itemId as Long)
+        return receiptService.addItem(auth.principal as User, body.receiptId as String, body.itemId as String)
                              .then()
     }
 }
