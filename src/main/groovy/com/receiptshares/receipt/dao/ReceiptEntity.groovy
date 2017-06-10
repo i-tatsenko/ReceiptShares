@@ -1,6 +1,7 @@
 package com.receiptshares.receipt.dao
 
 import com.receiptshares.DuckTypeConversion
+import com.receiptshares.user.dao.PersonEntity
 import groovy.transform.CompileStatic
 import groovy.transform.builder.Builder
 import org.springframework.data.annotation.Id
@@ -14,10 +15,10 @@ class ReceiptEntity implements DuckTypeConversion {
     @Id
     String id
     String name
-    String placeId
-    String ownerId
-    Set<String> memberIds
-    Set<String> orderedItemIds
+    PlaceEntity place
+    PersonEntity owner
+    Set<PersonEntity> members
+    Set<OrderedItemEntity> orderedItems
     String status
 
 }

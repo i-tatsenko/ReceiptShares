@@ -6,7 +6,7 @@ import com.receiptshares.receipt.dao.OrderItemRepository
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.ReceiptRepository
 import com.receiptshares.receipt.model.Receipt
-import com.receiptshares.user.dao.UserRepo
+import com.receiptshares.user.dao.UserRepository
 import com.receiptshares.user.model.User
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ class ReceiptServiceTest {
     @Mock
     ReceiptRepository receiptRepository
     @Mock
-    UserRepo userRepo
+    UserRepository userRepo
     @Mock
     OrderItemRepository orderItemRepository
     @Mock

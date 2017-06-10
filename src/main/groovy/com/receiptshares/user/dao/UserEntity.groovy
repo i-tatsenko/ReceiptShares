@@ -1,5 +1,6 @@
 package com.receiptshares.user.dao
 
+import com.receiptshares.user.model.Person
 import com.receiptshares.user.model.User
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
@@ -23,6 +24,6 @@ class UserEntity {
         if (!(_class == User)) {
             throw new ClassCastException("Don't know how to cast UserEntity to ${_class.simpleName}")
         }
-        return new User(id: id, email: email, name: person.name, avatarUrl: person.avatarUrl, passwordHash: passwordHash)
+        return new User(id: id, email: email, passwordHash: passwordHash, person: person as Person)
     }
 }

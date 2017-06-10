@@ -25,7 +25,7 @@ class UserServiceTest {
     private static final String PASSWORD_HASH = "encoded password"
 
     @Mock
-    UserRepo userRepo
+    UserRepository userRepo
     @Mock
     PasswordEncoder encoderMock
 

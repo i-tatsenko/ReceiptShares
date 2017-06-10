@@ -1,7 +1,8 @@
 package com.receiptshares.user.social
 
-import com.receiptshares.user.dao.UserRepo
-import com.receiptshares.user.model.User
+import com.receiptshares.user.dao.PersonRepository
+import com.receiptshares.user.dao.UserRepository
+import com.receiptshares.user.model.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.ConnectionRepository
@@ -17,30 +18,34 @@ class ConnectionService {
 
     private ConnectionRepository connectionRepository
     private UsersConnectionRepository userConnectionRepo
-    private UserRepo userRepo
+    private UserRepository userRepo
+    private PersonRepository personRepository
 
 
     @Autowired
-    ConnectionService(ConnectionRepository connectionRepository, UsersConnectionRepository userConnectionRepo, UserRepo userRepo) {
+    ConnectionService(ConnectionRepository connectionRepository, UsersConnectionRepository userConnectionRepo, UserRepository userRepo, PersonRepository personRepository) {
         this.connectionRepository = connectionRepository
         this.userConnectionRepo = userConnectionRepo
         this.userRepo = userRepo
+        this.personRepository = personRepository
     }
 
-    Flux<User> findFriendsForCurrentCustomer() {
+    Flux<Person> findFriendsForCurrentCustomer() {
         Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook)
         return Mono.defer({ ->
-            Mono.just(connection) })
+            Mono.just(connection)
+        })
                    .subscribeOn(Schedulers.elastic())
                    .map({ fb -> fb.api.friendOperations().getFriendIds() })
                    .flatMapMany({ ids -> findUserDetailsByConnectionIds(ids) })
     }
 
-    Flux<User> findUserDetailsByConnectionIds(List<String> providerIds) {
+    Flux<Person> findUserDetailsByConnectionIds(List<String> providerIds) {
         //TODO refactor provider name
         Set<String> indernalIds = userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)
 
         return userRepo.findAllById(indernalIds)
-                       .map { it as User }
+                       .map({ it.person })
+                       .map { it as Person }
     }
 }

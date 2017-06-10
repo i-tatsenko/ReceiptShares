@@ -15,10 +15,9 @@ class User implements UserDetails, DuckTypeConversion {
 
     String id
     String email
-    String name
     @JsonIgnore
     String passwordHash
-    String avatarUrl
+    Person person
 
     @JsonIgnore
     @Override

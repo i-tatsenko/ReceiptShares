@@ -1,13 +1,11 @@
 package com.receiptshares.user.dao
 
-import com.mongodb.MongoWriteException
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.EmailNotUniqueException
 import com.receiptshares.user.registration.NewUserDTO
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
@@ -20,13 +18,13 @@ import java.util.function.Function
 @Log4j
 class UserService {
 
-    private UserRepo userRepo
+    private UserRepository userRepo
     private PersonRepository personRepository
     private PasswordEncoder passwordEncoder
     Closure<String> randomPasswordGenerator = { UUID.randomUUID().toString() }
 
     @Autowired
-    UserService(UserRepo repo, PasswordEncoder passwordEncoder, PersonRepository personRepository) {
+    UserService(UserRepository repo, PasswordEncoder passwordEncoder, PersonRepository personRepository) {
         this.userRepo = repo
         this.passwordEncoder = passwordEncoder
         this.personRepository = personRepository

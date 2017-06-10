@@ -1,6 +1,7 @@
 package com.receiptshares.user
 
 import com.receiptshares.user.dao.UserService
+import com.receiptshares.user.model.Person
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.CaptchaService
 import com.receiptshares.user.registration.NewUserDTO
@@ -33,21 +34,23 @@ class UserController {
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
     def me(Authentication userAuth) {
-        return userAuth.principal
+        return (userAuth.principal as User).person
     }
 
     @RequestMapping(value = "/open/reg", method = RequestMethod.POST)
-    Mono<User> registerNewUser(NewUserDTO newUserDTO,
-                                  @RequestParam("g-recaptcha-response") String captcha) {
+    Mono<Person> registerNewUser(NewUserDTO newUserDTO,
+                                 @RequestParam("g-recaptcha-response") String captcha) {
         return captchaService.verify(captcha)
                              .then(Mono.defer({ userService.registerNewUser(newUserDTO) }))
+                             .map({ it.person })
 
     }
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET)
     @ResponseBody
-    Flux<User> friends() {
+    Flux<Person> friends() {
         return connectionService.findFriendsForCurrentCustomer()
+                                .map({ it as Person })
     }
 
 

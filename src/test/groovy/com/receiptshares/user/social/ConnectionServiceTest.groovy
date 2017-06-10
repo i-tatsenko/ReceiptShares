@@ -2,7 +2,7 @@ package com.receiptshares.user.social
 
 import com.receiptshares.MockitoExtension
 import com.receiptshares.user.dao.UserEntity
-import com.receiptshares.user.dao.UserRepo
+import com.receiptshares.user.dao.UserRepository
 import com.receiptshares.user.model.User
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,7 +28,7 @@ class ConnectionServiceTest {
     @Mock
     UsersConnectionRepository userConnectionRepo
     @Mock
-    UserRepo userRepo
+    UserRepository userRepo
 
     @InjectMocks
     ConnectionService underTest

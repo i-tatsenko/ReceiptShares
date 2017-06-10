@@ -6,6 +6,6 @@ import reactor.core.publisher.Flux
 
 interface ReceiptRepository extends ReactiveCrudRepository<ReceiptEntity, String> {
 
-    @Query('{$and: [{\'ownerId\': ?0}, {\'status\': \'ACTIVE\'}]}')
+    @Query('{$and: [{\'owner.id\': ?0}, {\'status\': \'ACTIVE\'}]}')
     Flux<ReceiptEntity> findAllActiveReceipts(String ownerId)
 }
