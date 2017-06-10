@@ -16,7 +16,6 @@ public class NeutralRootController {
 
     @RequestMapping("/{path:[^\\.][^v1]*}")
     public String forward() {
-        LOG.error("yoyoyoy");
         return "forward:/";
     }
 }
