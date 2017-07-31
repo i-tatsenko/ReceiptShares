@@ -59,7 +59,7 @@ export default class Receipt extends React.Component {
     calculateSpending() {
         let total = 0;
         let mySpending = 0;
-        for (let item of this.state.rec.orderedItems) {
+        for (let item of (this.state.rec.orderedItems || [])) {
             if (item.status == 'ACTIVE') {
                 if (item.user.id == this.props.user.id) {
                     mySpending += item.item.price;
@@ -72,7 +72,7 @@ export default class Receipt extends React.Component {
 
     renderItems() {
         let items = [];
-        for (let item of this.state.rec.orderedItems) {
+        for (let item of (this.state.rec.orderedItems || [])) {
             let foundItem = items.find(present => present.user.id == item.user.id && present.item.id == item.item.id);
             if (foundItem) {
                 foundItem.sum += foundItem.item.price;

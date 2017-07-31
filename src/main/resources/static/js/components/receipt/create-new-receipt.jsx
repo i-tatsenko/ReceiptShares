@@ -81,7 +81,6 @@ export default class CreateNewReceipt extends React.Component {
             name: state.name,
             members: state.friendsToInvite.map(friend => friend.id)
         };
-        debugger;
         $.ajax({
             url: '/v1/rec/create',
             data: JSON.stringify(data),

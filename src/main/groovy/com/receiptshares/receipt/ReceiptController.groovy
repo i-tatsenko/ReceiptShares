@@ -1,6 +1,5 @@
 package com.receiptshares.receipt
 
-import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.model.User
@@ -10,8 +9,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
-import static com.receiptshares.receipt.model.ItemStatus.ACTIVE
 
 @RestController
 @RequestMapping("/v1/rec")
@@ -26,16 +23,15 @@ class ReceiptController {
 
     @GetMapping(value = '/{id}', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Mono<Collection<OrderedItem>> receiptById(@PathVariable(name = "id") String id) {
+    Mono<Receipt> receiptById(@PathVariable(name = "id") String id) {
         return receiptService.findById(id)
-                             .map({ it.orderedItems.findAll({ it.status == ACTIVE }) })
     }
 
     @GetMapping(value = '/all', produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     Flux<Receipt> allReceipts(Authentication user) {
         //TODO return only common data
-        return receiptService.receiptsForUser(user.principal.person as String)
+        return receiptService.receiptsForUser(user.principal.person.id as String)
     }
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)

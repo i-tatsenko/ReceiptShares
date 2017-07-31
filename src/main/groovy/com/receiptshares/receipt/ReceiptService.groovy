@@ -5,7 +5,6 @@ import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.PersonRepository
-import com.receiptshares.user.model.User
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
-import reactor.util.function.Tuple3
 import reactor.util.function.Tuple4
 
 import java.util.function.Consumer
@@ -52,7 +50,7 @@ class ReceiptService {
         Mono<PersonEntity> ownerMono = personRepository.findById(ownerId)
         Mono<List<PersonEntity>> members = personRepository.findAllById(memberIds)
                                                            .collectList()
-        Mono<PlaceEntity> place = placeRepository.save(new PlaceEntity(name: placeName))
+        Mono<PlaceEntity> place = placeRepository.save(new PlaceEntity(name: placeName, authorId: ownerId))
         return Mono.when(ownerMono, members, place, Mono.just(name))
                    .map({ buildReceipt(it) })
                    .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)

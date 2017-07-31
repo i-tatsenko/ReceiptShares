@@ -1,8 +1,8 @@
 package com.receiptshares.util
 
-import org.reactivestreams.Subscriber
 import org.springframework.http.HttpMethod
 import org.springframework.http.client.reactive.ClientHttpResponse
+import reactor.core.CoreSubscriber
 import reactor.core.publisher.Mono
 
 class ResponseStub {
@@ -22,25 +22,28 @@ class ResponseStub {
     }
 
     def addResponseBody(String responseBody) {
-        addStubbing {Mono.just(new MockResponse(responseBody))}
+        addStubbing { Mono.just(new MockResponse(responseBody)) }
     }
 
     def addErrorThenSuccess(Throwable error, String successBody) {
-        addStubbing {new Mono<ClientHttpResponse>() {
+        addStubbing {
+            new Mono<ClientHttpResponse>() {
 
-            private boolean errorWasFired = false
+                private boolean errorWasFired = false
 
-            @Override
-            void subscribe(Subscriber<? super ClientHttpResponse> s) {
-                if (!errorWasFired) {
-                    s.onError(error)
-                    errorWasFired = true
-                } else {
-                    s.onNext(new MockResponse(successBody))
+                @Override
+                void subscribe(CoreSubscriber<? super ClientHttpResponse> s) {
+                    if (!errorWasFired) {
+                        s.onError(error)
+                        errorWasFired = true
+                    } else {
+                        s.onNext(new MockResponse(successBody))
+                    }
+                    s.onComplete()
                 }
-                s.onComplete()
             }
-        }}
+
+        }
     }
 
     private Closure<Mono<ClientHttpResponse>> getNextResponseProducer() {
