@@ -43,9 +43,9 @@ export default class ReceiptCard extends React.Component {
         let total = 0;
         let mySpending = 0;
         console.log("User id: ", this.props.user.id);
-        let items = this.props.receipt.orderedItems || []
+        let items = this.props.receipt.orderedItems || [];
         for (let item of items) {
-            if (item.user.id === this.props.user.id) {
+            if (item.owner.id === this.props.user.id) {
                 mySpending += item.item.price;
             }
             total += item.item.price;

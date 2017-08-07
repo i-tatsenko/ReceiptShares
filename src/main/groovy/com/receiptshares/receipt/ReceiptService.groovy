@@ -5,13 +5,11 @@ import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.PersonRepository
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.util.function.Tuple2
 import reactor.util.function.Tuple4
 
 import java.util.function.Consumer
@@ -21,7 +19,6 @@ import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
 
 @Component
 @Slf4j
-@CompileStatic
 class ReceiptService {
 
     private ReceiptRepository receiptRepository
@@ -77,7 +74,7 @@ class ReceiptService {
         //TODO check security
         //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
-                             .map({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+                             .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) } as Function)
                              .map({ it as OrderedItem })
     }
 
@@ -88,17 +85,18 @@ class ReceiptService {
 
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {
         Mono<OrderedItemEntity> orderedItem = personRepository.findById(ownerId)
-                                                              .map({ PersonEntity owner -> new OrderedItemEntity(owner as PersonEntity, item) })
-                                                              .flatMap({ OrderedItemEntity orderedItem -> orderItemRepository.save(orderedItem) } as Function)
+                                                              .map({ owner -> new OrderedItemEntity(owner, item) })
+                                                              .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) } as Function)
         Mono<ReceiptEntity> receipt = receiptRepository.findById(receiptId)
 
         return Mono.when(receipt, orderedItem)
-                   .doOnNext({ Tuple2<ReceiptEntity, OrderedItemEntity> receiptAndItem ->
+                   .doOnNext({ receiptAndItem ->
+            if (receiptAndItem.t1.orderedItems == null) {
+                receiptAndItem.t1.orderedItems = new HashSet<>()
+            }
             receiptAndItem.t1.orderedItems << receiptAndItem.t2
-            receiptRepository.save(receiptAndItem.t1)
+            receiptRepository.save(receiptAndItem.t1).block()
         } as Consumer)
-                   .map({ Tuple2<ReceiptEntity, OrderedItemEntity> receiptAndItem -> receiptAndItem.t2 })
-
-
+                   .then(orderedItem)
     }
 }

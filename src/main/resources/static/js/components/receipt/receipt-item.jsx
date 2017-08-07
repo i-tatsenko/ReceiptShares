@@ -36,7 +36,7 @@ class CommonComponent extends React.Component {
         let text = orderedItem.item.name + '. Price: ' + orderedItem.item.price + ". Total: " + total;
         return (
             <ListItem primaryText={text}
-                      leftAvatar={<Avatar src={orderedItem.user.avatarUrl}/>}
+                      leftAvatar={<Avatar src={orderedItem.owner.avatarUrl}/>}
                       children={this.children()}
                       className="receipt-item"
             />
