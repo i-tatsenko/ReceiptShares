@@ -3,7 +3,7 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import Subheader from 'material-ui/Subheader';
 
-require('style!css!./friend-list.css');
+import './friend-list.css';
 
 class FriendListItem extends React.Component {
     render() {

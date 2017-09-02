@@ -1,6 +1,7 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
+import Cookies from 'js-cookie'
 
 export default class FbLoginButton extends React.Component {
 

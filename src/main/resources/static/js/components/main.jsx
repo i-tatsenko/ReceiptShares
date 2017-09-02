@@ -6,6 +6,7 @@ import LoginForm from "./login/login-form.jsx";
 import Receipt from "./receipt/receipt.jsx";
 import Paper from "material-ui/Paper";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import Cookies from "js-cookie"
 
 import injectTapEventPlugin from "react-tap-event-plugin";
 import {Router, Route, IndexRoute} from 'react-router'

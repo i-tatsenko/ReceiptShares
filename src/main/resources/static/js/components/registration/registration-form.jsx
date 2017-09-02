@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-require('style!css!./reg-form.css');
+import './reg-form.css';
 
 export default class RegistrationForm extends React.Component {
 

@@ -1,5 +1,5 @@
 import Avatar from '../avatar/avatar.jsx'
-require('style!css!./header.css');
+import './header.css';
 
 
 export default class Header extends React.Component {

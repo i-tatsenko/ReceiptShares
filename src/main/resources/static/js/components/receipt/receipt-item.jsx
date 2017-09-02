@@ -1,7 +1,7 @@
 import {ListItem} from "material-ui/List";
 import Avatar from "material-ui/Avatar";
 import FontIcon from "material-ui/FontIcon";
-import "style!css!./receipt.css";
+import "./receipt.css";
 
 export class OwnReceiptItem extends React.Component {
 

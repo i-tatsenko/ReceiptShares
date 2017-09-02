@@ -1,11 +1,14 @@
-var path = require('path');
+const path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
     entry: './src/main/resources/static/js/components/main.jsx',
-    output: {path: __dirname, filename: 'src/main/resources/static/js/bundle.js'},
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, "src/main/resources/static/js/")
+    },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /.jsx?$/,
                 loader: 'babel-loader',
@@ -13,9 +16,17 @@ module.exports = {
                 query: {
                     presets: ['es2015', 'react']
                 }
+            },
+            {
+                test:/\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
             }
-        ],
+        ]
     },
+
 
     plugins: [
         new webpack.ProvidePlugin({

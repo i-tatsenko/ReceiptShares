@@ -1,8 +1,6 @@
 import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
-
-
-require('style!css!./avatar.css');
+import './avatar.css';
 
 export default React.createClass({
     render() {

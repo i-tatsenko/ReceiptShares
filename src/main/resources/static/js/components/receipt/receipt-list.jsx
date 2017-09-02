@@ -1,6 +1,6 @@
 import ReceiptCard from "./receipt-card.jsx";
 import WaitingData from "../waiting-data.jsx";
-require("style!css!./receipt.css");
+import "./receipt.css";
 
 let NoReceipts = () => <section className="receipt-list__no-receipts">{"Here will be present list of your receipts"}</section>;
 

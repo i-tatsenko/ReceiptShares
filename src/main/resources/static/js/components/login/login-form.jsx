@@ -4,8 +4,7 @@ import FbLoginButton from './facebook-login-button.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
-require('style!css!./login.css');
+import './login.css';
 
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;

@@ -4,7 +4,7 @@ import Divider from "material-ui/Divider";
 import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
 import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
-import "style!css!./receipt.css";
+import "./receipt.css";
 export default class Receipt extends React.Component {
 
     constructor(args) {
