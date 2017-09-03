@@ -15,7 +15,7 @@ export default React.createClass({
         if (!this.state.receiptsList) {
             return (<WaitingData/>)
         }
-        if (this.state.receiptsList.length == 0) {
+        if (this.state.receiptsList.length === 0) {
             return (<NoReceipts/>)
         }
         let user = this.props.user;

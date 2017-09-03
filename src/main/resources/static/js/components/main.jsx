@@ -1,15 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {browserHistory} from "react-router";
 import RegistrationForm from "./registration/registration-form.jsx";
 import LoginForm from "./login/login-form.jsx";
 import Receipt from "./receipt/receipt.jsx";
 import Paper from "material-ui/Paper";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Cookies from "js-cookie"
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 
 import injectTapEventPlugin from "react-tap-event-plugin";
-import {Router, Route, IndexRoute} from 'react-router'
 import CreateNewReceipt from './receipt/create-new-receipt.jsx'
 import ReceiptList from './receipt/receipt-list.jsx'
 import App from './app.jsx'
@@ -18,14 +17,6 @@ injectTapEventPlugin();
 
 let Help = () => <h1>Application is under construction</h1>;
 let LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
-
-
-class RedirectComponent extends React.Component {
-    constructor(args) {
-        super(args);
-        ReactRouter.browserHistory.push("/");
-    }
-}
 
 class Mui extends React.Component {
     render() {
@@ -45,36 +36,53 @@ class Mui extends React.Component {
 
 function getMainLayout(user) {
     var AppWrapper = React.createClass({
+
+        getInitialState() {
+            return {
+                barTitle: "Receipt Shares"
+            }
+        },
+
         render: function () {
             return (
                 <Mui>
-                    <App user={user}>
+                    <App user={user} barTitle={this.state.barTitle}>
                         {this.props.children}
                     </App>
                 </Mui>)
         }
     });
-    return <Router history={browserHistory}>
-        <Route path="/" component={AppWrapper}>
-            <IndexRoute component={ReceiptList}/>
-            <Route path="/new" component={CreateNewReceipt}/>
-            <Route path="/receipt/:id" component={Receipt}/>
-            <Route path="/help" component={Help}/>
-            <Route path="*" component={RedirectComponent}/>
-        </Route>
-    </Router>;
+
+    function setTitle(title) {
+        AppWrapper.setState({barTitle: title});
+    }
+
+    return <BrowserRouter>
+        <AppWrapper>
+            <Switch>
+                <Route exact path="/" component={props => <ReceiptList {...props} user={user} setTitle={setTitle}/>} />
+                <Route path="/new" component={props => <CreateNewReceipt {...props} user={user} setTitle={setTitle}/>}/>
+                <Route path="/receipt/:id" component={props => <Receipt {...props} user={user} setTitle={setTitle}/>}/>
+                <Route path="/help" component={props => <Help {...props} user={user} setTitle={setTitle}/>}/>
+                <Redirect to="/" push/>
+            </Switch>
+        </AppWrapper>
+    </BrowserRouter>;
 }
 
 
 var loginLayout =
-    <Router history={browserHistory}>
-        <Route path="/" component={Mui}>
-            <IndexRoute component={LoginComponent}/>
-            <Route path="/login" component={LoginComponent}/>
-            <Route path="/register" component={RegistrationForm}/>
-            <Route path="*" component={LoginComponent}/>
-        </Route>
-    </Router>;
+    <BrowserRouter>
+        <Mui>
+            <Switch>
+                <Route exact path="/" component={LoginComponent}/>
+                <Route path="/login" component={LoginComponent}/>
+                <Route path="/register" component={RegistrationForm}/>
+                <Route component={LoginComponent}/>
+            </Switch>
+        </Mui>
+    </BrowserRouter>;
+
 
 $(document).ajaxSend(function (event, jqXHR) {
     jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))

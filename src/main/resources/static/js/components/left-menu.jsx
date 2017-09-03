@@ -3,9 +3,9 @@ import Menu from "material-ui/Menu";
 import MenuItem from "material-ui/MenuItem";
 import Drawer from "material-ui/Drawer";
 import AppBar from "material-ui/AppBar";
-import {browserHistory} from "react-router";
+import {withRouter} from "react-router-dom";
 
-export default class LeftMenu extends React.Component {
+class LeftMenu extends React.Component {
     render() {
         let items = [];
         var links = this.props.links;
@@ -34,10 +34,12 @@ export default class LeftMenu extends React.Component {
     }
 
     createForLink(linkHeader, link) {
-        return (<MenuItem onClick={this.props.closeMenu} onTouchTap={() => browserHistory.push(link)} key={link}>{linkHeader}</MenuItem>)
+        return (<MenuItem onClick={this.props.closeMenu} onTouchTap={() => this.props.history.push(link)} key={link}>{linkHeader}</MenuItem>)
     }
 
     createForObject(object) {
         return (<MenuItem onClick={this.props.closeMenu} key={object}>{object}</MenuItem>)
     }
 }
+
+export default withRouter(LeftMenu)

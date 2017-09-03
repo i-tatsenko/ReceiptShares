@@ -6,8 +6,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import './login.css';
 
-var ReactRouter = require('react-router');
-var Link = ReactRouter.Link;
+import { Link } from 'react-router-dom'
 
 export default class LoginForm extends React.Component {
 

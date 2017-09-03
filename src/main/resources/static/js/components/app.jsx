@@ -5,16 +5,15 @@ import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
 import AppBar from "material-ui/AppBar";
 import Logout from "./login/logout.jsx";
-import {browserHistory} from "react-router";
+import {withRouter} from "react-router-dom";
 
 
-export default class App extends React.Component {
+class App extends React.Component {
 
     constructor(args) {
         super(args);
         this.state = {
             menuOpen: false,
-            barTitle: 'Receipt Shares',
             menuItems: {
                 Receipts: '/',
                 Help: '/help',
@@ -22,14 +21,14 @@ export default class App extends React.Component {
             },
             additionalMenuItems: [],
             actionItems: {
-                "New receipt": () => browserHistory.push('/new')
+                "New receipt": () => this.props.history.push('/new')
             }
         }
     }
 
     render() {
         let actions = this.state.additionalMenuItems;
-        actions.push({name: "New receipt", action: () => browserHistory.push('/new')});
+        actions.push({name: "New receipt", action: () => this.props.history.push('/new')});
         let menuItems = actions.map(action => <MenuItem primaryText={action.name} onTouchTap={action.action} key={action.name}/>);
 
         let ActionButton = () => <IconMenu
@@ -51,7 +50,7 @@ export default class App extends React.Component {
         return (
             <section>
                 <div className="clearfix" style={{position: "relative"}}>
-                    <AppBar title={this.state.barTitle}
+                    <AppBar title={this.props.barTitle}
                             onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
                     <LeftMenu open={this.state.menuOpen} links={this.state.menuItems}
                               closeMenu={() => this.setState({menuOpen: false})}/>
@@ -72,10 +71,6 @@ export default class App extends React.Component {
         let user = this.props.user;
         return React.Children.map(this.props.children, child => {
             return React.cloneElement(child, {
-                    user,
-                    setTitle: function (title) {
-                        t.setState({barTitle: title})
-                    },
                     addMenuItems: function (items) {
                         let menuItems = t.state.additionalMenuItems;
                         menuItems.unshift(...items);
@@ -91,3 +86,5 @@ export default class App extends React.Component {
         })
     }
 }
+
+export default withRouter(App)

@@ -5,10 +5,10 @@ import Divider from "material-ui/Divider";
 import Avatar from "material-ui/Avatar";
 import Chip from "material-ui/Chip";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
-import {browserHistory} from "react-router";
 import Snackbar from "material-ui/Snackbar";
+import {withRouter} from "react-router-dom";
 
-export default class CreateNewReceipt extends React.Component {
+class CreateNewReceipt extends React.Component {
 
     constructor(args) {
         super(args);
@@ -87,7 +87,7 @@ export default class CreateNewReceipt extends React.Component {
             contentType: 'application/json',
             dataType: 'json',
             method: 'post',
-            success: (resp) => {browserHistory.push('/receipt/' + resp.id)},
+            success: (resp) => {this.props.history.push('/receipt/' + resp.id)},
             error: () => this.setState({error: true})
         })
 
@@ -134,4 +134,6 @@ export default class CreateNewReceipt extends React.Component {
         this.props.setTitle("Create new receipt");
     }
 }
+
+export default withRouter(CreateNewReceipt)
 

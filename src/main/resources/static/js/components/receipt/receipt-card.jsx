@@ -2,9 +2,9 @@ import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from "mat
 import Chip from "material-ui/Chip";
 import Avatar from "material-ui/Avatar";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
-import {browserHistory} from "react-router";
+import {withRouter} from "react-router-dom";
 
-export default class ReceiptCard extends React.Component {
+class ReceiptCard extends React.Component {
 
     render() {
         let receipt = this.props.receipt;
@@ -36,7 +36,7 @@ export default class ReceiptCard extends React.Component {
     }
 
     goToReceipt() {
-        browserHistory.push("/receipt/" + this.props.receipt.id);
+        this.props.history.push("/receipt/" + this.props.receipt.id);
     }
 
     calculateSpending() {
@@ -53,3 +53,5 @@ export default class ReceiptCard extends React.Component {
         return {total, mySpending};
     }
 }
+
+export default withRouter(ReceiptCard)

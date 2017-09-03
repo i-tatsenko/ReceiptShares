@@ -1,5 +1,5 @@
 import React from 'react';
-import {ReactRouter, Link, browserHistory} from 'react-router';
+import {Link, withRouter} from 'react-router-dom';
 
 import FormAlert from '../form-alert.jsx';
 import AppBar from 'material-ui/AppBar';
@@ -8,7 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import './reg-form.css';
 
-export default class RegistrationForm extends React.Component {
+class RegistrationForm extends React.Component {
 
     constructor(args) {
         super(args);
@@ -36,12 +36,14 @@ export default class RegistrationForm extends React.Component {
                                    name="passwordCheck" type="password"/><br/>
                         <div id="captcha"/>
 
-                        <RaisedButton label="Register" primary={true} fullWidth={true} className="reg-form__register-button"
+                        <RaisedButton label="Register" primary={true} fullWidth={true}
+                                      className="reg-form__register-button"
                                       onClick={() => this.registerUser()} disabled={disabled}/>
 
                     </form>
                     <hr/>
-                    <span className="reg-form__invite-to-login">Have an account? <Link to="/login">Login</Link> here!</span>
+                    <span className="reg-form__invite-to-login">Have an account? <Link
+                        to="/login">Login</Link> here!</span>
                 </div>
             </div>
 
@@ -55,7 +57,7 @@ export default class RegistrationForm extends React.Component {
             url: '/v1/open/reg',
             data: form,
             dataType: 'html',
-            success: () => browserHistory.push("/login")
+            success: () => this.props.history.push("/login")
         }).fail(function (error) {
             if (error.status == 409) {
                 var divContainingEmail = $('#newUserEmail').parents('.form-group');
@@ -83,3 +85,5 @@ export default class RegistrationForm extends React.Component {
     }
 
 }
+
+export default withRouter(RegistrationForm)
