@@ -1,3 +1,4 @@
+import storage from "../../storage/storage.js"
 import FriendList from "../friend-list/friend-list.jsx";
 import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
@@ -131,7 +132,7 @@ class CreateNewReceipt extends React.Component {
     }
 
     componentDidMount() {
-        this.props.setTitle("Create new receipt");
+        storage.screenTitle("Create new receipt");
     }
 }
 

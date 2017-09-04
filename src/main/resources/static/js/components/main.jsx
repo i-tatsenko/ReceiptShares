@@ -35,7 +35,7 @@ class Mui extends React.Component {
 }
 
 function getMainLayout(user) {
-    var AppWrapper = React.createClass({
+    let AppWrapper = React.createClass({
 
         getInitialState() {
             return {
@@ -53,17 +53,13 @@ function getMainLayout(user) {
         }
     });
 
-    function setTitle(title) {
-        AppWrapper.setState({barTitle: title});
-    }
-
     return <BrowserRouter>
         <AppWrapper>
             <Switch>
-                <Route exact path="/" component={props => <ReceiptList {...props} user={user} setTitle={setTitle}/>} />
-                <Route path="/new" component={props => <CreateNewReceipt {...props} user={user} setTitle={setTitle}/>}/>
-                <Route path="/receipt/:id" component={props => <Receipt {...props} user={user} setTitle={setTitle}/>}/>
-                <Route path="/help" component={props => <Help {...props} user={user} setTitle={setTitle}/>}/>
+                <Route exact path="/" component={ReceiptList} />
+                <Route path="/new" component={CreateNewReceipt} />
+                <Route path="/receipt/:id" component={Receipt} />
+                <Route path="/help" component={Help} />
                 <Redirect to="/" push/>
             </Switch>
         </AppWrapper>
@@ -71,7 +67,7 @@ function getMainLayout(user) {
 }
 
 
-var loginLayout =
+let loginLayout =
     <BrowserRouter>
         <Mui>
             <Switch>

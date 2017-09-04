@@ -1,3 +1,4 @@
+import storage from "../storage/storage.js"
 import LeftMenu from "./left-menu.jsx";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
@@ -14,6 +15,7 @@ class App extends React.Component {
         super(args);
         this.state = {
             menuOpen: false,
+            barTitle: storage.getState().screenTitle,
             menuItems: {
                 Receipts: '/',
                 Help: '/help',
@@ -23,7 +25,8 @@ class App extends React.Component {
             actionItems: {
                 "New receipt": () => this.props.history.push('/new')
             }
-        }
+        };
+        storage.listenFor("screenTitle", () => this.setState({barTitle: storage.getState().screenTitle}))
     }
 
     render() {
@@ -50,7 +53,7 @@ class App extends React.Component {
         return (
             <section>
                 <div className="clearfix" style={{position: "relative"}}>
-                    <AppBar title={this.props.barTitle}
+                    <AppBar title={this.state.barTitle}
                             onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
                     <LeftMenu open={this.state.menuOpen} links={this.state.menuItems}
                               closeMenu={() => this.setState({menuOpen: false})}/>

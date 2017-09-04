@@ -1,11 +1,15 @@
 const path = require('path');
-var webpack = require('webpack');
+const webpack = require('webpack');
+const WebpackShellPlugin = require('webpack-shell-plugin');
+
+const outputDir = "src/main/resources/static/js/dist/";
+
 
 module.exports = {
     entry: './src/main/resources/static/js/components/main.jsx',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, "src/main/resources/static/js/")
+        path: path.resolve(__dirname, outputDir)
     },
     module: {
         rules: [
@@ -33,6 +37,9 @@ module.exports = {
             '$': 'jquery',
             'React': 'react',
             'ReactDOM': 'react-dom'
+        }),
+        new WebpackShellPlugin({
+            onBuildExit: [`cp --parents ${outputDir}bundle.js out/production/resources/static/js/dist/`]
         })
     ]
 

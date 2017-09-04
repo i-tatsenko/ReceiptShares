@@ -20,4 +20,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 node_modules
-src/main/resources/static/js/bundle.js
+src/main/resources/static/js/dist/bundle.js

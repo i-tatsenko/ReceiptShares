@@ -1,3 +1,4 @@
+import storage from "../../storage/storage.js"
 import ReceiptCard from "./receipt-card.jsx";
 import WaitingData from "../waiting-data.jsx";
 import "./receipt.css";
@@ -28,7 +29,7 @@ export default React.createClass({
     },
 
     componentWillMount() {
-        this.props.setTitle("Receipts");
+        storage.screenTitle("Receipts");
         let t = this;
         $.get('/v1/rec/all').done(resp => t.setState({receiptsList: resp}));
     }

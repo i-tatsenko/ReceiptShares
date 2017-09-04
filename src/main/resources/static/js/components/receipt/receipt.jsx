@@ -1,10 +1,13 @@
 import React from "react";
+import storage from "../../storage/storage.js"
 import WaitingData from "../waiting-data.jsx";
 import Divider from "material-ui/Divider";
 import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
 import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
 import "./receipt.css";
+
+
 export default class Receipt extends React.Component {
 
     constructor(args) {
@@ -101,7 +104,7 @@ export default class Receipt extends React.Component {
     getReceiptFromServer() {
         $.get('/v1/rec/' + this.props.params.id, resp => {
             this.setState({rec: resp});
-            this.props.setTitle(resp.name);
+            storage.screenTitle(resp.name)
         });
     }
 
