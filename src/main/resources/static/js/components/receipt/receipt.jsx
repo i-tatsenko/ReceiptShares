@@ -6,6 +6,7 @@ import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
 import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
 import "./receipt.css";
+import CustomMenuItem from "../menu/custom-menu-item.jsx";
 
 
 export default class Receipt extends React.Component {
@@ -17,10 +18,7 @@ export default class Receipt extends React.Component {
             addNewItemPopupOpened: false,
         };
 
-        this.additionalActions = [{
-            name: "Add new item",
-            action: () => this.setState({addNewItemPopupOpened: true})
-        }];
+        this.additionalAction = <CustomMenuItem label="Add new item" action={() => this.setState({addNewItemPopupOpened: true})}/>
     }
 
     closeAddNewItemPopup() {
@@ -63,8 +61,8 @@ export default class Receipt extends React.Component {
         let total = 0;
         let mySpending = 0;
         for (let item of (this.state.rec.orderedItems || [])) {
-            if (item.status == 'ACTIVE') {
-                if (item.owner.id == this.props.user.id) {
+            if (item.status === 'ACTIVE') {
+                if (item.owner.id === storage.getState().user.id) {
                     mySpending += item.item.price;
                 }
                 total += item.item.price;
@@ -98,11 +96,11 @@ export default class Receipt extends React.Component {
     }
 
     currentUsersOrderedItem(item) {
-        return item.owner.id === this.props.user.id
+        return item.owner.id === storage.getState().user.id
     }
 
     getReceiptFromServer() {
-        $.get('/v1/rec/' + this.props.params.id, resp => {
+        $.get('/v1/rec/' + this.props.match.params.id, resp => {
             this.setState({rec: resp});
             storage.screenTitle(resp.name)
         });
@@ -110,10 +108,10 @@ export default class Receipt extends React.Component {
 
     componentDidMount() {
         this.getReceiptFromServer();
-        this.props.addMenuItems(this.additionalActions);
+        storage.addAddActionButtonMenuItem(storage.addAddActionButtonMenuItem(this.additionalAction));
     }
 
     componentWillUnmount() {
-        this.props.removeMenuItems(this.additionalActions.map(action => action.name));
+        storage.removeAddActionButtonMenuItem(this.additionalAction);
     }
 }

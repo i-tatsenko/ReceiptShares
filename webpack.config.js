@@ -2,14 +2,14 @@ const path = require('path');
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
-const outputDir = "src/main/resources/static/js/dist/";
-
+const outputDir = path.resolve(__dirname, "src/main/resources/static/js/dist/");
+const ideaOutFile = path.resolve(__dirname, "out/production/resources/static/js/dist/");
 
 module.exports = {
     entry: './src/main/resources/static/js/components/main.jsx',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, outputDir)
+        path: outputDir
     },
     module: {
         rules: [
@@ -39,7 +39,7 @@ module.exports = {
             'ReactDOM': 'react-dom'
         }),
         new WebpackShellPlugin({
-            onBuildExit: [`cp --parents ${outputDir}bundle.js out/production/resources/static/js/dist/`]
+            onBuildExit: [`echo cp ${outputDir}/bundle.js ${ideaOutFile}/`,`cp ${outputDir}/bundle.js ${ideaOutFile}/bundle.js`]
         })
     ]
 

@@ -1,12 +1,11 @@
 import storage from "../storage/storage.js"
 import LeftMenu from "./left-menu.jsx";
-import FloatingActionButton from "material-ui/FloatingActionButton";
-import ContentAdd from "material-ui/svg-icons/content/add";
-import IconMenu from "material-ui/IconMenu";
+
 import MenuItem from "material-ui/MenuItem";
 import AppBar from "material-ui/AppBar";
 import Logout from "./login/logout.jsx";
 import {withRouter} from "react-router-dom";
+import ActionButton from "./add-action-button.jsx"
 
 
 class App extends React.Component {
@@ -20,39 +19,15 @@ class App extends React.Component {
                 Receipts: '/',
                 Help: '/help',
                 logout: <Logout/>
-            },
-            additionalMenuItems: [],
-            actionItems: {
-                "New receipt": () => this.props.history.push('/new')
             }
         };
         storage.listenFor("screenTitle", () => this.setState({barTitle: storage.getState().screenTitle}))
     }
 
     render() {
-        let actions = this.state.additionalMenuItems;
-        actions.push({name: "New receipt", action: () => this.props.history.push('/new')});
-        let menuItems = actions.map(action => <MenuItem primaryText={action.name} onTouchTap={action.action} key={action.name}/>);
-
-        let ActionButton = () => <IconMenu
-            style={{
-                position: 'absolute',
-                right: '30px',
-                bottom: '20px'
-            }}
-            iconButtonElement={
-                <FloatingActionButton zDepth={3}>
-                    <ContentAdd/>
-                </FloatingActionButton>
-            }
-            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-            targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}>
-            {menuItems}
-        </IconMenu>;
-
         return (
             <section>
-                <div className="clearfix" style={{position: "relative"}}>
+                <div className="clearflix" style={{position: "relative"}}>
                     <AppBar title={this.state.barTitle}
                             onLeftIconButtonTouchTap={() => this.setState({menuOpen: !this.state.menuOpen})}/>
                     <LeftMenu open={this.state.menuOpen} links={this.state.menuItems}
@@ -61,32 +36,12 @@ class App extends React.Component {
                         marginLeft: '20px',
                         marginTop: '20px',
                     }} className="container-div">
-                        {this.renderChildren()}
+                        {this.props.children}
                     </div>
                 </div>
                 <ActionButton/>
             </section>
         )
-    }
-
-    renderChildren() {
-        let t = this;
-        let user = this.props.user;
-        return React.Children.map(this.props.children, child => {
-            return React.cloneElement(child, {
-                    addMenuItems: function (items) {
-                        let menuItems = t.state.additionalMenuItems;
-                        menuItems.unshift(...items);
-                        t.setState({additionalMenuItems: menuItems})
-                    },
-                    removeMenuItems: function (itemNames) {
-                        let menuItems = t.state.additionalMenuItems;
-                        menuItems = menuItems.filter(item => !itemNames.includes(item.name));
-                        t.setState({additionalMenuItems: menuItems});
-                    }
-                }
-            )
-        })
     }
 }
 

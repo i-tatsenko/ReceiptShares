@@ -3,6 +3,7 @@ import Chip from "material-ui/Chip";
 import Avatar from "material-ui/Avatar";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import {withRouter} from "react-router-dom";
+import storage from "../../storage/storage.js"
 
 class ReceiptCard extends React.Component {
 
@@ -42,10 +43,10 @@ class ReceiptCard extends React.Component {
     calculateSpending() {
         let total = 0;
         let mySpending = 0;
-        console.log("User id: ", this.props.user.id);
+        console.log("User id: ", storage.getState().user.id);
         let items = this.props.receipt.orderedItems || [];
         for (let item of items) {
-            if (item.owner.id === this.props.user.id) {
+            if (item.owner.id === storage.getState().user.id) {
                 mySpending += item.item.price;
             }
             total += item.item.price;

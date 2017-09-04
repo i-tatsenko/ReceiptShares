@@ -7,16 +7,19 @@ import Paper from "material-ui/Paper";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Cookies from "js-cookie"
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
-
+import storage from "../storage/storage.js"
 import injectTapEventPlugin from "react-tap-event-plugin";
 import CreateNewReceipt from './receipt/create-new-receipt.jsx'
 import ReceiptList from './receipt/receipt-list.jsx'
 import App from './app.jsx'
+import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 
 injectTapEventPlugin();
 
 let Help = () => <h1>Application is under construction</h1>;
 let LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
+
+storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 
 class Mui extends React.Component {
     render() {
@@ -35,6 +38,7 @@ class Mui extends React.Component {
 }
 
 function getMainLayout(user) {
+    storage.setUser(user);
     let AppWrapper = React.createClass({
 
         getInitialState() {

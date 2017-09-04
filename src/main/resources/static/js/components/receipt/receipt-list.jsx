@@ -19,7 +19,7 @@ export default React.createClass({
         if (this.state.receiptsList.length === 0) {
             return (<NoReceipts/>)
         }
-        let user = this.props.user;
+        let user = storage.getState().user;
         return (
             <section>
                 {this.state.receiptsList.map(receipt => <ReceiptCard receipt={receipt} user={user}
