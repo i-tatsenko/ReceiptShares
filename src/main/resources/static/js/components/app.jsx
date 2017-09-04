@@ -1,7 +1,6 @@
 import storage from "../storage/storage.js"
 import LeftMenu from "./left-menu.jsx";
 
-import MenuItem from "material-ui/MenuItem";
 import AppBar from "material-ui/AppBar";
 import Logout from "./login/logout.jsx";
 import {withRouter} from "react-router-dom";
