@@ -14,7 +14,7 @@ public class NeutralRootController {
         return "/html/index.html";
     }
 
-    @RequestMapping("/{path:[^\\.][^v1]*}")
+    @RequestMapping("/{path:(?!(?:v1|html|css|fonts|images|js)).*}/**")
     public String forward() {
         return "forward:/";
     }

@@ -3,7 +3,7 @@ import {withRouter} from "react-router-dom";
 
 class NewReceiptMenuItem extends React.Component {
     render() {
-        return <MenuItem primaryText={"New receipt"} onTouchTap={() => this.props.history.push('/new')}/>
+        return <MenuItem primaryText={"New receipt"} onTouchTap={() => this.props.history.push('/new')} key="new-receipt"/>
     }
 }
 

@@ -6,6 +6,6 @@ export default class CustomMenuItem extends React.Component {
     }
 
     render() {
-        return <MenuItem primaryText={this.props.label} onTouchTap={() => this.props.action()}/>
+        return <MenuItem primaryText={this.props.label} onTouchTap={() => this.props.action()} key={this.props.label}/>
     }
 }

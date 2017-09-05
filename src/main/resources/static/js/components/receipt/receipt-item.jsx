@@ -12,8 +12,8 @@ export class OwnReceiptItem extends React.Component {
 
     actionButtons(orderedItem) {
         return [
-            <FontIcon className="fa fa-minus-circle receipt-item-actions__action"/>,
-            <FontIcon className="fa fa-plus-circle receipt-item-actions__action"/>
+            <FontIcon className="fa fa-minus-circle receipt-item-actions__action" key={"MinusItem"+orderedItem.id}/>,
+            <FontIcon className="fa fa-plus-circle receipt-item-actions__action" key={"PlusItem"+orderedItem.id}/>
         ]
     }
 }
@@ -24,7 +24,7 @@ export class ReceiptItem extends React.Component {
     }
 
     actionButtons(item) {
-        return [<span>Me too!</span>]
+        return [<span key={"MeeToo"+item.id}>Me too!</span>]
     }
 }
 
@@ -34,11 +34,14 @@ class CommonComponent extends React.Component {
         let orderedItem = this.props.item;
         let total = orderedItem.sum;
         let text = orderedItem.item.name + '. Price: ' + orderedItem.item.price + ". Total: " + total;
+        console.log("Key", orderedItem.id);
+
         return (
             <ListItem primaryText={text}
                       leftAvatar={<Avatar src={orderedItem.owner.avatarUrl}/>}
                       children={this.children()}
                       className="receipt-item"
+                      key={"ListItem"+orderedItem.id}
             />
         )
     }

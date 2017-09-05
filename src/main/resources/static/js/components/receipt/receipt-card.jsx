@@ -10,7 +10,7 @@ class ReceiptCard extends React.Component {
     render() {
         let receipt = this.props.receipt;
         let {total, mySpending} = this.calculateSpending();
-        let members = receipt.members.length == 0 ? "" :
+        let members = receipt.members.length === 0 ? "" :
             <section>
                 Members:
                 <div style={chipWrapperStyle}>
@@ -43,7 +43,6 @@ class ReceiptCard extends React.Component {
     calculateSpending() {
         let total = 0;
         let mySpending = 0;
-        console.log("User id: ", storage.getState().user.id);
         let items = this.props.receipt.orderedItems || [];
         for (let item of items) {
             if (item.owner.id === storage.getState().user.id) {
