@@ -55,11 +55,11 @@ export default class NewItemModal extends React.Component {
     }
 
     createNewItem() {
-        let newItem = {name: this.state.name, price: this.state.price, receiptId: this.props.receiptId};
+        let newItem = {name: this.state.name, price: this.state.price};
         let t = this;
         $.ajax({
             type: "POST",
-            url: "/v1/rec/new-item",
+            url: `/v1/receipt/${this.props.receiptId}/new-item`,
             data: JSON.stringify(newItem),
             success: t.props.itemCreatedCallback,
             contentType: "application/json",

@@ -31,7 +31,7 @@ export default React.createClass({
     componentWillMount() {
         storage.screenTitle("Receipts");
         let t = this;
-        $.get('/v1/rec/all').done(resp => t.setState({receiptsList: resp}));
+        $.get('/v1/receipt/all').done(resp => t.setState({receiptsList: resp}));
     }
 })
 

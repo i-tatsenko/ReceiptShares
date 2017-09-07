@@ -78,9 +78,31 @@ class ReceiptService {
                              .map({ it as OrderedItem })
     }
 
-    Mono<OrderedItemEntity> addItem(String ownerId, String receiptId, String itemId) {
-        return itemRepository.findById(itemId)
-                             .map({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+    Mono<OrderedItem> addItem(String ownerId, String receiptId, String orderedItemId) {
+        return orderItemRepository.findById(orderedItemId)
+                                  .map({ it.item })
+                                  .flatMap({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+                                  .map({ it as OrderedItem })
+    }
+
+    Mono<Receipt> deleteItem(String ownerId, String receiptId, String orderedItemId) {
+        return orderItemRepository.deleteById(orderedItemId)
+                                  .then(receiptRepository.findById(receiptId))
+                                  .flatMap({ deleteOrderedItem(it, ownerId, orderedItemId) })
+                                  .map({ it as Receipt })
+
+    }
+
+    private Mono<ReceiptEntity> deleteOrderedItem(ReceiptEntity receipt, String itemOwnerId, String orderedItemId) {
+        def orderedItems = new HashSet<>(receipt.orderedItems)
+        def deleted = orderedItems.removeIf({ it.id == orderedItemId && it.owner.id == itemOwnerId })
+        if (deleted) {
+            receipt.orderedItems = orderedItems
+            return receiptRepository.save(receipt)
+        } else {
+            return Mono.error(new OrderedItemNotFound(orderedItemId: orderedItemId))
+        }
+
     }
 
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {

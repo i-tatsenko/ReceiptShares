@@ -83,7 +83,7 @@ class CreateNewReceipt extends React.Component {
             members: state.friendsToInvite.map(friend => friend.id)
         };
         $.ajax({
-            url: '/v1/rec/create',
+            url: '/v1/receipt',
             data: JSON.stringify(data),
             contentType: 'application/json',
             dataType: 'json',

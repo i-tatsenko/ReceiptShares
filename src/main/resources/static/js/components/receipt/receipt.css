@@ -32,9 +32,9 @@
 
 .receipt-item__actions {
     position: absolute;
+    top: 0;
     display: flex;
     right: 20px;
-    align-items: center;
 }
 .receipt-item-actions__action {
     padding: 10px

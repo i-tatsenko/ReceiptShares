@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/v1/rec")
+@RequestMapping("/v1/receipt")
 class ReceiptController {
 
     ReceiptService receiptService
@@ -34,7 +34,7 @@ class ReceiptController {
         return receiptService.receiptsForUser(user.principal.person.id as String)
     }
 
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     Mono<Receipt> createNew(Authentication auth, @RequestBody Map requestBody) {
         def user = auth.principal as User
@@ -42,19 +42,24 @@ class ReceiptController {
         return receiptService.createNewReceipt(requestBody.place.name as String, user.person.id, requestBody.name as String, memberIds)
     }
 
-    @PostMapping(value = "/new-item", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}/new-item", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Mono<OrderedItem> createNewItem(Authentication auth, @RequestBody Map body) {
+    Mono<OrderedItem> createNewItem(Authentication auth, @RequestBody Map body, @PathVariable("id") String receiptId) {
         def user = auth.principal as User
-        def receiptId = body.receiptId as String
         def name = body.name as String
         def price = body.price as Double
         return receiptService.createNewItem(user.person.id, receiptId, name, price)
     }
 
-    @PostMapping("/item/add")
-    Mono<Void> addItem(Authentication auth, @RequestBody Map body) {
-        return receiptService.addItem(auth.principal.person.id as String, body.receiptId as String, body.itemId as String)
-                             .then()
+    @PostMapping("/{receiptId}/item/{orderedItemId}/duplicate")
+    Mono<OrderedItem> addItem(Authentication auth,
+                              @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
+        return receiptService.addItem(auth.principal.person.id as String, receiptId, itemId)
+    }
+
+    @DeleteMapping("/{receiptId}/item/{orderedItemId}")
+    Mono<Receipt> deleteItem(Authentication auth,
+                             @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
+        return receiptService.deleteItem(auth.principal.person.id as String, receiptId, itemId)
     }
 }

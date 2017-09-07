@@ -36,10 +36,10 @@ export default class Receipt extends React.Component {
             <section className="receipt">
                 <section className="receipt-header__spending">
                     <div className="receipt-header__my-spending">Your spending: <span
-                        className="receipt-header__my-spending-money">{mySpending}</span></div>
+                        className="receipt-header__my-spending-money">{mySpending.toFixed(2)}</span></div>
                     <Divider/>
                     <div className="receipt-header__total">Total: <span
-                        className="receipt-header__total-money">{total}</span>
+                        className="receipt-header__total-money">{total.toFixed(2)}</span>
                     </div>
                     <Divider/>
                     Items:
@@ -74,7 +74,7 @@ export default class Receipt extends React.Component {
     renderItems() {
         let items = [];
         for (let item of (this.state.rec.orderedItems || [])) {
-            let foundItem = items.find(present => present.owner.id == item.owner.id && present.item.id == item.item.id);
+            let foundItem = items.find(present => present.owner.id === item.owner.id && present.item.id === item.item.id);
             if (foundItem) {
                 foundItem.sum += foundItem.item.price;
                 foundItem.count++;
@@ -87,11 +87,13 @@ export default class Receipt extends React.Component {
             }
         }
         return items.map(item => {
-                        let key= "receiptItem" + item.id;
-                        if (this.currentUsersOrderedItem(item))
-                            return <OwnReceiptItem item={item} key={key} />;
+                        if (this.currentUsersOrderedItem(item)) {
+                            console.log(item);
+                            return <OwnReceiptItem item={item} receipt={this.state.rec}
+                                                   shouldUpdate={() => this.getReceiptFromServer()}/>;
+                        }
                         else
-                            return <ReceiptItem item={item} key={key} />;
+                            return <ReceiptItem item={item} receipt={this.state.rec} />;
                     })
     }
 
@@ -100,7 +102,7 @@ export default class Receipt extends React.Component {
     }
 
     getReceiptFromServer() {
-        $.get('/v1/rec/' + this.props.match.params.id, resp => {
+        $.get('/v1/receipt/' + this.props.match.params.id, resp => {
             this.setState({rec: resp});
             storage.screenTitle(resp.name)
         });
