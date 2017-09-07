@@ -2,6 +2,7 @@ import {ListItem} from "material-ui/List";
 import Avatar from "material-ui/Avatar";
 import FontIcon from "material-ui/FontIcon";
 import CircularProgress from 'material-ui/CircularProgress';
+import Snackbar from 'material-ui/Snackbar';
 
 import "./receipt.css";
 
@@ -11,13 +12,27 @@ export class OwnReceiptItem extends React.Component {
         super(args);
         this.state = {
             waitingForResult: false,
-            item: this.props.item
+            item: this.props.item,
+            showItemDeletedMessage: false,
+            itemDeletedMessage: "",
+            deletedItemId: ""
         }
     }
 
     render() {
-        return (<CommonComponent {...this.props}
-                                 actionButtons={this.actionButtons(this.props.receipt, this.state.item)}/>)
+        return (
+            <div>
+                <CommonComponent {...this.props}
+                                 actionButtons={this.actionButtons(this.props.receipt, this.state.item)}/>
+                <Snackbar
+                    open={this.state.showItemDeletedMessage}
+                    message={this.state.itemDeletedMessage}
+                    action="undo"
+                    onActionTouchTap={() => this.undoDelete()}
+                    onRequestClose={() => this.setState({showItemDeletedMessage: false})}
+                />
+            </div>
+        )
     }
 
     actionButtons(receipt, orderedItem) {
@@ -26,7 +41,8 @@ export class OwnReceiptItem extends React.Component {
         } else {
             return [
                 <FontIcon className="fa fa-minus-circle receipt-item-actions__action"
-                          key={"MinusItem" + orderedItem.id} onTouchTap={() => this.deleteItem(receipt.id, orderedItem.id)}/>,
+                          key={"MinusItem" + orderedItem.id}
+                          onTouchTap={() => this.deleteItem(receipt.id, orderedItem)}/>,
                 <FontIcon className="fa fa-plus-circle receipt-item-actions__action" key={"PlusItem" + orderedItem.id}
                           onTouchTap={() => this.cloneItem(receipt.id, orderedItem.id)}/>
             ]
@@ -43,8 +59,14 @@ export class OwnReceiptItem extends React.Component {
         $.post(`/v1/receipt/${receiptId}/item/${itemId}/duplicate`).done(() => this.orderedItemsUpdated());
     }
 
-    deleteItem(receiptId, itemId) {
-        this.setState({waitingForResult: true});
+    deleteItem(receiptId, orderedItem) {
+        let itemId = orderedItem.id;
+        this.setState({
+            waitingForResult: true,
+            deletedItemId: itemId,
+            itemDeletedMessage: `1 ${orderedItem.item.name} was removed.`,
+            showItemDeletedMessage: true
+        });
         $.ajax({
             url: `/v1/receipt/${receiptId}/item/${itemId}`,
             method: "DELETE",
@@ -56,6 +78,10 @@ export class OwnReceiptItem extends React.Component {
         if (nextProps.item.id !== this.state.item.id) {
             this.setState({item: nextProps.item});
         }
+    }
+
+    undoDelete() {
+
     }
 }
 
