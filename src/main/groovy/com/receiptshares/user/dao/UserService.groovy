@@ -35,7 +35,7 @@ class UserService {
         return personRepository.save(person)
                                .flatMap({ PersonEntity createdPerson -> createUserForPerson(person, newUser.email, newUser.password)} as Function)
                                .map({ UserEntity u -> u as User } as Function)
-                               .doOnError({ log.error("Blia", it) })
+                               .doOnError({ log.error(it) })
                                .onErrorMap(DuplicateKeyException, { error -> new EmailNotUniqueException(newUser.email) })
     }
 

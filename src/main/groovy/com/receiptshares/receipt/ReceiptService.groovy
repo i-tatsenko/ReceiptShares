@@ -1,6 +1,7 @@
 package com.receiptshares.receipt
 
 import com.receiptshares.receipt.dao.*
+import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
@@ -95,9 +96,9 @@ class ReceiptService {
 
     private Mono<ReceiptEntity> deleteOrderedItem(ReceiptEntity receipt, String itemOwnerId, String orderedItemId) {
         def orderedItems = new HashSet<>(receipt.orderedItems)
-        def deleted = orderedItems.removeIf({ it.id == orderedItemId && it.owner.id == itemOwnerId })
-        if (deleted) {
-            receipt.orderedItems = orderedItems
+        def orderedItem = orderedItems.find({ it.id == orderedItemId && it.owner.id == itemOwnerId })
+        if (orderedItem) {
+            orderedItem.status = ItemStatus.DELETED
             return receiptRepository.save(receipt)
         } else {
             return Mono.error(new OrderedItemNotFound(orderedItemId: orderedItemId))

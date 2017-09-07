@@ -34,7 +34,7 @@ class OAuthSingInAdapterTest {
     @Test
     void shouldSetAuthAndReturnNullWhenEmailWasFound() {
         def user = mock(User)
-        when(userService.getByEmail(email)).thenReturn(Mono.just(user))
+        when(userService.getById(email)).thenReturn(Mono.just(user))
 
         underTest.signIn(email, null, null)
 
@@ -43,7 +43,7 @@ class OAuthSingInAdapterTest {
 
     @Test
     void shouldThrowUnauthorizedErrorWhenNoUserWithSuchEmail() {
-        when(userService.getByEmail(email)).thenReturn(Mono.empty())
+        when(userService.getById(email)).thenReturn(Mono.empty())
 
         def exception = assertThrows(IllegalArgumentException, { underTest.signIn(email, null, null) })
         assertThat(exception.getMessage()).isEqualToIgnoringCase("There is no user with email: ${email}")

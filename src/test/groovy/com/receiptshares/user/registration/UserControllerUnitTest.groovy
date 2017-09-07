@@ -32,13 +32,14 @@ class UserControllerUnitTest {
     @InjectMocks
     UserController underTest
 
-    private Map userParams = [name: "userName", email: "userEmail"]
+    private Map userParams = [person: [name: "userName"], email: "userEmail"]
 
-    private NewUserDTO userDto = new NewUserDTO(userParams)
+    private NewUserDTO userDto = new NewUserDTO([name: "userName", email: "userEmail"])
 
     @BeforeEach
     void setup() {
-        when(userService.registerNewUser(userDto)).thenReturn(Mono.just(new User(userParams)))
+        def user = new User(userParams)
+        when(userService.registerNewUser(userDto)).thenReturn(Mono.just(user))
         when(captchaMock.verify(anyString())).thenReturn(Mono.just(true))
     }
 
@@ -49,8 +50,7 @@ class UserControllerUnitTest {
 
         StepVerifier.create(result)
                     .assertNext({ user ->
-            assertEquals(userParams.name, user.name)
-            assertEquals(userParams.email, user.email)
+            assertEquals(userParams.person.name, user.name)
         }).thenAwait()
                     .verifyComplete()
 

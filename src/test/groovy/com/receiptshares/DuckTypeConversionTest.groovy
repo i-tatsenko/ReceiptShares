@@ -1,5 +1,6 @@
 package com.receiptshares
 
+import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.UserEntity
 import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
@@ -12,20 +13,20 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 
 class DuckTypeConversionTest {
 
-    def dto =  new NewUserDTO(email: randomUUID().toString(), name: randomUUID().toString(), password: randomUUID().toString())
+    def dto =  new NewUserDTO(avatarUrl: randomUUID().toString(), name: randomUUID().toString(), password: randomUUID().toString())
 
     @Test
     void "should copying all common properties"(){
-        def entity = dto as UserEntity
+        def entity = dto as PersonEntity
         assertThat(entity.name).isEqualTo(dto.name)
-        assertThat(entity.email).isEqualTo(dto.email)
+        assertThat(entity.avatarUrl).isEqualTo(dto.avatarUrl)
     }
 
     @Test
     void "should not try to set readonly props"() {
-        def user = dto as User
+        def user = dto as PersonEntity
         assertThat(user.name).isEqualTo(dto.name)
-        assertThat(user.email).isEqualTo(dto.email)
+        assertThat(user.avatarUrl).isEqualTo(dto.avatarUrl)
     }
 
     @Test

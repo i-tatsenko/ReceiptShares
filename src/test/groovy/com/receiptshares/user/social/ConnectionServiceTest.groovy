@@ -1,8 +1,10 @@
 package com.receiptshares.user.social
 
 import com.receiptshares.MockitoExtension
+import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.UserEntity
 import com.receiptshares.user.dao.UserRepository
+import com.receiptshares.user.model.Person
 import com.receiptshares.user.model.User
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,6 +18,7 @@ import org.springframework.social.facebook.api.Facebook
 import org.springframework.social.facebook.api.FriendOperations
 import org.springframework.social.facebook.api.PagedList
 import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.Mockito.when
@@ -41,9 +44,9 @@ class ConnectionServiceTest {
     FriendOperations friendOperations
 
     def userParams = [
-            [id: "1", email: "email1@em.ail"],
-            [id: "2", email: "email2@em.ail"],
-            [id: "3", email: "email3@em.ail"],
+            [id: "1", name: "user name 1"],
+            [id: "2", name: "user name 2"],
+            [id: "3", name: "user name 3"],
     ]
 
     def providerIds = ["prov1", "prov2", "prov3"]
@@ -51,14 +54,17 @@ class ConnectionServiceTest {
     @BeforeEach
     void setup() {
         when(userConnectionRepo.findUserIdsConnectedTo("facebook", providerIds as Set)).thenReturn(["1", "2", "3"] as Set)
-        when(userRepo.findAllById(["1", "2", "3"] as Set)).thenReturn(Flux.just(createUsers(UserEntity).toArray()))
+        when(userRepo.findAllById(["1", "2", "3"] as Set)).thenReturn(Flux.just(
+                new UserEntity(id: "1", person: new PersonEntity(name: "user name 1")),
+                new UserEntity(id: "2", person: new PersonEntity(name: "user name 2")),
+                new UserEntity(id: "3", person: new PersonEntity(name: "user name 3"))))
     }
 
     @Test
     void shouldReturnUsersWithProviderIds() {
-        Flux<User> result = underTest.findUserDetailsByConnectionIds(providerIds)
-        def actualUsers = result.collectList().block()
-        assertThat(actualUsers).containsAll(createUsers(User))
+        Flux<Person> result = underTest.findUserDetailsByConnectionIds(providerIds)
+        StepVerifier.create(result)
+        .expectNextSequence(createUsers(Person))
     }
 
     @Test
@@ -68,8 +74,8 @@ class ConnectionServiceTest {
         when(facebookApi.friendOperations()).thenReturn(friendOperations)
         when(friendOperations.getFriendIds()).thenReturn(new PagedList<String>(providerIds, null, null))
 
-        def result = underTest.findFriendsForCurrentCustomer().collectList().block()
-        assertThat(result).containsAll(createUsers(User))
+        StepVerifier.create(underTest.findFriendsForCurrentCustomer())
+        .expectNextSequence(createUsers(Person))
     }
 
     private <T> Collection<T> createUsers(Class<T> usersClass) {

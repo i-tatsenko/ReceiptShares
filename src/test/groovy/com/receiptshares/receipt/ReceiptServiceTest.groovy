@@ -50,7 +50,7 @@ class ReceiptServiceTest {
 
     @Test
     void shouldReturnListOfActiveReceipts() {
-        def result = underTest.receiptsForUser(user)
+        def result = underTest.receiptsForUser(userId)
         StepVerifier.create(result)
                     .expectNext(receipt)
                     .verifyComplete()

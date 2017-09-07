@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.security.crypto.password.PasswordEncoder
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -27,9 +27,11 @@ class UserServiceTest {
     @Mock
     UserRepository userRepo
     @Mock
+    PersonRepository personRepository
+    @Mock
     PasswordEncoder encoderMock
 
-    def userParams = [name: "name", email: "email@email.com", password: "some password"]
+    def userParams = [name: "user name", email: "email@email.com", password: "some password"]
 
     @InjectMocks
     UserService underTest
@@ -38,6 +40,7 @@ class UserServiceTest {
     void setup() {
         when(encoderMock.encode(anyString())).thenReturn(PASSWORD_HASH)
         when(userRepo.save(any(UserEntity))).thenAnswer({ invocation -> Mono.just(invocation.arguments[0]) })
+        when(personRepository.save(any(PersonEntity))).thenAnswer({ invocation -> Mono.just(invocation.arguments[0]) })
     }
 
     @Test
@@ -47,7 +50,7 @@ class UserServiceTest {
         def matcher = StepVerifier.create(result)
 
         matcher.assertNext({ user ->
-            assertEquals(userParams.name, user.name)
+            assertEquals(userParams.name, user.person.name)
             assertEquals(userParams.email, user.email)
             assertEquals(PASSWORD_HASH, user.passwordHash)
         })
@@ -56,7 +59,7 @@ class UserServiceTest {
 
     @Test
     void "when saving user with non unique email exception should be thrown"() {
-        when(userRepo.save(any(UserEntity))).thenReturn(Mono.error(new DataIntegrityViolationException(null)))
+        when(userRepo.save(any(UserEntity))).thenReturn(Mono.error(new DuplicateKeyException(null)))
 
         def result = StepVerifier.create(underTest.registerNewUser(new NewUserDTO(userParams)))
         result.expectError(EmailNotUniqueException)
@@ -67,13 +70,15 @@ class UserServiceTest {
     void shouldReturnFoundByEmailUser() {
         def params = userParams
         params.remove("password")
-        when(userRepo.findByEmail(userParams.email)) thenReturn(Mono.just(new UserEntity(params)))
+        when(userRepo.findByEmail(userParams.email)) thenReturn(
+                Mono.just(new UserEntity(person: new PersonEntity(name: userParams.name), email: userParams.email))
+        )
 
         def result = underTest.getByEmail(userParams.email)
 
         StepVerifier.create(result)
                     .assertNext({ user ->
-            assertEquals(userParams.name, user.name)
+            assertEquals(userParams.name, user.person.name)
             assertEquals(userParams.email, user.email)
         })
     }
