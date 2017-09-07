@@ -1,8 +1,6 @@
 package com.receiptshares
 
 import com.receiptshares.user.dao.PersonEntity
-import com.receiptshares.user.dao.UserEntity
-import com.receiptshares.user.model.User
 import com.receiptshares.user.registration.NewUserDTO
 import org.junit.jupiter.api.Test
 
@@ -13,10 +11,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 
 class DuckTypeConversionTest {
 
-    def dto =  new NewUserDTO(avatarUrl: randomUUID().toString(), name: randomUUID().toString(), password: randomUUID().toString())
+    def dto = new NewUserDTO(avatarUrl: randomUUID().toString(), name: randomUUID().toString(), password: randomUUID().toString())
 
     @Test
-    void "should copying all common properties"(){
+    void "should copying all common properties"() {
         def entity = dto as PersonEntity
         assertThat(entity.name).isEqualTo(dto.name)
         assertThat(entity.avatarUrl).isEqualTo(dto.avatarUrl)
@@ -54,8 +52,10 @@ class DuckTypeConversionTest {
     }
 
     @Test
-    void "shoud set long to big int"() {
-
+    void "should map collections"() {
+        def result = new AWithCollection(collection: [new InnerA(str: "test")]) as BWithCollection
+        assertThat(result.collection).isNotEmpty()
+        assertThat(result.collection[0].class).isEqualTo(InnerB)
     }
 
 }
@@ -92,4 +92,13 @@ class LongId implements DuckTypeConversion {
 
 class BigIntId implements DuckTypeConversion {
     String id
+}
+
+class AWithCollection implements DuckTypeConversion {
+    Set<InnerA> collection
+}
+
+class BWithCollection implements DuckTypeConversion {
+    @DuckTypeCollectionMapping(itemType = InnerB)
+    Set<InnerB> collection
 }
