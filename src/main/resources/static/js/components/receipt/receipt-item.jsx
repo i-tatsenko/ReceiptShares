@@ -28,7 +28,7 @@ export class OwnReceiptItem extends React.Component {
                     open={this.state.showItemDeletedMessage}
                     message={this.state.itemDeletedMessage}
                     action="undo"
-                    onActionTouchTap={() => this.undoDelete()}
+                    onActionTouchTap={() => this.undoDelete(this.props.receipt.id, this.state.deletedItemId)}
                     onRequestClose={() => this.setState({showItemDeletedMessage: false})}
                 />
             </div>
@@ -62,15 +62,19 @@ export class OwnReceiptItem extends React.Component {
     deleteItem(receiptId, orderedItem) {
         let itemId = orderedItem.id;
         this.setState({
-            waitingForResult: true,
-            deletedItemId: itemId,
-            itemDeletedMessage: `1 ${orderedItem.item.name} was removed.`,
-            showItemDeletedMessage: true
+            waitingForResult: true
         });
         $.ajax({
             url: `/v1/receipt/${receiptId}/item/${itemId}`,
             method: "DELETE",
-            success: () => this.orderedItemsUpdated()
+            success: () => {
+                this.setState({
+                    deletedItemId: itemId,
+                    itemDeletedMessage: `1 ${orderedItem.item.name} was removed.`,
+                    showItemDeletedMessage: true
+                });
+                this.orderedItemsUpdated();
+            }
         })
     }
 
@@ -80,8 +84,13 @@ export class OwnReceiptItem extends React.Component {
         }
     }
 
-    undoDelete() {
-
+    undoDelete(receiptId, orderedItemId) {
+        this.setState({
+            showItemDeletedMessage: false,
+            itemDeletedMessage: "",
+            deletedItemId: ""
+        });
+        $.post(`/v1/receipt/${receiptId}/item/${orderedItemId}/restore`).done(() => this.props.shouldUpdate());
     }
 }
 

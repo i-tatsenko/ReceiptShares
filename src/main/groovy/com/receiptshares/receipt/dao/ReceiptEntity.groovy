@@ -5,9 +5,10 @@ import com.receiptshares.user.dao.PersonEntity
 import groovy.transform.CompileStatic
 import groovy.transform.builder.Builder
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document
+@Document(collection = "receipts")
 @CompileStatic
 @Builder
 class ReceiptEntity implements ReceiptConverter {
@@ -17,8 +18,10 @@ class ReceiptEntity implements ReceiptConverter {
     String name
     PlaceEntity place
     PersonEntity owner
-    Set<PersonEntity> members
-    Set<OrderedItemEntity> orderedItems
+    @DBRef
+    List<PersonEntity> members
+    @DBRef
+    List<OrderedItemEntity> orderedItems
     String status
 
 }

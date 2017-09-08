@@ -54,12 +54,18 @@ class ReceiptController {
     @PostMapping("/{receiptId}/item/{orderedItemId}/duplicate")
     Mono<OrderedItem> addItem(Authentication auth,
                               @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
-        return receiptService.addItem(auth.principal.person.id as String, receiptId, itemId)
+        return receiptService.duplicateOrderedItem(auth.principal.person.id as String, receiptId, itemId)
     }
 
     @DeleteMapping("/{receiptId}/item/{orderedItemId}")
-    Mono<Receipt> deleteItem(Authentication auth,
+    Mono<Void> deleteItem(Authentication auth,
                              @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
-        return receiptService.deleteItem(auth.principal.person.id as String, receiptId, itemId)
+        return receiptService.deleteOrderedItem(auth.principal.person.id as String, receiptId, itemId)
+    }
+
+    @PostMapping("/{receiptId}/item/{orderedItemId}/restore")
+    Mono<Void> restoreOrderedItem(Authentication auth,
+                                  @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
+        return receiptService.restoreOrderedItem(auth.principal.person.id as String, receiptId, itemId)
     }
 }

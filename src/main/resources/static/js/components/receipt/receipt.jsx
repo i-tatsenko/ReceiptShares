@@ -5,9 +5,19 @@ import Divider from "material-ui/Divider";
 import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
 import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
-import "./receipt.css";
+import FlatButton from 'material-ui/FlatButton';
 import CustomMenuItem from "../menu/custom-menu-item.jsx";
+import "./receipt.css";
+import {withRouter} from "react-router-dom";
 
+const NotFoundReceipt = withRouter(props => {
+    return (
+        <div>
+            {"This receipt was not found on the server ;("}
+            <FlatButton secondary={true} label="Return" onTouchTap={() => props.history.push("/")}/>
+        </div>
+    )
+});
 
 export default class Receipt extends React.Component {
 
@@ -16,6 +26,7 @@ export default class Receipt extends React.Component {
         this.state = {
             rec: null,
             addNewItemPopupOpened: false,
+            notFoundError: false
         };
 
         this.additionalAction = <CustomMenuItem label="Add new item" action={() => this.setState({addNewItemPopupOpened: true})}/>
@@ -26,6 +37,9 @@ export default class Receipt extends React.Component {
     }
 
     render() {
+        if (this.state.notFoundError) {
+            return (<NotFoundReceipt/>);
+        }
         let receipt = this.state.rec;
         if (!receipt) {
             return (<WaitingData/>);
@@ -105,7 +119,7 @@ export default class Receipt extends React.Component {
         $.get('/v1/receipt/' + this.props.match.params.id, resp => {
             this.setState({rec: resp});
             storage.screenTitle(resp.name)
-        });
+        }).fail(() => this.setState({notFoundError: true}));
     }
 
     componentDidMount() {

@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @CompileStatic
 @ToString
-@Document
+@Document(collection = "users")
 class UserEntity {
 
     @Id

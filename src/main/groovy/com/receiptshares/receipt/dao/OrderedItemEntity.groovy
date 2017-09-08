@@ -5,12 +5,14 @@ import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.user.dao.PersonEntity
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
+import groovy.transform.ToString
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document
+@Document(collection = "orderedItems")
 @CompileStatic
 @InheritConstructors
+@ToString
 class OrderedItemEntity implements DuckTypeConversion {
 
     @Id

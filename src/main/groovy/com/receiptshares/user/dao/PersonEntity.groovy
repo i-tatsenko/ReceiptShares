@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @CompileStatic
 @ToString
-@Document
+@Document(collection = "persons")
 class PersonEntity implements DuckTypeConversion {
 
     @Id

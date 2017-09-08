@@ -4,7 +4,7 @@ import com.receiptshares.DuckTypeConversion
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document
+@Document(collection = "items")
 class ItemEntity implements DuckTypeConversion {
 
     @Id
