@@ -19,7 +19,6 @@ import java.util.function.Function
 import java.util.function.Predicate
 
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
-import static java.util.Collections.singleton
 
 @Component
 @Slf4j
@@ -43,52 +42,52 @@ class ReceiptService {
 
     Flux<Receipt> receiptsForUser(String ownerId) {
         return receiptRepository.findAllActiveReceipts(ownerId)
-                .map { it as Receipt }
+                                .map { it as Receipt }
     }
 
     Mono<Receipt> createNewReceipt(String placeName, String ownerId, String name, Collection<String> memberIds) {
         //TODO find place in DB
         Mono<PersonEntity> ownerMono = personRepository.findById(ownerId)
         Mono<List<PersonEntity>> members = personRepository.findAllById(memberIds)
-                .collectList()
+                                                           .collectList()
         Mono<PlaceEntity> place = placeRepository.save(new PlaceEntity(name: placeName, authorId: ownerId))
         return Mono.when(ownerMono, members, place, Mono.just(name))
-                .map({ buildReceipt(it) })
-                .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
-                .map({ it as Receipt })
+                   .map({ buildReceipt(it) })
+                   .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
+                   .map({ it as Receipt })
     }
 
     private ReceiptEntity buildReceipt(Tuple4<PersonEntity, List<PersonEntity>, PlaceEntity, String> ownerMembersAndPlaceAndName) {
         return ReceiptEntity.builder()
-                .owner(ownerMembersAndPlaceAndName.t1)
-                .place(ownerMembersAndPlaceAndName.t3)
-                .status(ACTIVE.toString())
-                .name(ownerMembersAndPlaceAndName.t4)
-                .members(new ArrayList<PersonEntity>(ownerMembersAndPlaceAndName.t2))
-                .orderedItems(Collections.emptyList())
-                .build()
+                            .owner(ownerMembersAndPlaceAndName.t1)
+                            .place(ownerMembersAndPlaceAndName.t3)
+                            .status(ACTIVE.toString())
+                            .name(ownerMembersAndPlaceAndName.t4)
+                            .members(new ArrayList<PersonEntity>(ownerMembersAndPlaceAndName.t2))
+                            .orderedItems(Collections.emptyList())
+                            .build()
     }
 
     Mono<Receipt> findById(String id) {
         //TODO check security
         receiptRepository.findById(id)
-                .map({ it as Receipt })
-                .switchIfEmpty(Mono.error(new ReceiptNotFoundException()))
+                         .map({ it as Receipt })
+                         .switchIfEmpty(Mono.error(new ReceiptNotFoundException()))
     }
 
     Mono<OrderedItem> createNewItem(String ownerId, String receiptId, String name, Double price) {
         //TODO check security
         //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
-                .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) } as Function)
-                .map({ it as OrderedItem })
+                             .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+                             .map({ it as OrderedItem })
     }
 
     Mono<OrderedItem> duplicateOrderedItem(String ownerId, String receiptId, String orderedItemId) {
         return orderItemRepository.findById(orderedItemId)
-                .map({ it.item })
-                .flatMap({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
-                .map({ it as OrderedItem })
+                                  .map({ it.item })
+                                  .flatMap({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+                                  .map({ it as OrderedItem })
     }
 
     Mono<Void> deleteOrderedItem(String ownerId, String receiptId, String orderedItemId) {
@@ -113,11 +112,11 @@ class ReceiptService {
 
     private Mono<OrderedItemEntity> updateOrderedItemStatus(String receiptId, Predicate<OrderedItemEntity> orderedItemPredicate, ItemStatus newStatus) {
         receiptRepository.findById(receiptId)
-                .flatMap({ receipt -> updateOrderedItem(receipt, orderedItemPredicate) })
-                .doOnNext({ receiptAndFountItem -> receiptAndFountItem.second.status = newStatus.toString() })
-                .flatMap({ receiptAndFountItem ->
+                         .flatMap({ receipt -> updateOrderedItem(receipt, orderedItemPredicate) })
+                         .doOnNext({ receiptAndFountItem -> receiptAndFountItem.second.status = newStatus.toString() })
+                         .flatMap({ receiptAndFountItem ->
             receiptRepository.save(receiptAndFountItem.first)
-                    .then(Mono.just(receiptAndFountItem.second))
+                             .then(Mono.just(receiptAndFountItem.second))
         })
     }
 
@@ -132,12 +131,12 @@ class ReceiptService {
 
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {
         Mono<OrderedItemEntity> orderedItem = personRepository.findById(ownerId)
-                .map({ owner -> new OrderedItemEntity(owner, item) })
-                .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) })
+                                                              .map({ owner -> new OrderedItemEntity(owner, item) })
+                                                              .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) })
         Mono<ReceiptEntity> receipt = receiptRepository.findById(receiptId)
 
         return Mono.when(receipt, orderedItem)
-                .flatMap({ receiptAndItem ->
+                   .flatMap({ receiptAndItem ->
             if (receiptAndItem.t1.orderedItems == null) {
                 receiptAndItem.t1.orderedItems = new ArrayList<>()
             }
@@ -145,6 +144,6 @@ class ReceiptService {
             receiptAndItem.t1.orderedItems << receiptAndItem.t2
             return receiptRepository.save(receiptAndItem.t1)
         })
-                .then(orderedItem)
+                   .then(orderedItem)
     }
 }
