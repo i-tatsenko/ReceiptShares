@@ -1,6 +1,10 @@
 package com.receiptshares.receipt
 
 import com.receiptshares.receipt.dao.*
+import com.receiptshares.receipt.dao.repository.ItemRepository
+import com.receiptshares.receipt.dao.repository.OrderItemRepository
+import com.receiptshares.receipt.dao.repository.PlaceRepository
+import com.receiptshares.receipt.dao.repository.ReceiptRepository
 import com.receiptshares.receipt.exception.OrderedItemNotFound
 import com.receiptshares.receipt.exception.ReceiptNotFoundException
 import com.receiptshares.receipt.model.ItemStatus
@@ -79,7 +83,7 @@ class ReceiptService {
         //TODO check security
         //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
-                             .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) } as Function)
+                             .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) })
                              .map({ it as OrderedItem })
     }
 
@@ -133,17 +137,9 @@ class ReceiptService {
         Mono<OrderedItemEntity> orderedItem = personRepository.findById(ownerId)
                                                               .map({ owner -> new OrderedItemEntity(owner, item) })
                                                               .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) })
-        Mono<ReceiptEntity> receipt = receiptRepository.findById(receiptId)
+                                                              .cache()
 
-        return Mono.when(receipt, orderedItem)
-                   .flatMap({ receiptAndItem ->
-            if (receiptAndItem.t1.orderedItems == null) {
-                receiptAndItem.t1.orderedItems = new ArrayList<>()
-            }
-            log.info("Adding ordered item: " + receiptAndItem.t2)
-            receiptAndItem.t1.orderedItems << receiptAndItem.t2
-            return receiptRepository.save(receiptAndItem.t1)
-        })
-                   .then(orderedItem)
+        return orderedItem.flatMap({ receiptRepository.addOrderedItem(receiptId, it) })
+                          .then(orderedItem)
     }
 }

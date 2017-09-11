@@ -53,12 +53,5 @@ public class DataAccessConfiguration extends AbstractReactiveMongoConfiguration 
         return new MongoTemplate(new SimpleMongoDbFactory(new MongoClientURI(mongoUrl + '/' + getDatabaseName())));
     }
 
-    @Override
-    public MappingMongoConverter mappingMongoConverter() throws ClassNotFoundException {
-        MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory()), mongoMappingContext());
-        converter.setCustomConversions(this.customConversions());
-        return converter;
-    }
-
 
 }

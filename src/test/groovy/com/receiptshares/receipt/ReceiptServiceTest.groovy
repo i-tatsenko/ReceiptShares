@@ -1,10 +1,10 @@
 package com.receiptshares.receipt
 
 import com.receiptshares.MockitoExtension
-import com.receiptshares.receipt.dao.ItemRepository
-import com.receiptshares.receipt.dao.OrderItemRepository
+import com.receiptshares.receipt.dao.repository.ItemRepository
+import com.receiptshares.receipt.dao.repository.OrderItemRepository
 import com.receiptshares.receipt.dao.ReceiptEntity
-import com.receiptshares.receipt.dao.ReceiptRepository
+import com.receiptshares.receipt.dao.repository.ReceiptRepository
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.UserRepository
 import com.receiptshares.user.model.User

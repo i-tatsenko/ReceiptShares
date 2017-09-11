@@ -16,7 +16,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
+//TODO: migrate to reactive configuration https://github.com/spring-projects/spring-security/blob/5.0.0.M1/samples/javaconfig/hellowebflux/src/main/java/sample/Application.java
     private final UserDetailsService userDetailsService;
 
     @Autowired

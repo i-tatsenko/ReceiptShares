@@ -18,9 +18,7 @@ class ReceiptEntity implements ReceiptConverter {
     String name
     PlaceEntity place
     PersonEntity owner
-    @DBRef
     List<PersonEntity> members
-    @DBRef
     List<OrderedItemEntity> orderedItems
     String status
 
