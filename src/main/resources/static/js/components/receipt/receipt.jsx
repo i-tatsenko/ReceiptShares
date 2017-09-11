@@ -9,6 +9,7 @@ import FlatButton from 'material-ui/FlatButton';
 import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import "./receipt.css";
 import {withRouter} from "react-router-dom";
+import Snackbar from 'material-ui/Snackbar';
 
 const NotFoundReceipt = withRouter(props => {
     return (
@@ -26,7 +27,11 @@ export default class Receipt extends React.Component {
         this.state = {
             rec: null,
             addNewItemPopupOpened: false,
-            notFoundError: false
+            notFoundError: false,
+            showItemDeletedMessage: false,
+            itemDeletedMessage: "",
+            deletedItemId: "",
+            itemsIdWithPendingChange: []
         };
 
         this.additionalAction = <CustomMenuItem label="Add new item" action={() => this.setState({addNewItemPopupOpened: true})}/>
@@ -68,6 +73,13 @@ export default class Receipt extends React.Component {
                               opened={this.state.addNewItemPopupOpened}
                               closed={this.closeAddNewItemPopup.bind(this)}
                               receiptId={this.state.rec.id}/>
+                <Snackbar
+                    open={this.state.showItemDeletedMessage}
+                    message={this.state.itemDeletedMessage}
+                    action="undo"
+                    onActionTouchTap={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}
+                    onRequestClose={() => this.setState({showItemDeletedMessage: false})}
+                />
             </section>);
     }
 
@@ -103,8 +115,12 @@ export default class Receipt extends React.Component {
         return items.map(item => {
                         if (this.currentUsersOrderedItem(item)) {
                             console.log(item);
-                            return <OwnReceiptItem item={item} receipt={this.state.rec}
-                                                   shouldUpdate={() => this.getReceiptFromServer()}/>;
+                            return <OwnReceiptItem item={item}
+                                                   receipt={this.state.rec}
+                                                   changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
+                                                   cloneItem={this.cloneItem.bind(this)}
+                                                   deleteItem={this.deleteItem.bind(this)}
+                            />;
                         }
                         else
                             return <ReceiptItem item={item} receipt={this.state.rec} />;
@@ -129,5 +145,56 @@ export default class Receipt extends React.Component {
 
     componentWillUnmount() {
         storage.removeAddActionButtonMenuItem(this.additionalAction);
+    }
+
+    cloneItem(receiptId, itemId) {
+        this.markItemAsPendingForChange(itemId);
+        $.post(`/v1/receipt/${receiptId}/item/${itemId}/duplicate`).done(() => {
+            this.unMarkItemAsPendingForChange(itemId);
+            this.getReceiptFromServer();
+        });
+    }
+
+    deleteItem(receiptId, orderedItem) {
+        let itemId = orderedItem.id;
+        this.markItemAsPendingForChange(itemId);
+        $.ajax({
+            url: `/v1/receipt/${receiptId}/item/${itemId}`,
+            method: "DELETE",
+            success: () => {
+                this.setState({
+                    deletedItemId: itemId,
+                    itemDeletedMessage: `1 ${orderedItem.item.name} was removed.`,
+                    showItemDeletedMessage: true
+                });
+                this.unMarkItemAsPendingForChange(itemId);
+                this.getReceiptFromServer();
+            }
+        })
+    }
+
+    markItemAsPendingForChange(itemId) {
+        this.setState(prevState => ({itemsIdWithPendingChange: [...prevState.itemsIdWithPendingChange, itemId]}))
+    }
+
+    unMarkItemAsPendingForChange(itemId) {
+        //TODO mark item as pending change was done after full update only
+        this.setState(prevState => {
+            let index = prevState.itemsIdWithPendingChange.indexOf(itemId);
+            if (index !== -1) {
+                return {
+                    markItemAsPendingForChange: prevState.itemsIdWithPendingChange.splice(index, 1)
+                }
+            }
+        })
+    }
+
+    undoDelete(receiptId, orderedItemId) {
+        this.setState({
+            showItemDeletedMessage: false,
+            itemDeletedMessage: "",
+            deletedItemId: ""
+        });
+        $.post(`/v1/receipt/${receiptId}/item/${orderedItemId}/restore`).done(() => this.getReceiptFromServer());
     }
 }

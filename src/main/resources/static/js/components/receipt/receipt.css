@@ -15,7 +15,7 @@
     padding-top: 10px;
 }
 
-.receipt-header__spending>div:after {
+.receipt-header__spending > div:after {
     content: "";
     clear: both;
     display: table;
