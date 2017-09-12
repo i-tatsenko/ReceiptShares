@@ -110,6 +110,31 @@ class ReceiptService {
 
     }
 
+    Mono<Void> cloneItem(String ownerId, String receiptId, String cloneSourceId) {
+        //TODO check security
+        Mono<ReceiptEntity> receipt = receiptRepository.findById(receiptId)
+                                                       .switchIfEmpty(Mono.error(new ReceiptNotFoundException()))
+        Mono<OrderedItemEntity> orderedItem = orderItemRepository.findById(cloneSourceId)
+                                                                 .switchIfEmpty(Mono.error(new OrderedItemNotFound()))
+        return Mono.when(receipt, orderedItem)
+                   .flatMap({ createOrIncrementOrderedItem(ownerId, it.t1, it.t2) })
+    }
+
+    private Mono<Void> createOrIncrementOrderedItem(String ownerId, ReceiptEntity receipt, OrderedItemEntity orderedItem) {
+        String existingOrderedItemId = userHaveAlreadyOrderedItem(ownerId, receipt, orderedItem.item)
+        if (existingOrderedItemId) {
+            return incrementOrderedItem(ownerId, receipt.id, existingOrderedItemId, true).then()
+        } else {
+            return createOrderedItem(ownerId, orderedItem.item, receipt.id).then()
+        }
+    }
+
+    private String userHaveAlreadyOrderedItem(String ownerId, ReceiptEntity receipt, ItemEntity item) {
+        return receipt.orderedItems.find({
+            it.owner.id == ownerId && it.item.id == item.id && it.status == ItemStatus.ACTIVE.toString()
+        })?.id
+    }
+
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {
         Mono<OrderedItemEntity> orderedItem = personRepository.findById(ownerId)
                                                               .map({ owner -> new OrderedItemEntity(owner, item) })

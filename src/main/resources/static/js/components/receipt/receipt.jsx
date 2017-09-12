@@ -95,17 +95,24 @@ export default class Receipt extends React.Component {
         let myItems = items.filter(Receipt.currentUsersOrderedItem)
                            .map(item => <OwnReceiptItem item={item}
                                                         receipt={this.state.rec}
-                                                        changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
-                                                        cloneItem={this.cloneItem.bind(this)}
+                                                        changePending={this.changeIsPendingForItem(item)}
+                                                        incrementItem={this.incrementItemCount.bind(this)}
                                                         deleteItem={this.deleteItem.bind(this)}/>);
 
         let otherItems = items.filter(item => !Receipt.currentUsersOrderedItem(item))
-                              .map(item => <ReceiptItem item={item} receipt={this.state.rec}/>);
+                              .map(item => <ReceiptItem item={item} receipt={this.state.rec}
+                                                        cloneItem={this.cloneItem.bind(this)}
+                                                        changePending={this.changeIsPendingForItem(item)}
+                              />);
         return {myItems, otherItems}
     }
 
     static currentUsersOrderedItem(item) {
         return item.owner.id === storage.getState().user.id
+    }
+
+    changeIsPendingForItem(item) {
+        return this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1;
     }
 
     getReceiptFromServer(callback) {
@@ -125,7 +132,7 @@ export default class Receipt extends React.Component {
         storage.removeAddActionButtonMenuItem(this.additionalAction);
     }
 
-    cloneItem(receiptId, itemId) {
+    incrementItemCount(receiptId, itemId) {
         this.markItemAsPendingForChange(itemId);
         $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment`).done(() =>
             this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId))
@@ -148,6 +155,13 @@ export default class Receipt extends React.Component {
                 });
             }
         );
+    }
+
+    cloneItem(receiptId, itemId) {
+        this.markItemAsPendingForChange(itemId);
+        $.post(`/v1/receipt/${receiptId}/item/${itemId}/clone`).done(() => {
+            this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId))
+        })
     }
 
     markItemAsPendingForChange(itemId) {

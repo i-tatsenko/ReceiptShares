@@ -67,4 +67,11 @@ class ReceiptController {
                                   @PathVariable("orderedItemId") String itemId) {
         return receiptService.restoreOrderedItem(auth.principal.person.id as String, receiptId, itemId)
     }
+
+    @PostMapping("/{receiptId}/item/{orderedItemId}/clone")
+    Mono<Void> cloneItem(Authentication auth,
+                                               @PathVariable("receiptId") String receiptId,
+                                               @PathVariable("orderedItemId") String orderedItemId) {
+        return receiptService.cloneItem(auth.principal.person.id, receiptId, orderedItemId)
+    }
 }
