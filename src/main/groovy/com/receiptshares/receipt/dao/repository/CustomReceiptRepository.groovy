@@ -12,8 +12,8 @@ interface CustomReceiptRepository {
      *
      * @return {@code true} in case the last item was removed
      */
-    Mono<Boolean> incrementOrderedItemAmount(String ownerId, String receiptId, String orderedItemId, boolean increment)
+    Mono<Boolean> incrementOrderedItemAmount(String receiptId, String orderedItemId, boolean increment)
 
-    Mono<Void> changeOrderedItemStatus(String ownerId, String receiptId, String orderedItemId, ItemStatus status)
+    Mono<Void> changeOrderedItemStatus(String receiptId, String orderedItemId, ItemStatus status)
 
 }

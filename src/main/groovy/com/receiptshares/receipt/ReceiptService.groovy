@@ -22,6 +22,7 @@ import reactor.util.function.Tuple4
 import java.util.function.Function
 import java.util.function.Predicate
 
+
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
 
 @Component
@@ -88,7 +89,8 @@ class ReceiptService {
     }
 
     Mono<Boolean> incrementOrderedItem(String ownerId, String receiptId, String orderedItemId, boolean isIncrement) {
-        return receiptRepository.incrementOrderedItemAmount(ownerId, receiptId, orderedItemId, isIncrement)
+        //TODO check security
+        return receiptRepository.incrementOrderedItemAmount(receiptId, orderedItemId, isIncrement)
                                 .flatMap({ result ->
             if (result) {
                 return orderItemRepository.changeStatus(orderedItemId, ItemStatus.DELETED)
@@ -101,36 +103,11 @@ class ReceiptService {
     }
 
     Mono<Void> restoreOrderedItem(String ownerId, String receiptId, String orderedItemId) {
-        return updateOrderedItemStatus(receiptId, byId(orderedItemId).and(byOwner(ownerId)), ItemStatus.ACTIVE)
-                .flatMap({ orderItemRepository.save(it) })
-                .then()
-    }
+        //TODO check security
+        return Mono.when(receiptRepository.changeOrderedItemStatus(receiptId, orderedItemId, ItemStatus.ACTIVE),
+                orderItemRepository.changeStatus(orderedItemId, ItemStatus.ACTIVE))
+                   .then()
 
-    private static Predicate<OrderedItemEntity> byId(String id) {
-        return { it.id == id }
-    }
-
-    private static Predicate<OrderedItemEntity> byOwner(String ownerId) {
-        return { it.owner.id == ownerId }
-    }
-
-    private Mono<OrderedItemEntity> updateOrderedItemStatus(String receiptId, Predicate<OrderedItemEntity> orderedItemPredicate, ItemStatus newStatus) {
-        receiptRepository.findById(receiptId)
-                         .flatMap({ receipt -> findOrderedItem(receipt, orderedItemPredicate) })
-                         .doOnNext({ receiptAndFountItem -> receiptAndFountItem.second.status = newStatus.toString() })
-                         .flatMap({ receiptAndFountItem ->
-            receiptRepository.save(receiptAndFountItem.first)
-                             .then(Mono.just(receiptAndFountItem.second))
-        })
-    }
-
-    private Mono<Tuple2<ReceiptEntity, OrderedItemEntity>> findOrderedItem(ReceiptEntity receipt, Predicate<OrderedItemEntity> itemPredicate) {
-        OrderedItemEntity orderedItem = receipt.orderedItems.find(itemPredicate.&test)
-        if (orderedItem) {
-            return Mono.just(new Tuple2<ReceiptEntity, OrderedItemEntity>(receipt, orderedItem))
-        } else {
-            return Mono.error(new OrderedItemNotFound())
-        }
     }
 
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {

@@ -34,10 +34,10 @@ class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
     }
 
     @Override
-    Mono<Boolean> incrementOrderedItemAmount(String ownerId, String receiptId, String orderedItemId, boolean isIncrement = true) {
+    Mono<Boolean> incrementOrderedItemAmount(String receiptId, String orderedItemId, boolean isIncrement = true) {
         Update update = new Update().inc('orderedItems.$.count', isIncrement ? 1 : -1)
 
-        def receiptFindCriteria = receiptFindCriteria(ownerId, receiptId)
+        def receiptFindCriteria = where("_id").is(receiptId)
 
         Query q
         if (!isIncrement) {
@@ -49,21 +49,17 @@ class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
         return mongoOperations.updateFirst(q, update, ReceiptEntity)
                               .flatMap({ result ->
             if (result.modifiedCount == 0 && !isIncrement) {
-                return changeOrderedItemStatus(ownerId, receiptId, orderedItemId, ItemStatus.DELETED).then(Mono.just(true))
+                return changeOrderedItemStatus(receiptId, orderedItemId, ItemStatus.DELETED).then(Mono.just(true))
             }
             return Util.expectSingleUpdateResult(result).then(Mono.just(false))
         })
     }
 
     @Override
-    Mono<Void> changeOrderedItemStatus(String ownerId, String receiptId, String orderedItemId, ItemStatus status) {
-        def q = query(receiptFindCriteria(ownerId, receiptId).and("orderedItems._id").is(new ObjectId(orderedItemId)))
+    Mono<Void> changeOrderedItemStatus(String receiptId, String orderedItemId, ItemStatus status) {
+        def q = query(where("_id").is(receiptId).and("orderedItems._id").is(new ObjectId(orderedItemId)))
         mongoOperations.updateFirst(q, new Update().set('orderedItems.$.status', status.toString()), ReceiptEntity)
                        .flatMap(Util.&expectSingleUpdateResult)
     }
 
-    private static Criteria receiptFindCriteria(String ownerId, String receiptId) {
-        return where("_id").is(new ObjectId(receiptId)).and("owner._id").is(new ObjectId(ownerId))
-
-    }
 }

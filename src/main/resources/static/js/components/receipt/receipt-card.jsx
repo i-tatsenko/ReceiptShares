@@ -10,7 +10,7 @@ class ReceiptCard extends React.Component {
     render() {
         let receipt = this.props.receipt;
         let total = receipt.total;
-        let mySpending = receipt.totalsPerMember[storage.getState().user.id];
+        let mySpending = receipt.totalsPerMember[storage.getState().user.id] || 0;
         let members = receipt.members.length === 0 ? "" :
             <section>
                 Members:

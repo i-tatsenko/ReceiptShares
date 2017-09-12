@@ -51,7 +51,7 @@ export default class Receipt extends React.Component {
             return (<WaitingData/>);
         }
         let total = receipt.total;
-        let mySpending = receipt.totalsPerMember[storage.getState().user.id];
+        let mySpending = receipt.totalsPerMember[storage.getState().user.id] || 0;
 
         return (
             <section className="receipt">

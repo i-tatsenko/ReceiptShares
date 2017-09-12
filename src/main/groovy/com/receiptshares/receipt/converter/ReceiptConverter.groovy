@@ -9,7 +9,7 @@ trait ReceiptConverter extends DuckTypeConversion {
     def asType(Class _class) {
         Receipt result = super.asType(_class) as Receipt
         result.orderedItems = result.orderedItems.findAll({it.status == ItemStatus.ACTIVE})
-        result.total = result.orderedItems.total.sum()
+        result.total = result.orderedItems ? result.orderedItems.total.sum() : 0
         result.totalsPerMember = result.orderedItems.groupBy({it.owner.id}).collectEntries {k,v-> [k, v.total.sum()]}
         return result
     }
