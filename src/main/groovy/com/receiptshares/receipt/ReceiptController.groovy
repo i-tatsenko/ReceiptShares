@@ -3,6 +3,7 @@ package com.receiptshares.receipt
 import com.receiptshares.receipt.model.OrderedItem
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.model.User
+import com.receiptshares.web.response.SimpleValueResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
@@ -51,21 +52,19 @@ class ReceiptController {
         return receiptService.createNewItem(user.person.id, receiptId, name, price)
     }
 
-    @PostMapping("/{receiptId}/item/{orderedItemId}/duplicate")
-    Mono<OrderedItem> addItem(Authentication auth,
-                              @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
-        return receiptService.duplicateOrderedItem(auth.principal.person.id as String, receiptId, itemId)
-    }
-
-    @DeleteMapping("/{receiptId}/item/{orderedItemId}")
-    Mono<Void> deleteItem(Authentication auth,
-                             @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
-        return receiptService.deleteOrderedItem(auth.principal.person.id as String, receiptId, itemId)
+    @PostMapping("/{receiptId}/item/{orderedItemId}/increment")
+    Mono<SimpleValueResponse<Boolean>> addItem(Authentication auth,
+                                               @PathVariable("receiptId") String receiptId,
+                                               @PathVariable("orderedItemId") String itemId,
+                                               @RequestParam(value = "amount", required = false, defaultValue = "1") int amount) {
+        return receiptService.incrementOrderedItem(auth.principal.person.id as String, receiptId, itemId, amount > 0)
+                             .map({ new SimpleValueResponse<>(it) })
     }
 
     @PostMapping("/{receiptId}/item/{orderedItemId}/restore")
     Mono<Void> restoreOrderedItem(Authentication auth,
-                                  @PathVariable("receiptId") String receiptId, @PathVariable("orderedItemId") String itemId) {
+                                  @PathVariable("receiptId") String receiptId,
+                                  @PathVariable("orderedItemId") String itemId) {
         return receiptService.restoreOrderedItem(auth.principal.person.id as String, receiptId, itemId)
     }
 }

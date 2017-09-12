@@ -20,10 +20,12 @@ class OrderedItemEntity implements DuckTypeConversion {
     PersonEntity owner
     ItemEntity item
     String status
+    int count
 
     OrderedItemEntity(PersonEntity owner, ItemEntity item) {
         this.owner = owner
         this.item = item
         this.status = ItemStatus.ACTIVE.toString()
+        this.count = 1
     }
 }

@@ -34,7 +34,8 @@ export default class Receipt extends React.Component {
             itemsIdWithPendingChange: []
         };
 
-        this.additionalAction = <CustomMenuItem label="Add new item" action={() => this.setState({addNewItemPopupOpened: true})}/>
+        this.additionalAction =
+            <CustomMenuItem label="Add new item" action={() => this.setState({addNewItemPopupOpened: true})}/>
     }
 
     closeAddNewItemPopup() {
@@ -79,6 +80,7 @@ export default class Receipt extends React.Component {
                     action="undo"
                     onActionTouchTap={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}
                     onRequestClose={() => this.setState({showItemDeletedMessage: false})}
+                    autoHideDuration={5000}
                 />
             </section>);
     }
@@ -98,43 +100,32 @@ export default class Receipt extends React.Component {
     }
 
     renderItems() {
-        let items = [];
-        for (let item of (this.state.rec.orderedItems || [])) {
-            let foundItem = items.find(present => present.owner.id === item.owner.id && present.item.id === item.item.id);
-            if (foundItem) {
-                foundItem.sum += foundItem.item.price;
-                foundItem.count++;
-                foundItem.orderedItemIds.push(item.id);
-            } else {
-                items.push(item);
-                item.sum = item.item.price;
-                item.count = 1;
-                item.orderedItemIds = [item.id]
-            }
-        }
+        let items = this.state.rec.orderedItems || [];
+        items.forEach(item => item.sum = item.item.price * item.count);
         return items.map(item => {
-                        if (this.currentUsersOrderedItem(item)) {
-                            console.log(item);
-                            return <OwnReceiptItem item={item}
-                                                   receipt={this.state.rec}
-                                                   changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
-                                                   cloneItem={this.cloneItem.bind(this)}
-                                                   deleteItem={this.deleteItem.bind(this)}
-                            />;
-                        }
-                        else
-                            return <ReceiptItem item={item} receipt={this.state.rec} />;
-                    })
+            if (this.currentUsersOrderedItem(item)) {
+                console.log(item);
+                return <OwnReceiptItem item={item}
+                                       receipt={this.state.rec}
+                                       changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
+                                       cloneItem={this.cloneItem.bind(this)}
+                                       deleteItem={this.deleteItem.bind(this)}
+                />;
+            }
+            else
+                return <ReceiptItem item={item} receipt={this.state.rec}/>;
+        })
     }
 
     currentUsersOrderedItem(item) {
         return item.owner.id === storage.getState().user.id
     }
 
-    getReceiptFromServer() {
+    getReceiptFromServer(callback) {
         $.get('/v1/receipt/' + this.props.match.params.id, resp => {
             this.setState({rec: resp});
-            storage.screenTitle(resp.name)
+            storage.screenTitle(resp.name);
+            callback && callback();
         }).fail(() => this.setState({notFoundError: true}));
     }
 
@@ -149,28 +140,27 @@ export default class Receipt extends React.Component {
 
     cloneItem(receiptId, itemId) {
         this.markItemAsPendingForChange(itemId);
-        $.post(`/v1/receipt/${receiptId}/item/${itemId}/duplicate`).done(() => {
-            this.unMarkItemAsPendingForChange(itemId);
-            this.getReceiptFromServer();
-        });
+        $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment`).done(() =>
+            this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId))
+        );
     }
 
     deleteItem(receiptId, orderedItem) {
         let itemId = orderedItem.id;
         this.markItemAsPendingForChange(itemId);
-        $.ajax({
-            url: `/v1/receipt/${receiptId}/item/${itemId}`,
-            method: "DELETE",
-            success: () => {
-                this.setState({
-                    deletedItemId: itemId,
-                    itemDeletedMessage: `1 ${orderedItem.item.name} was removed.`,
-                    showItemDeletedMessage: true
+        $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment?amount=-1`).done(data => {
+                this.getReceiptFromServer(() => {
+                    if (data.value) {
+                        this.setState({
+                            deletedItemId: itemId,
+                            itemDeletedMessage: `${orderedItem.item.name} was removed.`,
+                            showItemDeletedMessage: true
+                        });
+                    }
+                    this.unMarkItemAsPendingForChange(itemId);
                 });
-                this.unMarkItemAsPendingForChange(itemId);
-                this.getReceiptFromServer();
             }
-        })
+        );
     }
 
     markItemAsPendingForChange(itemId) {

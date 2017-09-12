@@ -11,5 +11,6 @@ class OrderedItem implements DuckTypeConversion {
     Person owner
     Item item
     ItemStatus status
+    int count
 
 }

@@ -87,17 +87,17 @@ class ReceiptService {
                              .map({ it as OrderedItem })
     }
 
-    Mono<OrderedItem> duplicateOrderedItem(String ownerId, String receiptId, String orderedItemId) {
-        return orderItemRepository.findById(orderedItemId)
-                                  .map({ it.item })
-                                  .flatMap({ ItemEntity item -> createOrderedItem(ownerId, item, receiptId) } as Function)
-                                  .map({ it as OrderedItem })
-    }
-
-    Mono<Void> deleteOrderedItem(String ownerId, String receiptId, String orderedItemId) {
-        return updateOrderedItemStatus(receiptId, byId(orderedItemId).and(byOwner(ownerId)), ItemStatus.DELETED)
-                .flatMap({ orderItemRepository.deleteById(it.id) })
-
+    Mono<Boolean> incrementOrderedItem(String ownerId, String receiptId, String orderedItemId, boolean isIncrement) {
+        return receiptRepository.incrementOrderedItemAmount(ownerId, receiptId, orderedItemId, isIncrement)
+                                .flatMap({ result ->
+            if (result) {
+                return orderItemRepository.changeStatus(orderedItemId, ItemStatus.DELETED)
+                                          .then(Mono.just(result))
+            } else {
+                return orderItemRepository.incrementCount(orderedItemId, isIncrement ? 1 : -1)
+                                          .then(Mono.just(result))
+            }
+        })
     }
 
     Mono<Void> restoreOrderedItem(String ownerId, String receiptId, String orderedItemId) {

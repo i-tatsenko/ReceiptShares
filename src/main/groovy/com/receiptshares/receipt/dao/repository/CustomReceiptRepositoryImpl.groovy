@@ -1,9 +1,14 @@
 package com.receiptshares.receipt.dao.repository
 
-import com.mongodb.client.result.UpdateResult
+import com.receiptshares.Util
 import com.receiptshares.receipt.dao.OrderedItemEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
+import com.receiptshares.receipt.model.ItemStatus
+import groovy.util.logging.Slf4j
+import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.ReactiveMongoOperations
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -12,6 +17,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where
 import static org.springframework.data.mongodb.core.query.Query.query
 
 @Component
+@Slf4j
 class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
 
     final ReactiveMongoOperations mongoOperations
@@ -23,15 +29,41 @@ class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
     @Override
     Mono<Void> addOrderedItem(String receiptId, OrderedItemEntity orderedItem) {
         Update updateOperation = new Update().push("orderedItems", orderedItem)
-        mongoOperations.updateFirst(query(where("_id").is(receiptId)), updateOperation, ReceiptEntity)
-                       .flatMap(CustomReceiptRepositoryImpl.&expectSingleUpdateResult)
+        return mongoOperations.updateFirst(query(where("_id").is(receiptId)), updateOperation, ReceiptEntity)
+                              .flatMap(Util.&expectSingleUpdateResult)
     }
 
-    private static Mono<Void> expectSingleUpdateResult(UpdateResult updateResult) {
-        if (updateResult.modifiedCount == 1) {
-            return Mono.empty()
+    @Override
+    Mono<Boolean> incrementOrderedItemAmount(String ownerId, String receiptId, String orderedItemId, boolean isIncrement = true) {
+        Update update = new Update().inc('orderedItems.$.count', isIncrement ? 1 : -1)
+
+        def receiptFindCriteria = receiptFindCriteria(ownerId, receiptId)
+
+        Query q
+        if (!isIncrement) {
+            q = query(receiptFindCriteria.and("orderedItems").elemMatch(where("_id").is(new ObjectId(orderedItemId)).and("count").gt(1)))
         } else {
-            return Mono.error(new IllegalStateException("Expected only 1 receipt to be modified, but got: " + updateResult.modifiedCount))
+            q = query(receiptFindCriteria.and("orderedItems._id").is(new ObjectId(orderedItemId)))
         }
+        log.info(q.toString())
+        return mongoOperations.updateFirst(q, update, ReceiptEntity)
+                              .flatMap({ result ->
+            if (result.modifiedCount == 0 && !isIncrement) {
+                return changeOrderedItemStatus(ownerId, receiptId, orderedItemId, ItemStatus.DELETED).then(Mono.just(true))
+            }
+            return Util.expectSingleUpdateResult(result).then(Mono.just(false))
+        })
+    }
+
+    @Override
+    Mono<Void> changeOrderedItemStatus(String ownerId, String receiptId, String orderedItemId, ItemStatus status) {
+        def q = query(receiptFindCriteria(ownerId, receiptId).and("orderedItems._id").is(new ObjectId(orderedItemId)))
+        mongoOperations.updateFirst(q, new Update().set('orderedItems.$.status', status.toString()), ReceiptEntity)
+                       .flatMap(Util.&expectSingleUpdateResult)
+    }
+
+    private static Criteria receiptFindCriteria(String ownerId, String receiptId) {
+        return where("_id").is(new ObjectId(receiptId)).and("owner._id").is(new ObjectId(ownerId))
+
     }
 }
