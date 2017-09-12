@@ -1,6 +1,6 @@
 package com.receiptshares.receipt.dao
 
-import com.receiptshares.DuckTypeConversion
+import com.receiptshares.receipt.converter.OrderedItemConverter
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.user.dao.PersonEntity
 import groovy.transform.CompileStatic
@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @CompileStatic
 @InheritConstructors
 @ToString
-class OrderedItemEntity implements DuckTypeConversion {
+class OrderedItemEntity implements OrderedItemConverter {
 
     @Id
     String id

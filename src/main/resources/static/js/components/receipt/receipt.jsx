@@ -50,7 +50,8 @@ export default class Receipt extends React.Component {
         if (!receipt) {
             return (<WaitingData/>);
         }
-        let {total, mySpending} = this.calculateSpending();
+        let total = receipt.total;
+        let mySpending = receipt.totalsPerMember[storage.getState().user.id];
 
         return (
             <section className="receipt">
@@ -85,26 +86,11 @@ export default class Receipt extends React.Component {
             </section>);
     }
 
-    calculateSpending() {
-        let total = 0;
-        let mySpending = 0;
-        for (let item of (this.state.rec.orderedItems || [])) {
-            if (item.status === 'ACTIVE') {
-                if (item.owner.id === storage.getState().user.id) {
-                    mySpending += item.item.price;
-                }
-                total += item.item.price;
-            }
-        }
-        return {total, mySpending};
-    }
 
     renderItems() {
         let items = this.state.rec.orderedItems || [];
-        items.forEach(item => item.sum = item.item.price * item.count);
         return items.map(item => {
             if (this.currentUsersOrderedItem(item)) {
-                console.log(item);
                 return <OwnReceiptItem item={item}
                                        receipt={this.state.rec}
                                        changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
@@ -168,7 +154,6 @@ export default class Receipt extends React.Component {
     }
 
     unMarkItemAsPendingForChange(itemId) {
-        //TODO mark item as pending change was done after full update only
         this.setState(prevState => {
             let index = prevState.itemsIdWithPendingChange.indexOf(itemId);
             if (index !== -1) {

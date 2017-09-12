@@ -17,4 +17,6 @@ class Receipt implements DuckTypeConversion {
     @DuckTypeCollectionMapping(itemType = OrderedItem)
     Set<OrderedItem> orderedItems
     ReceiptStatus status
+    double total
+    Map<String, Double> totalsPerMember
 }

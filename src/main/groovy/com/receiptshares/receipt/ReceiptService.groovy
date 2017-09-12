@@ -116,7 +116,7 @@ class ReceiptService {
 
     private Mono<OrderedItemEntity> updateOrderedItemStatus(String receiptId, Predicate<OrderedItemEntity> orderedItemPredicate, ItemStatus newStatus) {
         receiptRepository.findById(receiptId)
-                         .flatMap({ receipt -> updateOrderedItem(receipt, orderedItemPredicate) })
+                         .flatMap({ receipt -> findOrderedItem(receipt, orderedItemPredicate) })
                          .doOnNext({ receiptAndFountItem -> receiptAndFountItem.second.status = newStatus.toString() })
                          .flatMap({ receiptAndFountItem ->
             receiptRepository.save(receiptAndFountItem.first)
@@ -124,7 +124,7 @@ class ReceiptService {
         })
     }
 
-    private Mono<Tuple2<ReceiptEntity, OrderedItemEntity>> updateOrderedItem(ReceiptEntity receipt, Predicate<OrderedItemEntity> itemPredicate) {
+    private Mono<Tuple2<ReceiptEntity, OrderedItemEntity>> findOrderedItem(ReceiptEntity receipt, Predicate<OrderedItemEntity> itemPredicate) {
         OrderedItemEntity orderedItem = receipt.orderedItems.find(itemPredicate.&test)
         if (orderedItem) {
             return Mono.just(new Tuple2<ReceiptEntity, OrderedItemEntity>(receipt, orderedItem))

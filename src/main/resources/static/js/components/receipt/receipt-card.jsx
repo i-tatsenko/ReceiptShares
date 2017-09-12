@@ -9,7 +9,8 @@ class ReceiptCard extends React.Component {
 
     render() {
         let receipt = this.props.receipt;
-        let {total, mySpending} = this.calculateSpending();
+        let total = receipt.total;
+        let mySpending = receipt.totalsPerMember[storage.getState().user.id];
         let members = receipt.members.length === 0 ? "" :
             <section>
                 Members:
@@ -38,19 +39,6 @@ class ReceiptCard extends React.Component {
 
     goToReceipt() {
         this.props.history.push("/receipt/" + this.props.receipt.id);
-    }
-
-    calculateSpending() {
-        let total = 0;
-        let mySpending = 0;
-        let items = this.props.receipt.orderedItems || [];
-        for (let item of items) {
-            if (item.owner.id === storage.getState().user.id) {
-                mySpending += item.item.price;
-            }
-            total += item.item.price;
-        }
-        return {total, mySpending};
     }
 }
 

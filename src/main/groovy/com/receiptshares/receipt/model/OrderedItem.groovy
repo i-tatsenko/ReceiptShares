@@ -12,5 +12,6 @@ class OrderedItem implements DuckTypeConversion {
     Item item
     ItemStatus status
     int count
+    double total
 
 }
