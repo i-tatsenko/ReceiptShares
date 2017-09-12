@@ -29,10 +29,10 @@ export class OwnReceiptItem extends React.Component {
             return [<CircularProgress/>]
         } else {
             return [
-                <IconButton iconClassName="fa fa-minus-circle receipt-item-actions__action"
+                <IconButton iconClassName="fa fa-minus-square-o receipt-item-actions__action"
                           key={"MinusItem" + orderedItem.id}
                           onTouchTap={() => this.props.deleteItem(receipt.id, orderedItem)}/>,
-                <IconButton iconClassName="fa fa-plus-circle receipt-item-actions__action" key={"PlusItem" + orderedItem.id}
+                <IconButton iconClassName="fa fa-plus-square-o receipt-item-actions__action" key={"PlusItem" + orderedItem.id}
                           onTouchTap={() => this.props.cloneItem(receipt.id, orderedItem.id)}/>
             ]
         }
@@ -51,7 +51,7 @@ export class ReceiptItem extends React.Component {
     }
 
     actionButtons(item) {
-        return [<div key={"MeeToo" + item.id} className="receipt-item-actions__action">Me too!</div>]
+        return [<IconButton key={"MeeToo" + item.id} iconClassName="fa fa-clone receipt-item-actions__action" />]
     }
 }
 

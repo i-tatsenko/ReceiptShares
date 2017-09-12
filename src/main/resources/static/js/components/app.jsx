@@ -34,6 +34,8 @@ class App extends React.Component {
                     <div style={{
                         marginLeft: '20px',
                         marginTop: '20px',
+                        marginRight: '20px',
+                        marginBottom: '10px'
                     }} className="container-div">
                         {this.props.children}
                     </div>
