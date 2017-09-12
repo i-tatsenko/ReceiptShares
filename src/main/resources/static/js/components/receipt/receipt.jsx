@@ -10,6 +10,7 @@ import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import "./receipt.css";
 import {withRouter} from "react-router-dom";
 import Snackbar from 'material-ui/Snackbar';
+import Subheader from 'material-ui/Subheader';
 
 const NotFoundReceipt = withRouter(props => {
     return (
@@ -52,7 +53,7 @@ export default class Receipt extends React.Component {
         }
         let total = receipt.total;
         let mySpending = receipt.totalsPerMember[storage.getState().user.id] || 0;
-
+        let {myItems, otherItems} = this.renderItems();
         return (
             <section className="receipt">
                 <section className="receipt-header__spending">
@@ -63,9 +64,11 @@ export default class Receipt extends React.Component {
                         className="receipt-header__total-money">{total.toFixed(2)}</span>
                     </div>
                     <Divider/>
-                    Items:
                     <List>
-                        {this.renderItems()}
+                        <Subheader>Items</Subheader>
+                        {myItems}
+                        <Divider inset={true}/>
+                        {otherItems}
                     </List>
                 </section>
                 <NewItemModal itemCreatedCallback={() => {
@@ -89,21 +92,19 @@ export default class Receipt extends React.Component {
 
     renderItems() {
         let items = this.state.rec.orderedItems || [];
-        return items.map(item => {
-            if (this.currentUsersOrderedItem(item)) {
-                return <OwnReceiptItem item={item}
-                                       receipt={this.state.rec}
-                                       changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
-                                       cloneItem={this.cloneItem.bind(this)}
-                                       deleteItem={this.deleteItem.bind(this)}
-                />;
-            }
-            else
-                return <ReceiptItem item={item} receipt={this.state.rec}/>;
-        })
+        let myItems = items.filter(Receipt.currentUsersOrderedItem)
+                           .map(item => <OwnReceiptItem item={item}
+                                                        receipt={this.state.rec}
+                                                        changePending={this.state.itemsIdWithPendingChange.indexOf(item.id) !== -1}
+                                                        cloneItem={this.cloneItem.bind(this)}
+                                                        deleteItem={this.deleteItem.bind(this)}/>);
+
+        let otherItems = items.filter(item => !Receipt.currentUsersOrderedItem(item))
+                              .map(item => <ReceiptItem item={item} receipt={this.state.rec}/>);
+        return {myItems, otherItems}
     }
 
-    currentUsersOrderedItem(item) {
+    static currentUsersOrderedItem(item) {
         return item.owner.id === storage.getState().user.id
     }
 
