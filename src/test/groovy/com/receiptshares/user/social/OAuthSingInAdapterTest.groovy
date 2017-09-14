@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.springframework.social.connect.Connection
+import org.springframework.web.context.request.NativeWebRequest
 import reactor.core.publisher.Mono
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -36,7 +37,7 @@ class OAuthSingInAdapterTest {
         def user = mock(User)
         when(userService.getById(email)).thenReturn(Mono.just(user))
 
-        underTest.signIn(email, null, null)
+        underTest.signIn(email, null, mock(NativeWebRequest))
 
         verify(authenticator).authenticate(any(UserAuthentication))
     }
