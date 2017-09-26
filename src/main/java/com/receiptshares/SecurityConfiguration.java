@@ -1,9 +1,12 @@
 package com.receiptshares;
 
+import com.receiptshares.user.dao.RememberMeTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
@@ -18,15 +24,20 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //TODO: migrate to reactive configuration https://github.com/spring-projects/spring-security/blob/5.0.0.M1/samples/javaconfig/hellowebflux/src/main/java/sample/Application.java
     private final UserDetailsService userDetailsService;
+    private MongoTemplate mongoTemplate;
+
+    @Value("${security.rememberme.key}")
+    private String rememberMeKey;
 
     @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
+    public SecurityConfiguration(UserDetailsService userDetailsService, MongoTemplate mongoTemplate) {
         this.userDetailsService = userDetailsService;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.rememberMe().alwaysRemember(true)
+        http.rememberMe().rememberMeServices(tokenBasedRememberMeServices())
             .and()
             .formLogin().loginProcessingUrl("/v1/open/login").successHandler(authSuccessHandler()).failureHandler(authFailureHandler())
             .and()
@@ -45,6 +56,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected UserDetailsService userDetailsService() {
         return userDetailsService;
+    }
+
+    @Bean
+    public RememberMeTokenRepository rememberMeTokenRepository() {
+        return new RememberMeTokenRepository(mongoTemplate);
+    }
+
+    @Bean
+    public RememberMeServices tokenBasedRememberMeServices() {
+        PersistentTokenBasedRememberMeServices result = new PersistentTokenBasedRememberMeServices(rememberMeKey, userDetailsService(), rememberMeTokenRepository());
+        result.setAlwaysRemember(true);
+        result.setCookieName("rembo");
+        result.setTokenValiditySeconds(7 * 24 * 60 * 60);
+        return result;
     }
 
     @Bean

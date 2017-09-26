@@ -45,7 +45,6 @@ class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
         } else {
             q = query(receiptFindCriteria.and("orderedItems._id").is(new ObjectId(orderedItemId)))
         }
-        log.info(q.toString())
         return mongoOperations.updateFirst(q, update, ReceiptEntity)
                               .flatMap({ result ->
             if (result.modifiedCount == 0 && !isIncrement) {

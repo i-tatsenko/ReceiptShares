@@ -8,7 +8,8 @@ export default class ActionButton extends React.Component {
     constructor(args) {
         super(args);
         this.state = {
-            menuItems: storage.getState().actionButtonMenuItems
+            menuItems: storage.getState().actionButtonMenuItems,
+            menuOpen: false
         };
         storage.listenFor("add-action-menu", () => this.setState({menuItems: storage.getState().actionButtonMenuItems}));
     }
@@ -16,17 +17,21 @@ export default class ActionButton extends React.Component {
     render() {
         return <IconMenu
             style={{
-                position: 'absolute',
+                position: 'fixed',
                 right: '30px',
                 bottom: '20px'
             }}
             iconButtonElement={
-                <FloatingActionButton zDepth={3}>
+                <FloatingActionButton zDepth={5}>
                     <ContentAdd/>
                 </FloatingActionButton>
             }
             anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-            targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}>
+            targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}
+            useLayerForClickAway={true}
+            open={this.state.open}
+            onItemTouchTap={() => this.setState({menuOpen:false})}
+            touchTapCloseDelay={1}>
             {this.state.menuItems}
         </IconMenu>;
     }

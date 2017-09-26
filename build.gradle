@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0"
     }
 }
 
@@ -68,7 +68,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
-//    compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.mongodb:mongodb-driver-reactivestreams:1.6.0'
 
     compile 'org.codehaus.groovy:groovy:2.4.10'

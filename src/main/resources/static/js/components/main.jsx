@@ -60,10 +60,10 @@ function getMainLayout(user) {
     return <BrowserRouter>
         <AppWrapper>
             <Switch>
-                <Route exact path="/" component={ReceiptList} />
-                <Route path="/new" component={CreateNewReceipt} />
-                <Route path="/receipt/:id" component={Receipt} />
-                <Route path="/help" component={Help} />
+                <Route exact path="/" component={ReceiptList}/>
+                <Route path="/new" component={CreateNewReceipt}/>
+                <Route path="/receipt/:id" component={Receipt}/>
+                <Route path="/help" component={Help}/>
                 <Redirect to="/" push/>
             </Switch>
         </AppWrapper>
@@ -86,6 +86,13 @@ let loginLayout =
 
 $(document).ajaxSend(function (event, jqXHR) {
     jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))
+});
+
+$(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+    console.log(thrownError);
+    if (jqxhr.status === 401) {
+        window.location = "/"
+    }
 });
 
 $.get({

@@ -4,6 +4,8 @@ import com.receiptshares.user.dao.UserService
 import com.receiptshares.user.model.UserAuthentication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
+import org.springframework.security.web.authentication.RememberMeServices
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices
 import org.springframework.social.connect.Connection
 import org.springframework.social.connect.web.SignInAdapter
 import org.springframework.stereotype.Service
@@ -14,9 +16,11 @@ class OAuthSingInAdapter implements SignInAdapter {
 
     UserService userService
     SpringSecurityAuthenticator authenticator
+    private RememberMeServices tokenBasedRememberMeServices
 
     @Autowired
-    OAuthSingInAdapter(UserService userService, SpringSecurityAuthenticator authenticator) {
+    OAuthSingInAdapter(UserService userService, SpringSecurityAuthenticator authenticator, RememberMeServices tokenBasedRememberMeServices) {
+        this.tokenBasedRememberMeServices = tokenBasedRememberMeServices
         this.userService = userService
         this.authenticator = authenticator
     }
@@ -29,6 +33,7 @@ class OAuthSingInAdapter implements SignInAdapter {
         if (!authentication)
             throw new IllegalArgumentException("There is no user with email: ${userId}")
         authenticator.authenticate(authentication)
+        tokenBasedRememberMeServices.loginSuccess(request.getNativeRequest(), request.getNativeResponse(), authentication)
         return request.getHeader(HttpHeaders.REFERER)
     }
 
