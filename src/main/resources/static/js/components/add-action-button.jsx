@@ -15,6 +15,7 @@ export default class ActionButton extends React.Component {
     }
 
     render() {
+        let menuItemCounter = 0;
         return <IconMenu
             style={{
                 position: 'fixed',
@@ -32,7 +33,7 @@ export default class ActionButton extends React.Component {
             open={this.state.open}
             onItemTouchTap={() => this.setState({menuOpen:false})}
             touchTapCloseDelay={1}>
-            {this.state.menuItems}
+            {this.state.menuItems.map(elem => React.cloneElement(elem, {key: "menu-item-" + menuItemCounter++}))}
         </IconMenu>;
     }
 

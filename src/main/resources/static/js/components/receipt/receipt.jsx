@@ -96,12 +96,14 @@ export default class Receipt extends React.Component {
                                                         receipt={this.state.rec}
                                                         changePending={this.changeIsPendingForItem(item)}
                                                         incrementItem={this.incrementItemCount.bind(this)}
-                                                        deleteItem={this.deleteItem.bind(this)}/>);
+                                                        deleteItem={this.deleteItem.bind(this)}
+                                                        key={item.id}/>);
 
         let otherItems = items.filter(item => !Receipt.currentUsersOrderedItem(item))
                               .map(item => <ReceiptItem item={item} receipt={this.state.rec}
                                                         cloneItem={this.cloneItem.bind(this)}
                                                         changePending={this.changeIsPendingForItem(item)}
+                                                        key={item.id}
                               />);
         return {myItems, otherItems}
     }

@@ -3,14 +3,11 @@ import ReceiptCard from "./receipt-card.jsx";
 import WaitingData from "../waiting-data.jsx";
 import "./receipt.css";
 
-let NoReceipts = () => <section className="receipt-list__no-receipts">{"Here will be present list of your receipts"}</section>;
+let NoReceipts = () => <section
+    className="receipt-list__no-receipts">{"Here will be present list of your receipts"}</section>;
 
 
-export default React.createClass({
-
-    getInitialState() {
-        return {};
-    },
+export default class ReceiptList extends React.Component {
 
     render() {
         if (!this.state.receiptsList) {
@@ -26,12 +23,12 @@ export default React.createClass({
                                                                      key={'rec' + receipt.id}/>)}
             </section>
         )
-    },
+    }
 
     componentWillMount() {
         storage.screenTitle("Receipts");
         let t = this;
         $.get('/v1/receipt/all').done(resp => t.setState({receiptsList: resp}));
     }
-})
+}
 

@@ -39,15 +39,16 @@ class Mui extends React.Component {
 
 function getMainLayout(user) {
     storage.setUser(user);
-    let AppWrapper = React.createClass({
+    let AppWrapper = class extends React.Component {
 
-        getInitialState() {
-            return {
+        constructor(args) {
+            super(args);
+            this.state = {
                 barTitle: "Receipt Shares"
             }
-        },
+        }
 
-        render: function () {
+        render() {
             return (
                 <Mui>
                     <App user={user} barTitle={this.state.barTitle}>
@@ -55,7 +56,7 @@ function getMainLayout(user) {
                     </App>
                 </Mui>)
         }
-    });
+    };
 
     return <BrowserRouter>
         <AppWrapper>

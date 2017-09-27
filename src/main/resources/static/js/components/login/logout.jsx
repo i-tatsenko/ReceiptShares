@@ -1,6 +1,4 @@
-
-
-export default React.createClass({
+export default class Logout extends React.Component {
 
     render() {
         return (
@@ -8,9 +6,9 @@ export default React.createClass({
                 Logout
             </div>
         )
-    },
+    }
 
     logout() {
         $.post('/v1/open/logout').done(window.location = '/');
     }
-})
+}

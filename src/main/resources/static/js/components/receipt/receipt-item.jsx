@@ -71,7 +71,7 @@ class CommonComponent extends React.Component {
         }
         else {
             return (
-                <div className="receipt-item__actions">
+                <div className="receipt-item__actions" key={"action-buttons"}>
                     {this.props.actionButtons}
                 </div>
             )
