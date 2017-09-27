@@ -57,7 +57,7 @@ class CommonComponent extends React.Component {
         return (
             <ListItem primaryText={primaryText}
                       secondaryText={secondaryText}
-                      leftAvatar={<Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl}/>}
+                      leftAvatar={<Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl || "/images/no-photo-avatar.svg"}/>}
                       children={this.children()}
                       className="receipt-item"
                       key={"ListItem" + orderedItem.id}
