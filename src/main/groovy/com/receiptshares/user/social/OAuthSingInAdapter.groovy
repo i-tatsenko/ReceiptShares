@@ -16,7 +16,7 @@ class OAuthSingInAdapter implements SignInAdapter {
 
     UserService userService
     SpringSecurityAuthenticator authenticator
-    private RememberMeServices tokenBasedRememberMeServices
+    RememberMeServices tokenBasedRememberMeServices
 
     @Autowired
     OAuthSingInAdapter(UserService userService, SpringSecurityAuthenticator authenticator, RememberMeServices tokenBasedRememberMeServices) {

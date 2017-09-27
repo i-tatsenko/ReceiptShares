@@ -51,7 +51,6 @@ export default class Receipt extends React.Component {
         if (!receipt) {
             return (<WaitingData/>);
         }
-        let total = receipt.total;
         let mySpending = receipt.totalsPerMember[storage.getState().user.id] || 0;
         let {myItems, otherItems} = this.renderItems();
         return (
@@ -61,7 +60,7 @@ export default class Receipt extends React.Component {
                         className="receipt-header__my-spending-money">{mySpending.toFixed(2)}</span></div>
                     <Divider/>
                     <div className="receipt-header__total">Total: <span
-                        className="receipt-header__total-money">{total.toFixed(2)}</span>
+                        className="receipt-header__total-money">{receipt.total.toFixed(2)}</span>
                     </div>
                     <Divider/>
                     <List>

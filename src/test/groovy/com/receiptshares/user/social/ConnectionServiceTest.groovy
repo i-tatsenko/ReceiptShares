@@ -64,7 +64,7 @@ class ConnectionServiceTest {
     void shouldReturnUsersWithProviderIds() {
         Flux<Person> result = underTest.findUserDetailsByConnectionIds(providerIds)
         StepVerifier.create(result)
-        .expectNextSequence(createUsers(Person))
+                    .expectNextSequence(createUsers(Person))
     }
 
     @Test
@@ -75,14 +75,22 @@ class ConnectionServiceTest {
         when(friendOperations.getFriendIds()).thenReturn(new PagedList<String>(providerIds, null, null))
 
         StepVerifier.create(underTest.findFriendsForCurrentCustomer())
-        .expectNextSequence(createUsers(Person))
+                    .expectNextSequence(createUsers(Person))
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenThereIsNoFacebookConnection() {
+        when(connectionRepository.findPrimaryConnection(Facebook)).thenReturn(null)
+
+        StepVerifier.create(underTest.findFriendsForCurrentCustomer())
+                    .verifyComplete()
     }
 
     private <T> Collection<T> createUsers(Class<T> usersClass) {
         def meta = usersClass.metaClass
-        return userParams.collect({props->
+        return userParams.collect({ props ->
             def instance = usersClass.newInstance()
-            props.each {k, v-> meta.setProperty(instance, k, v)}
+            props.each { k, v -> meta.setProperty(instance, k, v) }
             return instance
         })
     }

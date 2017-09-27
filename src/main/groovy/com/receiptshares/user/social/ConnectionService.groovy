@@ -32,6 +32,9 @@ class ConnectionService {
 
     Flux<Person> findFriendsForCurrentCustomer() {
         Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook)
+        if (!connection) {
+            return Flux.empty()
+        }
         return Mono.defer({ ->
             Mono.just(connection)
         })
