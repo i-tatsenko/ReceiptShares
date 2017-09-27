@@ -8,6 +8,7 @@ import Chip from "material-ui/Chip";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import Snackbar from "material-ui/Snackbar";
 import {withRouter} from "react-router-dom";
+import location from "../../service/location.js"
 
 class CreateNewReceipt extends React.Component {
 
@@ -19,7 +20,8 @@ class CreateNewReceipt extends React.Component {
             name: '',
             place: '',
             nameError: '',
-            error: false
+            error: false,
+            autoSuggest: []
         }
     }
 
@@ -41,6 +43,10 @@ class CreateNewReceipt extends React.Component {
                 </div>
             </div>
         }
+        let autoSuggest = null;
+        if (this.state.autoSuggest.length > 0) {
+            autoSuggest = <ul>{this.state.autoSuggest.map(item => <li>item.name</li>)}</ul>
+        }
         return (
             <section>
                 <TextField hintText="Receipt Name" floatingLabelText="Receipt Name" name="name"
@@ -48,6 +54,7 @@ class CreateNewReceipt extends React.Component {
                            errorText={this.state.nameError}/><br/>
                 <TextField hintText="Place" floatingLabelText="Where are you?" name="place"
                            onChange={this.updateStateFunction('place')}/>
+                {autoSuggest}
                 <div>
                     {alreadyInvitedElement}
                     <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)}
@@ -66,7 +73,13 @@ class CreateNewReceipt extends React.Component {
     }
 
     updateStateFunction(key) {
-        return (event) => this.setState({[key]: event.target.value.trim()})
+        return (event) => {
+            let newValue = event.target.value.trim();
+            if (key === "place") {
+                location.getPlacesNearWithName(newValue, (res) => this.setState({autoSuggest: res}));
+            }
+            this.setState({[key]: newValue})
+        }
     }
 
     createReceipt() {

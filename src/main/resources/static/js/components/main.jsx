@@ -91,7 +91,7 @@ $(document).ajaxSend(function (event, jqXHR) {
 
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
     console.log(thrownError);
-    if (jqxhr.status === 401) {
+    if (jqxhr.status === 401 && window.location.pathname !== '/') {
         window.location = "/"
     }
 });

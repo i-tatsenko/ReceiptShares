@@ -9,6 +9,11 @@ let NoReceipts = () => <section
 
 export default class ReceiptList extends React.Component {
 
+    constructor(args) {
+        super(args);
+        this.state = {}
+    }
+
     render() {
         if (!this.state.receiptsList) {
             return (<WaitingData/>)
