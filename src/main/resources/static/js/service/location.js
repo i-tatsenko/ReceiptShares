@@ -17,27 +17,23 @@ class Location {
 
     getPlacesNearWithName(name, callback) {
         this.getCurrentLocation(function (result) {
-            let data = {
-                key: "AIzaSyDAs1kSd6gN_ef68tXv-HyrOr9ZHzTfd2A",
-                location: result.coords.latitude + "," + result.coords.longitude,
-                radius: 1000
-            };
-            if (name && name !== '') {
-                data.keyword = name
+            if (!name || name === '') {
+                return
             }
-            $.get({
-                url: PLACES_URL,
-                data: data,
-                success: callback,
-                dataType: 'json'
-            });
+            let places = new google.maps.places.PlacesService(new google.maps.Map(document.getElementById('map'), {}));
+            places.nearbySearch({
+                name,
+                location: new google.maps.LatLng(result.coords.latitude, result.coords.longitude),
+                radius: 1000
+
+            },callback)
         })
     }
 
 }
 
 function isLocationAccessAllowed(callback) {
-    if (!navigator.geolocation){
+    if (!navigator.geolocation) {
         callback(false);
         return;
     }
@@ -62,7 +58,10 @@ function setAccessCookie(accessAllowed) {
 }
 
 function askForAccess(callback) {
-    navigator.permissions.query({name:'geolocation'}).then(result => {console.log(result);callback(result.state === 'granted')})
+    navigator.permissions.query({name: 'geolocation'}).then(result => {
+        console.log(result);
+        callback(result.state === 'granted' || result.state === 'prompt')
+    })
 }
 
 export default new Location()

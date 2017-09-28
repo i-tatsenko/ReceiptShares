@@ -45,7 +45,7 @@ class CreateNewReceipt extends React.Component {
         }
         let autoSuggest = null;
         if (this.state.autoSuggest.length > 0) {
-            autoSuggest = <ul>{this.state.autoSuggest.map(item => <li>item.name</li>)}</ul>
+            autoSuggest = <ul>{this.state.autoSuggest.map(item => <li>{item.name}</li>)}</ul>
         }
         return (
             <section>
