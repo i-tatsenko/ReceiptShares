@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 
 const COOKIE_LOCATION_ALLOWED = "location-service-allowed";
-const PLACES_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+const PLACES_URL = "/v1/place/suggest";
 
 class Location {
 
@@ -20,14 +20,18 @@ class Location {
             if (!name || name === '') {
                 return
             }
-            let places = new google.maps.places.PlacesService(new google.maps.Map(document.getElementById('map'), {}));
-            places.nearbySearch({
-                name,
-                location: new google.maps.LatLng(result.coords.latitude, result.coords.longitude),
-                radius: 1000
+            $.ajax({
+                url: PLACES_URL,
+                type: 'GET',
+                data: {
+                    query: name,
+                    lat: result.lat,
+                    long: result.long
+                },
+                success: callback
 
-            },callback)
-        })
+            });
+        });
     }
 
 }
@@ -44,12 +48,26 @@ function isLocationAccessAllowed(callback) {
             callback(result);
         })
     } else {
-        callback(allowed);
+        callback(allowed === 'true');
     }
 }
 
 function getLocation(callback) {
-    navigator.geolocation.getCurrentPosition(callback, error => console.log("Can't get current location", error));
+    let lastLocationCookie = Cookies.get("last-location");
+    if (lastLocationCookie) {
+        callback(JSON.parse(lastLocationCookie));
+    } else {
+        let saveLocationAndReturn = function (location) {
+            let result = {
+                lat: location.coords.latitude,
+                long: location.coords.longitude
+            };
+            console.log(result);
+            Cookies.set('last-location', JSON.stringify(result), 5 * 60 * 1000);
+            callback(result);
+        };
+        navigator.geolocation.getCurrentPosition(saveLocationAndReturn, error => console.log("Can't get current location", error));
+    }
 }
 
 function setAccessCookie(accessAllowed) {
