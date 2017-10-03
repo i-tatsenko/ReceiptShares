@@ -7,4 +7,5 @@ class PlaceSuggest {
     String id
     String name
     String provider
+    Location location
 }

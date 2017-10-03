@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 
+import java.util.function.Function
+
 @Component
 @Slf4j
 class SwarmPlaceProvider implements PlaceProvider {
@@ -18,7 +20,7 @@ class SwarmPlaceProvider implements PlaceProvider {
     private static final String API_INTEGRATION_DATE = "20170930"
 
     private static
-    final String AUTOCOMPLETE_PATH = "/venues/suggestcompletion?query={query}&ll={ll}&client_id={clientId}&client_secret={clientSecret}&v=${API_INTEGRATION_DATE}"
+    final String AUTOCOMPLETE_PATH = "/venues/suggestcompletion?query={query}&ll={ll}&limit=10&client_id={clientId}&client_secret={clientSecret}&v=${API_INTEGRATION_DATE}"
 
     @Value('${swarm.app.id}')
     private String appId
@@ -47,9 +49,15 @@ class SwarmPlaceProvider implements PlaceProvider {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(SwarmResult)
-        .doOnNext({println "got $it"})
                 .map({ it.response.minivenues })
-                .flatMapMany({ Flux.fromIterable(it) })
+                .flatMapMany({ Flux.fromIterable(it.sort(placeSuggestComparator)) })
                 .doOnNext({ it.provider = "swarm" })
+    }
+
+    private Closure placeSuggestComparator = { l, r ->
+        return Comparator.comparing({it.location?.distance} as Function)
+                         .thenComparing({ it.name } as Function)
+                         .thenComparing({ it.id } as Function)
+                         .compare(l, r)
     }
 }
