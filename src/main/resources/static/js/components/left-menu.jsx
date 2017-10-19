@@ -1,6 +1,6 @@
 import React from "react";
 import Menu from "material-ui/Menu";
-import MenuItem from "material-ui/MenuItem";
+import MenuItem  from 'material-ui/Menu';
 import Drawer from "material-ui/Drawer";
 import AppBar from "material-ui/AppBar";
 import {withRouter} from "react-router-dom";

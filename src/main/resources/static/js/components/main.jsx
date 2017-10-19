@@ -4,7 +4,7 @@ import RegistrationForm from "./registration/registration-form.jsx";
 import LoginForm from "./login/login-form.jsx";
 import Receipt from "./receipt/receipt.jsx";
 import Paper from "material-ui/Paper";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import {MuiThemeProvider, createMuiTheme} from "material-ui/styles";
 import Cookies from "js-cookie"
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 import storage from "../storage/storage.js"
@@ -24,7 +24,7 @@ storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 class Mui extends React.Component {
     render() {
         return (
-            <MuiThemeProvider>
+            <MuiThemeProvider theme={createMuiTheme()}>
                 <div className="container-div">
                     <div id="main-component" className="col-lg-6 col-lg-offset-3 container-div">
                         <Paper zDepth={3} className="container-div">

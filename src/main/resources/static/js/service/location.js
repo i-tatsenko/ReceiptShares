@@ -29,7 +29,6 @@ class Location {
                     long: result.long
                 },
                 success: callback
-
             });
         });
     }

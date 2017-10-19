@@ -1,4 +1,4 @@
-import MenuItem from "material-ui/MenuItem";
+import MenuItem  from 'material-ui/Menu';
 import {withRouter} from "react-router-dom";
 
 class NewReceiptMenuItem extends React.Component {

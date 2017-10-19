@@ -1,6 +1,5 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
 import Cookies from 'js-cookie'
 
 export default class FbLoginButton extends React.Component {
@@ -21,8 +20,8 @@ export default class FbLoginButton extends React.Component {
         };
         return (
             <form id="signInFacebook" action="/signin/facebook" method="POST" onSubmit={this.setCsrfToken}>
-                <IconButton style={medium} type="submit" iconStyle={{fontSize:"48px"}}>
-                    <FontIcon className="fa fa-facebook-square"/>
+                <IconButton style={medium} type="submit">
+                    <i className="fa fa-facebook-square fa-5x"/>
                 </IconButton>
                 <input type="hidden" name="_csrf"/>
             </form>

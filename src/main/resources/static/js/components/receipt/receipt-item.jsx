@@ -1,6 +1,6 @@
 import {ListItem} from "material-ui/List";
 import Avatar from "material-ui/Avatar";
-import CircularProgress from 'material-ui/CircularProgress';
+import { LinearProgress } from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 
 import "./receipt.css";
@@ -67,7 +67,7 @@ class CommonComponent extends React.Component {
 
     children() {
         if (this.props.changePending) {
-            return <CircularProgress/>
+            return <LinearProgress mode="query" />
         }
         else {
             return (

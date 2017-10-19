@@ -5,18 +5,18 @@ import Divider from "material-ui/Divider";
 import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
 import NewItemModal from "./receipt-item-create-modal.jsx";
 import List from "material-ui/List";
-import FlatButton from 'material-ui/FlatButton';
+import Button from 'material-ui/Button';
 import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import "./receipt.css";
 import {withRouter} from "react-router-dom";
 import Snackbar from 'material-ui/Snackbar';
-import Subheader from 'material-ui/Subheader';
+import ListSubheader from 'material-ui/List/ListSubheader';
 
 const NotFoundReceipt = withRouter(props => {
     return (
         <div>
             {"This receipt was not found on the server ;("}
-            <FlatButton secondary={true} label="Return" onTouchTap={() => props.history.push("/")}/>
+            <Button secondary={true} label="Return" onTouchTap={() => props.history.push("/")}/>
         </div>
     )
 });
@@ -64,7 +64,7 @@ export default class Receipt extends React.Component {
                     </div>
                     <Divider/>
                     <List>
-                        <Subheader>Items</Subheader>
+                        <ListSubheader>Items</ListSubheader>
                         {myItems}
                         <Divider inset={true}/>
                         {otherItems}

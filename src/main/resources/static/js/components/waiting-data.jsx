@@ -1,3 +1,3 @@
-import CircularProgress from 'material-ui/CircularProgress';
+import { LinearProgress } from 'material-ui/Progress';
 
-export default () => <CircularProgress size={80} thickness={5} style={{marginLeft: '50%'}}/>;
+export default () => <LinearProgress mode="query"/>;

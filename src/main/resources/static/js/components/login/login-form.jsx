@@ -3,10 +3,13 @@ import FormAlert from '../form-alert.jsx';
 import FbLoginButton from './facebook-login-button.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from 'material-ui/Button';
 import './login.css';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
-import { Link } from 'react-router-dom'
+
+import {Link} from 'react-router-dom'
 
 export default class LoginForm extends React.Component {
 
@@ -20,31 +23,37 @@ export default class LoginForm extends React.Component {
     render() {
         return (
             <div>
-                <AppBar title="Login" iconStyleLeft={{display: 'none'}}/>
-                    <div id="login">
-                        <FormAlert message={this.state.alertMessage}/>
-                        <form id="login-form">
-                            <TextField
-                                hintText="Email"
-                                floatingLabelText="Your login"
-                                name="username"
-                            /><br />
-                            <TextField
-                                hintText="Password"
-                                floatingLabelText="Your password"
-                                name="password" type="password"
-                            /><br />
-                            <RaisedButton label="Login" primary={true} className="login__login-button"
-                                          onClick={(event) => this.login(event)}/>
-                            <hr/>
-                            <div>
-                                <h3>Login with your social network account</h3>
-                                <FbLoginButton/>
-                            </div>
-                        </form>
+                <AppBar>
+                    <Toolbar>
+                        <Typography type="title" color="inherit">
+                            Login
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <div id="login">
+                    <FormAlert message={this.state.alertMessage}/>
+                    <form id="login-form">
+                        <TextField
+                            label="Email"
+                            placeholder="Your login"
+                            name="username"
+                        /><br/>
+                        <TextField
+                            label="Password"
+                            placeholder="Your password"
+                            name="password" type="password"
+                        /><br/>
+                        <Button raised color="primary" className="login__login-button"
+                                onClick={(event) => this.login(event)}>Login</Button>
                         <hr/>
-                        <span className="login__invite-to-register"><Link to="/register">Register</Link> if you have no account!</span>
-                    </div>
+                        <div>
+                            <h3>Login with your social network account</h3>
+                            <FbLoginButton/>
+                        </div>
+                    </form>
+                    <hr/>
+                    <span className="login__invite-to-register"><Link to="/register">Register</Link> if you have no account!</span>
+                </div>
             </div>
         )
     }

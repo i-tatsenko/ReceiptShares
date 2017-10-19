@@ -1,6 +1,9 @@
-import FloatingActionButton from "material-ui/FloatingActionButton";
-import ContentAdd from "material-ui/svg-icons/content/add";
-import IconMenu from "material-ui/IconMenu";
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
+import IconButton from 'material-ui/IconButton';
+import Menu from 'material-ui/Menu'
+
+'material-ui/Menu';
 import storage from "../storage/storage.js"
 
 export default class ActionButton extends React.Component {
@@ -16,25 +19,25 @@ export default class ActionButton extends React.Component {
 
     render() {
         let menuItemCounter = 0;
-        return <IconMenu
-            style={{
-                position: 'fixed',
-                right: '30px',
-                bottom: '20px'
-            }}
-            iconButtonElement={
-                <FloatingActionButton zDepth={5}>
-                    <ContentAdd/>
-                </FloatingActionButton>
-            }
-            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-            targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}
-            useLayerForClickAway={true}
-            open={this.state.open}
-            onItemTouchTap={() => this.setState({menuOpen:false})}
-            touchTapCloseDelay={1}>
-            {this.state.menuItems.map(elem => React.cloneElement(elem, {key: "menu-item-" + menuItemCounter++}))}
-        </IconMenu>;
+        return (
+            <div>
+                <IconButton style={{
+                    position: 'fixed',
+                    right: '30px',
+                    bottom: '20px'
+                }} ref={button => this.setState({floatMenuButton: button})}>
+                    <AddIcon/>
+                </IconButton>
+
+                <Menu
+                    anchorEl={this.state.floatMenuButton}
+                    open={this.state.open}
+                    onItemTouchTap={() => this.setState({menuOpen: false})}
+                    touchTapCloseDelay={1}>
+                    {this.state.menuItems.map(elem => React.cloneElement(elem, {key: "menu-item-" + menuItemCounter++}))}
+                </Menu>
+            </div>
+        )
     }
 
 }

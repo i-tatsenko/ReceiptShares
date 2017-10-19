@@ -17,7 +17,7 @@ import java.util.function.Function
 @Slf4j
 class SwarmPlaceProvider implements PlaceProvider {
 
-    private static final String API_INTEGRATION_DATE = "20170930"
+    private static final String API_INTEGRATION_DATE = "20171004"
 
     private static
     final String AUTOCOMPLETE_PATH = "/venues/suggestcompletion?query={query}&ll={ll}&limit=10&client_id={clientId}&client_secret={clientSecret}&v=${API_INTEGRATION_DATE}"

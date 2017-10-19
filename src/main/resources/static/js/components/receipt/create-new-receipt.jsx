@@ -1,7 +1,7 @@
 import storage from "../../storage/storage.js"
 import FriendList from "../friend-list/friend-list.jsx";
 import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Button from 'material-ui/Button';
 import Divider from "material-ui/Divider";
 import Avatar from "material-ui/Avatar";
 import Chip from "material-ui/Chip";
@@ -9,6 +9,7 @@ import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import Snackbar from "material-ui/Snackbar";
 import {withRouter} from "react-router-dom";
 import location from "../../service/location.js"
+import PlaceSuggest from "../place/suggest.jsx"
 
 class CreateNewReceipt extends React.Component {
 
@@ -43,25 +44,21 @@ class CreateNewReceipt extends React.Component {
                 </div>
             </div>
         }
-        let autoSuggest = null;
-        if (this.state.autoSuggest.length > 0) {
-            autoSuggest = <ul>{this.state.autoSuggest.map(item => <li>{item.name}</li>)}</ul>
-        }
         return (
             <section>
-                <TextField hintText="Receipt Name" floatingLabelText="Receipt Name" name="name"
+                <TextField label="Receipt Name" placeholder="Receipt Name" name="name"
                            onChange={this.updateStateFunction('name')}
                            errorText={this.state.nameError}/><br/>
-                <TextField hintText="Place" floatingLabelText="Where are you?" name="place"
+                <TextField label="Place" placeholder="Where are you?" name="place"
                            onChange={this.updateStateFunction('place')}/>
-                {autoSuggest}
+                <PlaceSuggest searchString={this.state.place}/>
                 <div>
                     {alreadyInvitedElement}
                     <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)}
                                 friends={this.state.friends}/>
                 </div>
                 <Divider/>
-                <RaisedButton label="Create" primary={true} onClick={() => this.createReceipt()}/>
+                <Button raised label="Create" primary={true} onClick={() => this.createReceipt()}/>
                 <Snackbar
                     open={this.state.error}
                     message="Can't create receipt. Please try one more time"

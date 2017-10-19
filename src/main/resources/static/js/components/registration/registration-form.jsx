@@ -4,9 +4,11 @@ import {Link, withRouter} from 'react-router-dom';
 import FormAlert from '../form-alert.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from 'material-ui/Button';
 
 import './reg-form.css';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
 class RegistrationForm extends React.Component {
 
@@ -22,23 +24,31 @@ class RegistrationForm extends React.Component {
         var disabled = !this.state.formOk;
         return (
             <div>
-                <AppBar title="Register" iconStyleLeft={{display: 'none'}}/>
+                <AppBar>
+                    <Toolbar>
+                        <Typography type="title" color="inherit">
+                            Register
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
                 <div id="reg-form-container">
 
                     <FormAlert message={this.state.alertMessage}/>
                     <form id='register-form'>
 
-                        <TextField hintText="Name" floatingLabelText="Your name" name="name"/><br/>
-                        <TextField hintText="Email" floatingLabelText="Your email" name="email" type="email"/><br/>
-                        <TextField hintText="Password" floatingLabelText="Your password" name="password"
+                        <TextField label="Name" placeholder="Your name" name="name"/><br/>
+                        <TextField label="Email" placeholder="Your email" name="email" type="email"/><br/>
+                        <TextField label="Password" placeholder="Your password" name="password"
                                    type="password"/><br/>
-                        <TextField hintText="Password one more time" floatingLabelText="Your password one more time"
+                        <TextField label="Password one more time" placeholder="Your password one more time"
                                    name="passwordCheck" type="password"/><br/>
                         <div id="captcha"/>
 
-                        <RaisedButton label="Register" primary={true} fullWidth={true}
-                                      className="reg-form__register-button"
-                                      onClick={() => this.registerUser()} disabled={disabled}/>
+                        <Button raised color="primary" fullWidth={true}
+                                className="reg-form__register-button"
+                                onClick={() => this.registerUser()} disabled={disabled}>
+                            Register
+                        </Button>
 
                     </form>
                     <hr/>

@@ -1,6 +1,6 @@
 import Dialog from "material-ui/Dialog";
 import TextField from "material-ui/TextField";
-import FlatButton from "material-ui/FlatButton";
+import Button from 'material-ui/Button';
 
 export default class NewItemModal extends React.Component {
 
@@ -19,14 +19,14 @@ export default class NewItemModal extends React.Component {
             <Dialog title="Add item" modal={false} open={this.props.opened}
                     actions={this.createAddNewItemActions()} onRequestClose={this.close}>
                 <TextField
-                    hintText="Item name"
-                    floatingLabelText="Name"
+                    label="Item name"
+                    placeholder="Name"
                     name="name"
                     onChange={e => t.setState({name: e.target.value})}/>
                 <br/>
                 <TextField
-                    hintText="Item price"
-                    floatingLabelText="Price"
+                    label="Item price"
+                    placeholder="Price"
                     name="price"
                     onChange={e => t.setState({price: e.target.value})}/>
             </Dialog>
@@ -35,12 +35,12 @@ export default class NewItemModal extends React.Component {
 
     createAddNewItemActions() {
         return [
-            <FlatButton
+            <Button
                 label="Cancel"
                 primary={true}
                 onTouchTap={this.close}
             />,
-            <FlatButton
+            <Button
                 label="Add"
                 primary={true}
                 keyboardFocused={true}
