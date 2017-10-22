@@ -9,7 +9,9 @@ import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import Snackbar from "material-ui/Snackbar";
 import {withRouter} from "react-router-dom";
 import location from "../../service/location.js"
-import PlaceSuggest from "../place/suggest.jsx"
+import PlaceSelect from "../place/suggest.jsx"
+import {FormControl, FormHelperText} from 'material-ui/Form';
+import Input, {InputLabel} from 'material-ui/Input';
 
 class CreateNewReceipt extends React.Component {
 
@@ -19,7 +21,7 @@ class CreateNewReceipt extends React.Component {
             friends: [],
             friendsToInvite: [],
             name: '',
-            place: '',
+            place: null,
             nameError: '',
             error: false,
             autoSuggest: []
@@ -28,17 +30,15 @@ class CreateNewReceipt extends React.Component {
 
     render() {
         let alreadyInvitedElement = <div/>;
-        let remove = this.removeSelectedFriend.bind(this);
         if (this.state.friendsToInvite.length) {
             alreadyInvitedElement = <div>
-                <h4>Invite will be sent to</h4>
+                <h4>Inviting</h4>
                 <div style={chipWrapperStyle}>
                     {this.state.friendsToInvite.map(function (user) {
                         return (
-                            <Chip onRequestDelete={() => remove(user.id)} style={chipStyle}>
-                                <Avatar src={user.avatarUrl}/>
-                                {user.name}
-                            </Chip>
+                            <Chip avatar={<Avatar src={user.avatarUrl}/>}
+                                  label={user.name}
+                                  onRequestDelete={() => this.removeSelectedFriend(user.id)} style={chipStyle}/>
                         );
                     })}
                 </div>
@@ -46,19 +46,20 @@ class CreateNewReceipt extends React.Component {
         }
         return (
             <section>
-                <TextField label="Receipt Name" placeholder="Receipt Name" name="name"
-                           onChange={this.updateStateFunction('name')}
-                           errorText={this.state.nameError}/><br/>
-                <TextField label="Place" placeholder="Where are you?" name="place"
-                           onChange={this.updateStateFunction('place')}/>
-                <PlaceSuggest searchString={this.state.place}/>
+                <FormControl error={!!this.state.nameError}>
+                    <InputLabel html-for="new-receipt-name">Receipt Name</InputLabel>
+                    <Input id="new-receipt-name" value={this.state.name} onChange={this.updateStateFunction('name')}/>
+                    <FormHelperText>{this.state.nameError}</FormHelperText>
+                </FormControl><br/>
+
+                <PlaceSelect selected={suggest=> this.setState({place: suggest})}/>
                 <div>
                     {alreadyInvitedElement}
                     <FriendList title="Invite friends" friendSelected={this.friendSelected.bind(this)}
                                 friends={this.state.friends}/>
                 </div>
-                <Divider/>
-                <Button raised label="Create" primary={true} onClick={() => this.createReceipt()}/>
+                <Divider style={{marginBottom: '20px'}}/>
+                <Button raised color="primary" onClick={() => this.createReceipt()}>Create</Button>
                 <Snackbar
                     open={this.state.error}
                     message="Can't create receipt. Please try one more time"
@@ -72,9 +73,6 @@ class CreateNewReceipt extends React.Component {
     updateStateFunction(key) {
         return (event) => {
             let newValue = event.target.value.trim();
-            if (key === "place") {
-                location.getPlacesNearWithName(newValue, (res) => this.setState({autoSuggest: res}));
-            }
             this.setState({[key]: newValue})
         }
     }
@@ -86,9 +84,7 @@ class CreateNewReceipt extends React.Component {
             return
         }
         let data = {
-            place: {
-                name: state.place
-            },
+            place: state.place,
             name: state.name,
             members: state.friendsToInvite.map(friend => friend.id)
         };
@@ -98,7 +94,9 @@ class CreateNewReceipt extends React.Component {
             contentType: 'application/json',
             dataType: 'json',
             method: 'post',
-            success: (resp) => {this.props.history.push('/receipt/' + resp.id)},
+            success: (resp) => {
+                this.props.history.push('/receipt/' + resp.id)
+            },
             error: () => this.setState({error: true})
         })
 

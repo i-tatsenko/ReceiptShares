@@ -9,6 +9,7 @@ import com.receiptshares.receipt.exception.OrderedItemNotFound
 import com.receiptshares.receipt.exception.ReceiptNotFoundException
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
+import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.PersonRepository
@@ -20,8 +21,6 @@ import reactor.core.publisher.Mono
 import reactor.util.function.Tuple4
 
 import java.util.function.Function
-import java.util.function.Predicate
-
 
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
 
@@ -34,15 +33,17 @@ class ReceiptService {
     private ItemRepository itemRepository
     private PlaceRepository placeRepository
     private PersonRepository personRepository
+    private PlaceService placeService
 
     @Autowired
     ReceiptService(ReceiptRepository receiptRepository, OrderItemRepository orderItemRepository,
-                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository) {
+                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository, PlaceService placeService) {
         this.receiptRepository = receiptRepository
         this.orderItemRepository = orderItemRepository
         this.itemRepository = itemRepository
         this.placeRepository = placeRepository
         this.personRepository = personRepository
+        this.placeService = placeService
     }
 
     Flux<Receipt> receiptsForUser(String ownerId) {
@@ -50,12 +51,11 @@ class ReceiptService {
                                 .map { it as Receipt }
     }
 
-    Mono<Receipt> createNewReceipt(String placeName, String ownerId, String name, Collection<String> memberIds) {
-        //TODO find place in DB
+    Mono<Receipt> createNewReceipt(Place p, String ownerId, String name, Collection<String> memberIds) {
         Mono<PersonEntity> ownerMono = personRepository.findById(ownerId)
         Mono<List<PersonEntity>> members = personRepository.findAllById(memberIds)
                                                            .collectList()
-        Mono<PlaceEntity> place = placeRepository.save(new PlaceEntity(name: placeName, authorId: ownerId))
+        Mono<PlaceEntity> place = placeService.findOrCreatePlace(p, ownerId)
         return Mono.when(ownerMono, members, place, Mono.just(name))
                    .map({ buildReceipt(it) })
                    .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)

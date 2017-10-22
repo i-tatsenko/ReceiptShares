@@ -1,6 +1,7 @@
 package com.receiptshares.receipt
 
 import com.receiptshares.receipt.model.OrderedItem
+import com.receiptshares.receipt.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.model.User
 import com.receiptshares.web.response.SimpleValueResponse
@@ -40,7 +41,7 @@ class ReceiptController {
     Mono<Receipt> createNew(Authentication auth, @RequestBody Map requestBody) {
         def user = auth.principal as User
         Collection<String> memberIds = requestBody.members
-        return receiptService.createNewReceipt(requestBody.place.name as String, user.person.id, requestBody.name as String, memberIds)
+        return receiptService.createNewReceipt(new Place(requestBody.place), user.person.id, requestBody.name as String, memberIds)
     }
 
     @PostMapping(value = "/{id}/new-item", produces = MediaType.APPLICATION_JSON_VALUE)

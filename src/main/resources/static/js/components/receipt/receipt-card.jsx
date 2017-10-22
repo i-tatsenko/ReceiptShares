@@ -1,4 +1,4 @@
-import {Card, CardHeader, CardContent} from "material-ui/Card";
+import Card, {CardHeader, CardContent} from "material-ui/Card";
 import Chip from "material-ui/Chip";
 import Avatar from "material-ui/Avatar";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
@@ -23,13 +23,12 @@ class ReceiptCard extends React.Component {
                             {user.name}
                         </Chip>)}
                 </div>
-            </section>;if (true) return null;
+            </section>;
         return (
-            <Card style={{marginBottom: '15px'}} onTouchTap={this.goToReceipt.bind(this)}>
-                <CardHeader>
-                    <Avatar src={receipt.owner.avatarUrl}/>
-                    <Typography type="body1">{'by ' + receipt.owner.name}</Typography>
-                    <Typography type="headline">receipt.name</Typography>
+            <Card style={{marginBottom: '15px'}} onClick={this.goToReceipt.bind(this)}>
+                <CardHeader avatar={<Avatar src={receipt.owner.avatarUrl}/>}
+                            title={receipt.name}
+                            subheader={'by ' + receipt.owner.name}>
                 </CardHeader>
                 <CardContent>
                     <Typography type="body1">Your Part: {mySpending}</Typography>

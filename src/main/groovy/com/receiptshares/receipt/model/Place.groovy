@@ -7,6 +7,7 @@ import groovy.transform.CompileStatic
 class Place implements DuckTypeConversion {
 
     String id
+    String provider
     String authorId
     String name
 }

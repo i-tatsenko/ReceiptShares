@@ -20,10 +20,10 @@ export class OwnReceiptItem extends React.Component {
         return [
             <IconButton iconClassName="fa fa-minus-square-o receipt-item-actions__action"
                         key={"MinusItem" + orderedItem.id}
-                        onTouchTap={() => this.props.deleteItem(receipt.id, orderedItem)}/>,
+                        onClick={() => this.props.deleteItem(receipt.id, orderedItem)}/>,
             <IconButton iconClassName="fa fa-plus-square-o receipt-item-actions__action"
                         key={"PlusItem" + orderedItem.id}
-                        onTouchTap={() => this.props.incrementItem(receipt.id, orderedItem.id)}/>
+                        onClick={() => this.props.incrementItem(receipt.id, orderedItem.id)}/>
         ]
     }
 
@@ -41,7 +41,7 @@ export class ReceiptItem extends React.Component {
 
     actionButtons(item) {
         return [<IconButton key={"MeeToo" + item.id} iconClassName="fa fa-clone receipt-item-actions__action"
-                            onTouchTap={() => this.props.cloneItem(this.props.receipt.id, this.props.item.id)}/>]
+                            onClick={() => this.props.cloneItem(this.props.receipt.id, this.props.item.id)}/>]
     }
 }
 

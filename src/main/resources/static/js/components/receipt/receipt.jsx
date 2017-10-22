@@ -16,7 +16,7 @@ const NotFoundReceipt = withRouter(props => {
     return (
         <div>
             {"This receipt was not found on the server ;("}
-            <Button secondary={true} label="Return" onTouchTap={() => props.history.push("/")}/>
+            <Button secondary={true} label="Return" onClick={() => props.history.push("/")}/>
         </div>
     )
 });
@@ -81,7 +81,7 @@ export default class Receipt extends React.Component {
                     open={this.state.showItemDeletedMessage}
                     message={this.state.itemDeletedMessage}
                     action="undo"
-                    onActionTouchTap={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}
+                    onActionClick={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}
                     onRequestClose={() => this.setState({showItemDeletedMessage: false})}
                     autoHideDuration={5000}
                 />

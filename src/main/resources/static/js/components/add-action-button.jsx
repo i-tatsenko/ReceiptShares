@@ -1,9 +1,6 @@
-import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
 import Menu from 'material-ui/Menu'
-
-'material-ui/Menu';
 import storage from "../storage/storage.js"
 
 export default class ActionButton extends React.Component {
@@ -21,19 +18,23 @@ export default class ActionButton extends React.Component {
         let menuItemCounter = 0;
         return (
             <div>
-                <IconButton style={{
+                <Button fab color="primary" style={{
                     position: 'fixed',
                     right: '30px',
                     bottom: '20px'
-                }} ref={button => this.setState({floatMenuButton: button})}>
+                }}
+                        onClick={event => this.setState({menuOpen: !this.state.menuOpen, floatMenuButton: event.currentTarget})}
+                >
                     <AddIcon/>
-                </IconButton>
+                </Button>
 
                 <Menu
                     anchorEl={this.state.floatMenuButton}
-                    open={this.state.open}
-                    onItemTouchTap={() => this.setState({menuOpen: false})}
-                    touchTapCloseDelay={1}>
+                    open={this.state.menuOpen}
+                    onRequestClose={() => this.setState({menuOpen: false})}
+                    //TODO: check if this working
+                    // onItemTouchTap={() => this.setState({menuOpen: false})}
+                >
                     {this.state.menuItems.map(elem => React.cloneElement(elem, {key: "menu-item-" + menuItemCounter++}))}
                 </Menu>
             </div>

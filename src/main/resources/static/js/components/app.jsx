@@ -44,7 +44,7 @@ class App extends React.Component {
                               closeMenu={() => this.setState({menuOpen: false})}/>
                     <div style={{
                         marginLeft: '20px',
-                        marginTop: '20px',
+                        marginTop: '100px',
                         marginRight: '20px',
                         marginBottom: '10px'
                     }} className="container-div">

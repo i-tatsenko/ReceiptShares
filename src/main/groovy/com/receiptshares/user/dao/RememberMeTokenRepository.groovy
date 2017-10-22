@@ -41,7 +41,7 @@ class RememberMeTokenRepository implements PersistentTokenRepository {
     }
 
     @Override
-    void removeUserTokens(String username) {mongo.remo
+    void removeUserTokens(String username) {
         mongo.remove(query(where("username").is(username)), PersistentRememberMeToken)
     }
 }

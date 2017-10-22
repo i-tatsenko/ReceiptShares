@@ -1,25 +1,34 @@
 import React from "react";
-import Menu from "material-ui/Menu";
-import MenuItem  from 'material-ui/Menu';
+import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
 import Drawer from "material-ui/Drawer";
-import AppBar from "material-ui/AppBar";
 import {withRouter} from "react-router-dom";
 
 class LeftMenu extends React.Component {
     render() {
         let items = [];
-        var links = this.props.links;
+        let links = this.props.links;
         for (let linkHeader in links) {
             if (links.hasOwnProperty(linkHeader)) {
                 items.push(this.createMenuItem(linkHeader, links[linkHeader]))
             }
         }
         return (
-            <Drawer {...this.props} >
-                <AppBar onLeftIconButtonTouchTap={this.props.closeMenu}/>
-                <Menu>
-                    {items}
-                </Menu>
+            <Drawer open={this.props.open} onRequestClose={this.props.closeMenu}>
+                <div
+                    tabIndex={0}
+                    role="button"
+                    onClick={this.props.closeMenu}
+                    onKeyDown={this.props.closeMenu}
+                >
+                    <div style={{
+                        width: 250
+                    }}>
+
+                        <List>
+                            {items}
+                        </List>
+                    </div>
+                </div>
             </Drawer>
         )
     }
@@ -34,11 +43,13 @@ class LeftMenu extends React.Component {
     }
 
     createForLink(linkHeader, link) {
-        return (<MenuItem onClick={this.props.closeMenu} onTouchTap={() => this.props.history.push(link)} key={link}>{linkHeader}</MenuItem>)
+        return (<ListItem button onClick={() => this.props.history.push(link)} key={link}>
+            <ListItemText primary={linkHeader}/>
+        </ListItem>)
     }
 
     createForObject(object) {
-        return (<MenuItem onClick={this.props.closeMenu} key={object}>{object}</MenuItem>)
+        return (<ListItem button onClick={this.props.closeMenu} key={object}>{object}</ListItem>)
     }
 }
 

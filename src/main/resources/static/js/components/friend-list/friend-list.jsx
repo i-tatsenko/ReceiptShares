@@ -1,4 +1,4 @@
-import {List, ListItem} from 'material-ui/List';
+import List, {ListItemIcon, ListItem, ListItemText} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ListSubheader from 'material-ui/List/ListSubheader';
 
@@ -12,12 +12,15 @@ export default class FriendList extends React.Component {
             <List>
                 <ListSubheader>{this.props.title}</ListSubheader>
                 {this.props.friends.map(friend => {
-                    return <ListItem primaryText={friend.name}
-                                     insetChildren={true}
+                    return <ListItem button dense
                                      onClick={() => friendSelected(friend.id)}
-                                     leftAvatar={<Avatar src={friend.avatarUrl}/>}
                                      key={friend.id}
-                    />
+                    >
+                        <ListItemIcon>
+                            <Avatar src={friend.avatarUrl}/>
+                        </ListItemIcon>
+                        <ListItemText primary={friend.name} />
+                    </ListItem>
                 })}
             </List>
         )

@@ -38,13 +38,13 @@ export default class NewItemModal extends React.Component {
             <Button
                 label="Cancel"
                 primary={true}
-                onTouchTap={this.close}
+                onClick={this.close}
             />,
             <Button
                 label="Add"
                 primary={true}
                 keyboardFocused={true}
-                onTouchTap={this.createNewItem.bind(this)}
+                onClick={this.createNewItem.bind(this)}
                 disabled={!this.validateNewItem()}
             />
         ]

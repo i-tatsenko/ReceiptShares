@@ -1,4 +1,4 @@
-import MenuItem  from 'material-ui/Menu';
+import {MenuItem}  from 'material-ui/Menu';
 
 export default class CustomMenuItem extends React.Component {
     constructor(args) {
@@ -6,6 +6,6 @@ export default class CustomMenuItem extends React.Component {
     }
 
     render() {
-        return <MenuItem primaryText={this.props.label} onTouchTap={() => this.props.action()} />
+        return <MenuItem onClick={() => this.props.action()} >{this.props.label}</MenuItem>
     }
 }
