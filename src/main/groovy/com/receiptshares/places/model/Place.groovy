@@ -1,4 +1,4 @@
-package com.receiptshares.receipt.model
+package com.receiptshares.places.model
 
 import com.receiptshares.DuckTypeConversion
 import groovy.transform.CompileStatic

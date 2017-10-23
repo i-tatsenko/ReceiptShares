@@ -20,9 +20,10 @@ function getSuggestValue(item) {
 }
 
 function renderSuggest(item) {
+    let address = item.location && item.location.address;
     return (
         <ListItem button>
-            <ListItemText primary={item.name} secondary={item.location.address} key={item.id}/>
+            <ListItemText primary={item.name} secondary={address} key={item.id}/>
         </ListItem>
     )
 }
@@ -68,8 +69,8 @@ class PlacesList extends React.Component {
         console.log(event);
         console.log(val);
         this.setState({value: val.newValue});
-        if (event.method === 'type') {
-            this.props.suggestSelected({name: val});
+        if (val.method === 'type') {
+            this.props.selected({name: val.newValue});
         }
     }
 

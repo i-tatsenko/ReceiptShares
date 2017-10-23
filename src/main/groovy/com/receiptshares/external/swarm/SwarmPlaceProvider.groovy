@@ -1,7 +1,7 @@
-package com.receiptshares.external.places.swarm
+package com.receiptshares.external.swarm
 
-import com.receiptshares.external.places.PlaceProvider
-import com.receiptshares.external.places.PlaceSuggest
+import com.receiptshares.places.PlaceProvider
+import com.receiptshares.places.model.PlaceSuggest
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType

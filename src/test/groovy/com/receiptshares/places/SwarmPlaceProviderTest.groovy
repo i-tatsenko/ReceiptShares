@@ -1,7 +1,7 @@
-package com.receiptshares.external.places
+package com.receiptshares.places
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.receiptshares.external.places.swarm.SwarmPlaceProvider
+import com.receiptshares.external.swarm.SwarmPlaceProvider
 import com.receiptshares.util.MockClientHttpConnector
 import org.junit.Test
 import reactor.test.StepVerifier

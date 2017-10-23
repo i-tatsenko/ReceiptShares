@@ -1,7 +1,7 @@
 package com.receiptshares.receipt
 
 import com.receiptshares.receipt.model.OrderedItem
-import com.receiptshares.receipt.model.Place
+import com.receiptshares.places.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.model.User
 import com.receiptshares.web.response.SimpleValueResponse

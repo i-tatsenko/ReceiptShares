@@ -10,12 +10,17 @@ class Location {
             if (result) {
                 getLocation(callback);
             } else {
-                throw Error("Not implemented alternative way")
+                //TODO implement alternative way
             }
         })
     }
 
     getPlacesNearWithName(name, callback) {
+        if (!name || name.length < 3) {
+            return
+        }
+        //TODO migrate to reactive approach
+        //TODO reject previous request in case query has been updated
         this.getCurrentLocation(function (result) {
             if (!name || name === '') {
                 return

@@ -1,11 +1,11 @@
 package com.receiptshares.receipt.dao
 
+import com.receiptshares.places.dao.PlaceEntity
 import com.receiptshares.receipt.converter.ReceiptConverter
 import com.receiptshares.user.dao.PersonEntity
 import groovy.transform.CompileStatic
 import groovy.transform.builder.Builder
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "receipts")

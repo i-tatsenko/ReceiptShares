@@ -1,4 +1,4 @@
-package com.receiptshares.external.places
+package com.receiptshares.places.model
 
 import groovy.transform.ToString
 

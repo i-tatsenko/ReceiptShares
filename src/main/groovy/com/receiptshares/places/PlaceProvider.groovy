@@ -1,5 +1,6 @@
-package com.receiptshares.external.places
+package com.receiptshares.places
 
+import com.receiptshares.places.model.PlaceSuggest
 import reactor.core.publisher.Flux
 
 interface PlaceProvider {

@@ -1,15 +1,17 @@
 package com.receiptshares.receipt
 
+import com.receiptshares.places.PlaceService
+import com.receiptshares.places.dao.PlaceEntity
 import com.receiptshares.receipt.dao.*
 import com.receiptshares.receipt.dao.repository.ItemRepository
 import com.receiptshares.receipt.dao.repository.OrderItemRepository
-import com.receiptshares.receipt.dao.repository.PlaceRepository
+import com.receiptshares.places.dao.repository.PlaceRepository
 import com.receiptshares.receipt.dao.repository.ReceiptRepository
 import com.receiptshares.receipt.exception.OrderedItemNotFound
 import com.receiptshares.receipt.exception.ReceiptNotFoundException
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
-import com.receiptshares.receipt.model.Place
+import com.receiptshares.places.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.PersonRepository
