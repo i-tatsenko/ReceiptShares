@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
-import FormAlert from '../form-alert.jsx';
+import FormAlert from '../alert/form-alert.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';

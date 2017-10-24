@@ -63,7 +63,7 @@ export default class Receipt extends React.Component {
                         className="receipt-header__total-money">{receipt.total.toFixed(2)}</span>
                     </div>
                     <Divider/>
-                    <List>
+                    <List dense disablePadding>
                         <ListSubheader>Items</ListSubheader>
                         {myItems}
                         <Divider inset={true}/>

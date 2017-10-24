@@ -31,9 +31,9 @@ class UserService {
     }
 
     Mono<User> registerNewUser(NewUserDTO newUser) {
-        def person = new PersonEntity(name: newUser.name, avatarUrl: newUser.avatarUrl)
+        def person = new PersonEntity(name: newUser.name, avatarUrl: newUser.avatarUrl ?: "/images/no-photo-avatar.svg")
         return personRepository.save(person)
-                               .flatMap({ PersonEntity createdPerson -> createUserForPerson(person, newUser.email, newUser.password)} as Function)
+                               .flatMap({ PersonEntity createdPerson -> createUserForPerson(person, newUser.email.toLowerCase(), newUser.password)} as Function)
                                .map({ UserEntity u -> u as User } as Function)
                                .doOnError({ log.error(it) })
                                .onErrorMap(DuplicateKeyException, { error -> new EmailNotUniqueException(newUser.email) })

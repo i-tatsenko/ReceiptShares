@@ -13,4 +13,5 @@ class PlaceEntity implements DuckTypeConversion {
     def String id
     def String provider
     def String name
+    def String imageUrl
 }

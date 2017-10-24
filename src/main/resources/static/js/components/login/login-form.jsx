@@ -1,5 +1,5 @@
 import React from 'react'
-import FormAlert from '../form-alert.jsx';
+import FormAlert from '../alert/form-alert.jsx';
 import FbLoginButton from './facebook-login-button.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
@@ -61,7 +61,8 @@ export default class LoginForm extends React.Component {
     login(event) {
         let that = this;
         event.preventDefault();
-        var loginData = $('#login-form').serialize();
+        let loginData = $('#login-form').serialize();
+        loginData.login = loginData.login.toLowerCase();
         $.post({
             url: '/v1/open/login',
             data: loginData,

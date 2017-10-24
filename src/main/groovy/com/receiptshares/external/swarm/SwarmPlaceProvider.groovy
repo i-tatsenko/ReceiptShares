@@ -1,5 +1,7 @@
 package com.receiptshares.external.swarm
 
+import com.receiptshares.external.swarm.model.SwarmSuggestResult
+import com.receiptshares.external.swarm.model.SwarmVenueResult
 import com.receiptshares.places.PlaceProvider
 import com.receiptshares.places.model.PlaceSuggest
 import groovy.util.logging.Slf4j
@@ -10,6 +12,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 import java.util.function.Function
 
@@ -20,7 +23,10 @@ class SwarmPlaceProvider implements PlaceProvider {
     private static final String API_INTEGRATION_DATE = "20171004"
 
     private static
-    final String AUTOCOMPLETE_PATH = "/venues/suggestcompletion?query={query}&ll={ll}&limit=10&client_id={clientId}&client_secret={clientSecret}&v=${API_INTEGRATION_DATE}"
+    final String AUTH_QUERY = "client_id={clientId}&client_secret={clientSecret}&v=${API_INTEGRATION_DATE}"
+    private static
+    final String AUTOCOMPLETE_PATH = "/venues/suggestcompletion?query={query}&ll={ll}&limit=10&" + AUTH_QUERY
+    private static final String VENUE_DETAILS_PATH = "/venues/{venueId}?" + AUTH_QUERY
 
     @Value('${swarm.app.id}')
     private String appId
@@ -48,14 +54,29 @@ class SwarmPlaceProvider implements PlaceProvider {
         return uri
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(SwarmResult)
+                .bodyToMono(SwarmSuggestResult)
                 .map({ it.response.minivenues })
                 .flatMapMany({ Flux.fromIterable(it.sort(placeSuggestComparator)) })
-                .doOnNext({ it.provider = "swarm" })
     }
 
+    @Override
+    Mono<String> getPlaceImage(String placeId) {
+        WebClient.RequestHeadersSpec uri = webClient.get()
+                                                    .uri(VENUE_DETAILS_PATH, [venueId: placeId, clientId: appId, clientSecret: appSecret])
+
+        return uri.accept(MediaType.APPLICATION_JSON)
+                  .retrieve()
+                  .bodyToMono(SwarmVenueResult)
+                  .map({ it.response.venue.bestPhoto })
+                  .map({ "${it.prefix}${it.width}x${it.height}${it.suffix}" })
+    }
+
+    @Override
+    String name() {
+        return "swarm"
+    }
     private Closure placeSuggestComparator = { l, r ->
-        return Comparator.comparing({it.location?.distance} as Function)
+        return Comparator.comparing({ it.location?.distance } as Function)
                          .thenComparing({ it.name } as Function)
                          .thenComparing({ it.id } as Function)
                          .compare(l, r)

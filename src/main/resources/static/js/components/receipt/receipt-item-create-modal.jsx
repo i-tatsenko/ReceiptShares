@@ -1,4 +1,8 @@
-import Dialog from "material-ui/Dialog";
+import Dialog, {
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+} from 'material-ui/Dialog';
 import TextField from "material-ui/TextField";
 import Button from 'material-ui/Button';
 
@@ -16,38 +20,34 @@ export default class NewItemModal extends React.Component {
     render() {
         let t = this;
         return (
-            <Dialog title="Add item" modal={false} open={this.props.opened}
-                    actions={this.createAddNewItemActions()} onRequestClose={this.close}>
-                <TextField
-                    label="Item name"
-                    placeholder="Name"
-                    name="name"
-                    onChange={e => t.setState({name: e.target.value})}/>
-                <br/>
-                <TextField
-                    label="Item price"
-                    placeholder="Price"
-                    name="price"
-                    onChange={e => t.setState({price: e.target.value})}/>
+            <Dialog modal={false} open={this.props.opened} onRequestClose={this.close}>
+                <DialogTitle>
+                    Add new item
+                </DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Item name"
+                        placeholder="Name"
+                        name="name"
+                        onChange={e => t.setState({name: e.target.value})}/>
+                    <br/>
+                    <TextField
+                        label="Item price"
+                        placeholder="Price"
+                        name="price"
+                        onChange={e => t.setState({price: e.target.value})}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.close} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => this.createNewItem()} color="primary" disabled={!this.validateNewItem()}>
+                        Create
+                    </Button>
+                </DialogActions>
+
             </Dialog>
         );
-    }
-
-    createAddNewItemActions() {
-        return [
-            <Button
-                label="Cancel"
-                primary={true}
-                onClick={this.close}
-            />,
-            <Button
-                label="Add"
-                primary={true}
-                keyboardFocused={true}
-                onClick={this.createNewItem.bind(this)}
-                disabled={!this.validateNewItem()}
-            />
-        ]
     }
 
     validateNewItem() {

@@ -31,7 +31,16 @@ class PlaceService {
     }
 
     Mono<PlaceEntity> createNewPlace(Place place, String authorId) {
-        return placeRepository.save(new PlaceEntity(id: place.id, name: place.name, provider: place.provider ?: authorId))
+        Mono<String> image
+        if (place.provider == placeProvider.name()) {
+            image = placeProvider.getPlaceImage(place.id)
+        } else {
+            image = Mono.just("")
+        }
+        return image.map({
+            new PlaceEntity(id: place.id, name: place.name, provider: place.provider ?: authorId, imageUrl: it)
+        })
+                    .flatMap(placeRepository.&save)
     }
 
     Flux<PlaceSuggest> suggestPlacesForUser(String query, String userId) {
@@ -42,6 +51,7 @@ class PlaceService {
     }
 
     Flux<PlaceSuggest> suggestPlacesForUser(String query, String userId, String latitude, String longtitude) {
-        return suggestPlacesForUser(query, userId).concatWith(placeProvider.findPlaces(query, latitude, longtitude))
+        return suggestPlacesForUser(query, userId).concatWith(
+                placeProvider.findPlaces(query, latitude, longtitude).doOnNext({ it.provider = placeProvider.name() }))
     }
 }

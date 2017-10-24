@@ -8,6 +8,6 @@ class Place implements DuckTypeConversion {
 
     String id
     String provider
-    String authorId
     String name
+    String imageUrl
 }

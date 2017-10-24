@@ -1,7 +1,10 @@
-import {ListItem} from "material-ui/List";
+import {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
 import Avatar from "material-ui/Avatar";
-import { LinearProgress } from 'material-ui/Progress';
+import {LinearProgress} from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
+import Remove from 'material-ui-icons/Remove'
+import Add from 'material-ui-icons/Add'
+import PlusOne from 'material-ui-icons/PlusOne'
 
 import "./receipt.css";
 
@@ -18,12 +21,14 @@ export class OwnReceiptItem extends React.Component {
 
     actionButtons(receipt, orderedItem) {
         return [
-            <IconButton iconClassName="fa fa-minus-square-o receipt-item-actions__action"
-                        key={"MinusItem" + orderedItem.id}
-                        onClick={() => this.props.deleteItem(receipt.id, orderedItem)}/>,
-            <IconButton iconClassName="fa fa-plus-square-o receipt-item-actions__action"
-                        key={"PlusItem" + orderedItem.id}
-                        onClick={() => this.props.incrementItem(receipt.id, orderedItem.id)}/>
+            <IconButton key={"MinusItem" + orderedItem.id}
+                        onClick={() => this.props.deleteItem(receipt.id, orderedItem)}>
+                <Remove/>
+            </IconButton>,
+            <IconButton key={"PlusItem" + orderedItem.id}
+                        onClick={() => this.props.incrementItem(receipt.id, orderedItem.id)}>
+                <Add/>
+            </IconButton>
         ]
     }
 
@@ -36,12 +41,14 @@ export class OwnReceiptItem extends React.Component {
 
 export class ReceiptItem extends React.Component {
     render() {
-        return (<CommonComponent {...this.props} actionButtons={this.actionButtons(this.props.item)} />)
+        return (<CommonComponent {...this.props} actionButtons={this.actionButtons(this.props.item)}/>)
     }
 
     actionButtons(item) {
-        return [<IconButton key={"MeeToo" + item.id} iconClassName="fa fa-clone receipt-item-actions__action"
-                            onClick={() => this.props.cloneItem(this.props.receipt.id, this.props.item.id)}/>]
+        return [<IconButton key={"MeeToo" + item.id}
+                            onClick={() => this.props.cloneItem(this.props.receipt.id, this.props.item.id)}>
+            <PlusOne/>
+        </IconButton>]
     }
 }
 
@@ -55,19 +62,17 @@ class CommonComponent extends React.Component {
             ${orderedItem.item.price}</div>;
 
         return (
-            <ListItem primaryText={primaryText}
-                      secondaryText={secondaryText}
-                      leftAvatar={<Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl || "/images/no-photo-avatar.svg"}/>}
-                      children={this.children()}
-                      className="receipt-item"
-                      key={"ListItem" + orderedItem.id}
-            />
+            <ListItem className="receipt-item" key={"ListItem" + orderedItem.id}>
+                <Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl}/>
+                <ListItemText primary={primaryText} secondary={secondaryText}/>
+                {this.children()}
+            </ListItem>
         )
     }
 
     children() {
         if (this.props.changePending) {
-            return <LinearProgress mode="query" />
+            return <LinearProgress style={{width: '100%'}}/>
         }
         else {
             return (
