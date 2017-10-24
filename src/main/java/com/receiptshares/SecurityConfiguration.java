@@ -15,14 +15,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-//TODO: migrate to reactive configuration https://github.com/spring-projects/spring-security/blob/5.0.0.M1/samples/javaconfig/hellowebflux/src/main/java/sample/Application.java
+    public static final String REMEMBER_ME_COOKIE_NAME = "rembo";
+    //TODO: migrate to reactive configuration https://github.com/spring-projects/spring-security/blob/5.0.0.M1/samples/javaconfig/hellowebflux/src/main/java/sample/Application.java
     private final UserDetailsService userDetailsService;
     private MongoTemplate mongoTemplate;
 
@@ -41,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .formLogin().loginProcessingUrl("/v1/open/login").successHandler(authSuccessHandler()).failureHandler(authFailureHandler())
             .and()
-            .logout().logoutUrl("/v1/open/logout").logoutSuccessUrl("/")
+            .logout().logoutUrl("/v1/open/logout").deleteCookies(REMEMBER_ME_COOKIE_NAME).logoutSuccessHandler(logoutSuccessHandler())
             .and()
             .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .and()
@@ -67,9 +68,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public RememberMeServices tokenBasedRememberMeServices() {
         PersistentTokenBasedRememberMeServices result = new PersistentTokenBasedRememberMeServices(rememberMeKey, userDetailsService(), rememberMeTokenRepository());
         result.setAlwaysRemember(true);
-        result.setCookieName("rembo");
+        result.setCookieName(REMEMBER_ME_COOKIE_NAME);
         result.setTokenValiditySeconds(7 * 24 * 60 * 60);
         return result;
+    }
+
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return (request, response, auth) -> response.setStatus(HttpStatus.OK.value());
     }
 
     @Bean

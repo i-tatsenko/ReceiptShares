@@ -1,8 +1,7 @@
 import storage from "../storage/storage.js"
 import LeftMenu from "./left-menu.jsx";
-
+import {withStyles} from 'material-ui/styles';
 import AppBar from "material-ui/AppBar";
-import Logout from "./login/logout.jsx";
 import {withRouter} from "react-router-dom";
 import ActionButton from "./add-action-button.jsx"
 import Toolbar from 'material-ui/Toolbar';
@@ -10,17 +9,28 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 
+const styles = theme => ({
+    container: {
+        marginLeft: '20px',
+        marginTop: theme.spacing.unit * 9,
+        marginRight: '20px',
+        marginBottom: '10px',
+        paddingTop: theme.spacing.unit
+    }
+});
+
 class App extends React.Component {
 
     constructor(args) {
         super(args);
+        this.classes = args.classes;
         this.state = {
             menuOpen: false,
             barTitle: storage.getState().screenTitle,
             menuItems: {
                 Receipts: '/',
                 Help: '/help',
-                logout: <Logout/>
+                Logout: () => $.post('/v1/open/logout').done(window.location = '/')
             }
         };
         storage.listenFor("screenTitle", () => this.setState({barTitle: storage.getState().screenTitle}))
@@ -32,7 +42,8 @@ class App extends React.Component {
                 <div className="clearflix" style={{position: "relative"}}>
                     <AppBar>
                         <Toolbar>
-                            <IconButton color="contrast" onClick={() => this.setState({menuOpen: !this.state.menuOpen})}>
+                            <IconButton color="contrast"
+                                        onClick={() => this.setState({menuOpen: !this.state.menuOpen})}>
                                 <MenuIcon/>
                             </IconButton>
                             <Typography type="title" color="inherit">
@@ -42,12 +53,7 @@ class App extends React.Component {
                     </AppBar>
                     <LeftMenu open={this.state.menuOpen} links={this.state.menuItems}
                               closeMenu={() => this.setState({menuOpen: false})}/>
-                    <div style={{
-                        marginLeft: '20px',
-                        marginTop: '100px',
-                        marginRight: '20px',
-                        marginBottom: '10px'
-                    }} className="container-div">
+                    <div className={this.classes.container}>
                         {this.props.children}
                     </div>
                 </div>
@@ -57,4 +63,4 @@ class App extends React.Component {
     }
 }
 
-export default withRouter(App)
+export default withRouter(withStyles(styles)(App))

@@ -4,12 +4,12 @@ import FbLoginButton from './facebook-login-button.jsx';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import './login.css';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-
-
 import {Link} from 'react-router-dom'
+
+import './login.css';
+
 
 export default class LoginForm extends React.Component {
 
@@ -45,12 +45,12 @@ export default class LoginForm extends React.Component {
                         /><br/>
                         <Button raised color="primary" className="login__login-button"
                                 onClick={(event) => this.login(event)}>Login</Button>
-                        <hr/>
-                        <div>
-                            <h3>Login with your social network account</h3>
-                            <FbLoginButton/>
-                        </div>
                     </form>
+                    <hr/>
+                    <div>
+                        <h3>Login with your social network account</h3>
+                        <FbLoginButton/>
+                    </div>
                     <hr/>
                     <span className="login__invite-to-register"><Link to="/register">Register</Link> if you have no account!</span>
                 </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
+import List, {ListItem, ListItemText} from 'material-ui/List';
 import Drawer from "material-ui/Drawer";
 import {withRouter} from "react-router-dom";
 
@@ -36,10 +36,10 @@ class LeftMenu extends React.Component {
     createMenuItem(linkHeader, link) {
         if ((typeof link) === 'string') {
             return this.createForLink(linkHeader, link);
+        } else if ((typeof link === 'function')) {
+            return LeftMenu.createForFunction(linkHeader, link)
         }
-        return (
-            this.createForObject(link)
-        );
+        throw new Error(`Can't create menu item for ${link}`)
     }
 
     createForLink(linkHeader, link) {
@@ -48,8 +48,10 @@ class LeftMenu extends React.Component {
         </ListItem>)
     }
 
-    createForObject(object) {
-        return (<ListItem button onClick={this.props.closeMenu} key={object}>{object}</ListItem>)
+    static createForFunction(linkHeader, func) {
+        return (<ListItem button onClick={func} key={linkHeader}>
+            <ListItemText primary={linkHeader}/>
+        </ListItem>)
     }
 }
 

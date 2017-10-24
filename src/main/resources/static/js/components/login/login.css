@@ -4,6 +4,10 @@
     margin-top: 100px;
 }
 
+#login-form {
+    margin-bottom: 50px;
+}
+
 .login__login-button {
     margin-top: 20px;
 }

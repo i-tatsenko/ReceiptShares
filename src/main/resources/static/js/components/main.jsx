@@ -21,11 +21,9 @@ class Mui extends React.Component {
     render() {
         return (
                 <div className="container-div">
-                    <div id="main-component" className="col-lg-6 col-lg-offset-3 container-div">
-                        <Paper elevation={3} className="container-div">
+                        <Paper elevation={3} style={{minHeight: '90vh'}}>
                             {this.props.children}
                         </Paper>
-                    </div>
                 </div>
         )
     }
