@@ -16,4 +16,6 @@ interface CustomReceiptRepository {
 
     Mono<Void> changeOrderedItemStatus(String receiptId, String orderedItemId, ItemStatus status)
 
+    Mono<Void> addUserToReceipt(String receiptId, String userId)
+
 }

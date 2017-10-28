@@ -20,10 +20,10 @@ class RememberMeTokenRepository implements PersistentTokenRepository {
     @Override
     void createNewToken(PersistentRememberMeToken token) {
         mongo.upsert(query(where("username").is(token.username)), update("username", token.username)
-                                                                      .set("series", token.series)
-                                                                      .set("tokenValue", token.tokenValue)
-                                                                      .set("date", token.date),
-        RememberMeTokenEntity)
+                .set("series", token.series)
+                .set("tokenValue", token.tokenValue)
+                .set("date", token.date),
+                RememberMeTokenEntity)
     }
 
     @Override
@@ -35,9 +35,11 @@ class RememberMeTokenRepository implements PersistentTokenRepository {
 
     @Override
     PersistentRememberMeToken getTokenForSeries(String seriesId) {
-        def result = mongo.query(RememberMeTokenEntity).matching(query(where("series").is(seriesId)))
-                          .first().get()
-        return new PersistentRememberMeToken(result.username, result.series, result.tokenValue, result.date)
+        return mongo.query(RememberMeTokenEntity)
+                    .matching(query(where("series").is(seriesId)))
+                    .first()
+                    .map({ new PersistentRememberMeToken(it.username, it.series, it.tokenValue, it.date) })
+                    .orElse(null)
     }
 
     @Override

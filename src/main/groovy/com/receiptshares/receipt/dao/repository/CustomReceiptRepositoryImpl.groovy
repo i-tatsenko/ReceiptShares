@@ -4,10 +4,11 @@ import com.receiptshares.Util
 import com.receiptshares.receipt.dao.OrderedItemEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.model.ItemStatus
+import com.receiptshares.user.dao.PersonEntity
+import com.receiptshares.user.dao.PersonRepository
 import groovy.util.logging.Slf4j
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.ReactiveMongoOperations
-import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Component
@@ -21,9 +22,11 @@ import static org.springframework.data.mongodb.core.query.Query.query
 class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
 
     final ReactiveMongoOperations mongoOperations
+    final PersonRepository personRepository
 
-    CustomReceiptRepositoryImpl(ReactiveMongoOperations mongoOperations) {
+    CustomReceiptRepositoryImpl(ReactiveMongoOperations mongoOperations, PersonRepository personRepository) {
         this.mongoOperations = mongoOperations
+        this.personRepository = personRepository
     }
 
     @Override
@@ -61,4 +64,16 @@ class CustomReceiptRepositoryImpl implements CustomReceiptRepository {
                        .flatMap(Util.&expectSingleUpdateResult)
     }
 
+    @Override
+    Mono<Void> addUserToReceipt(String receiptId, String userId) {
+        return personRepository.findById(userId)
+                               .flatMap({ addUserToReceiptInteranl(receiptId, it) })
+    }
+
+    private Mono<Void> addUserToReceiptInteranl(String receiptId, PersonEntity person) {
+        def update = new Update().push("members", person)
+        return mongoOperations.updateFirst(query(where("_id").is(receiptId)), update, ReceiptEntity)
+                              .flatMap(Util.&expectSingleUpdateResult)
+
+    }
 }

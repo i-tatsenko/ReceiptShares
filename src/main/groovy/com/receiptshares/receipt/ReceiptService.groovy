@@ -84,7 +84,6 @@ class ReceiptService {
 
     Mono<OrderedItem> createNewItem(String ownerId, String receiptId, String name, Double price) {
         //TODO check security
-        //TODO find item in DB if exists
         return itemRepository.save(new ItemEntity(name: name, price: price))
                              .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) })
                              .map({ it as OrderedItem })
