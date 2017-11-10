@@ -12,6 +12,7 @@ gradle-app.setting
 hs_err_pid*
 .idea/
 *.iws
+*.iml
 /out/
 .idea_modules/
 atlassian-ide-plugin.xml

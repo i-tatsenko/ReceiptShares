@@ -20,4 +20,5 @@ class Receipt implements DuckTypeConversion {
     ReceiptStatus status
     double total
     Map<String, Double> totalsPerMember
+    String inviteLink
 }

@@ -22,6 +22,18 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src/main/groovy', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+}
+
+
 junitPlatform {
     // platformVersion '1.0.0-M4'
     filters {

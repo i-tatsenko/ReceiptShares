@@ -3,6 +3,7 @@ package com.receiptshares.receipt
 import com.receiptshares.places.PlaceService
 import com.receiptshares.places.dao.PlaceEntity
 import com.receiptshares.receipt.dao.*
+import com.receiptshares.receipt.dao.repository.InviteRepository
 import com.receiptshares.receipt.dao.repository.ItemRepository
 import com.receiptshares.receipt.dao.repository.OrderItemRepository
 import com.receiptshares.places.dao.repository.PlaceRepository
@@ -35,17 +36,19 @@ class ReceiptService {
     private ItemRepository itemRepository
     private PlaceRepository placeRepository
     private PersonRepository personRepository
+    private InviteService inviteService
     private PlaceService placeService
 
     @Autowired
     ReceiptService(ReceiptRepository receiptRepository, OrderItemRepository orderItemRepository,
-                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository, PlaceService placeService) {
+                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository, PlaceService placeService, InviteService inviteService) {
         this.receiptRepository = receiptRepository
         this.orderItemRepository = orderItemRepository
         this.itemRepository = itemRepository
         this.placeRepository = placeRepository
         this.personRepository = personRepository
         this.placeService = placeService
+        this.inviteService = inviteService
     }
 
     Flux<Receipt> receiptsForUser(String ownerId) {
@@ -61,7 +64,17 @@ class ReceiptService {
         return Mono.when(ownerMono, members, place, Mono.just(name))
                    .map({ buildReceipt(it) })
                    .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
+                   .flatMap(this.&addInviteLink)
                    .map({ it as Receipt })
+    }
+
+    private Mono<ReceiptEntity> addInviteLink(ReceiptEntity receipt) {
+        return inviteService.createInviteLink(receipt.id, receipt.owner)
+                            .flatMap({
+            receipt.inviteLink = it
+            return receiptRepository.save(receipt)
+        })
+
     }
 
     private ReceiptEntity buildReceipt(Tuple4<PersonEntity, List<PersonEntity>, PlaceEntity, String> ownerMembersAndPlaceAndName) {

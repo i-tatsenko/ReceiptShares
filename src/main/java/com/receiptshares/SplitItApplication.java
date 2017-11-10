@@ -16,15 +16,15 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication(scanBasePackages = "com.receiptshares", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
 @EnableReactiveMongoRepositories
 @AutoConfigureAfter(EmbeddedMongoAutoConfiguration.class)
-public class ReceiptSharesApplication extends SpringBootServletInitializer {
+public class SplitItApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(ReceiptSharesApplication.class, args);
+        SpringApplication.run(SplitItApplication.class, args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(ReceiptSharesApplication.class);
+        return application.sources(SplitItApplication.class);
     }
 
     @Bean

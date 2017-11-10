@@ -17,16 +17,9 @@ class InviteController {
         this.inviteService = inviteService
     }
 
-    @PostMapping("/")
-    @ResponseBody
-    Mono createOrGet(Authentication auth, @RequestParam("receiptId") String receiptId) {
-        inviteService.getOrCreateInviteLink(receiptId, auth.principal.person.id)
-                     .map({ [value: it] })
-    }
-
     @PostMapping("/accept")
     @ResponseBody
     Mono<ReceiptEntity> accept(Authentication auth, @RequestParam("inviteId") String inviteId, @RequestParam("time")long creationTime) {
-        inviteService.accept(auth.principal.person.id, inviteId, creationTime)
+        inviteService.accept(auth.principal.person.id, inviteId)
     }
 }

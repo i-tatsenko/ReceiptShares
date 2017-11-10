@@ -21,5 +21,6 @@ class ReceiptEntity implements ReceiptConverter {
     List<PersonEntity> members
     List<OrderedItemEntity> orderedItems
     String status
+    String inviteLink
 
 }

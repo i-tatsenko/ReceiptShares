@@ -4,6 +4,8 @@ import com.receiptshares.receipt.dao.InviteEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.repository.InviteRepository
 import com.receiptshares.receipt.dao.repository.ReceiptRepository
+import com.receiptshares.user.dao.PersonEntity
+import com.receiptshares.user.model.Person
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -23,28 +25,23 @@ class InviteService {
         this.receiptRepository = receiptRepository
     }
 
-    Mono<String> getOrCreateInviteLink(String receiptId, String authorId) {
-        inviteRepository.findByReceiptIdAndAuthorId(receiptId, authorId)
-                        .switchIfEmpty(createInvite(receiptId, authorId))
-                        .map(this.&constructInviteLink)
+    Mono<String> createInviteLink(String receiptId, PersonEntity author) {
+        createInvite(receiptId, author).map(this.&constructInviteLink)
     }
 
-    private Mono<InviteEntity> createInvite(String receiptId, String authorId) {
-        Mono.defer({
-            Mono.just(new InviteEntity(
-                    receiptId: receiptId,
-                    authorId: authorId,
-                    creationTime: new Date().getTime()))
-        })
-            .flatMap(inviteRepository.&save)
+    private Mono<InviteEntity> createInvite(String receiptId, PersonEntity author) {
+        return inviteRepository.save(new InviteEntity(
+                receiptId: receiptId,
+                author: author,
+                creationTime: new Date().getTime()))
     }
 
     private String constructInviteLink(InviteEntity invite) {
-        return siteUrl + "/receipt/${invite.receiptId}/invite/" + invite.id + "/" + invite.creationTime
+        return siteUrl + "/receipt/invite/" + invite.id + "/"
     }
 
-    Mono<ReceiptEntity> accept(String userId, String inviteId, long creationTime) {
-        inviteRepository.findByIdAndCreationTime(inviteId, creationTime)
+    Mono<ReceiptEntity> accept(String userId, String inviteId) {
+        inviteRepository.findById(inviteId)
                         .switchIfEmpty(Mono.error(new IllegalArgumentException("There is no such invite")))
                         .flatMap({ addUserToReceipt(userId, it.receiptId) })
     }

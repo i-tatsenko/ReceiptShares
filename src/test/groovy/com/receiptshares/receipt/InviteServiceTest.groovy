@@ -44,7 +44,7 @@ class InviteServiceTest {
     void "should return link from existing invite"() {
         when(inviteRepository.findByReceiptIdAndAuthorId(receiptId, userId)).thenReturn(Mono.just(inviteEntity))
 
-        StepVerifier.create(underTest.getOrCreateInviteLink(receiptId, userId))
+        StepVerifier.create(underTest.createInviteLink(receiptId, userId))
                     .expectNext(site + "/receipt/${receiptId}/invite/${inviteId}/${creationTime}")
                     .verifyComplete()
     }
@@ -54,7 +54,7 @@ class InviteServiceTest {
         when(inviteRepository.findByReceiptIdAndAuthorId(anyString(), anyString())).thenReturn(Mono.empty())
         when(inviteRepository.save(any())).thenReturn(Mono.just(inviteEntity))
 
-        StepVerifier.create(underTest.getOrCreateInviteLink(receiptId, userId))
+        StepVerifier.create(underTest.createInviteLink(receiptId, userId))
                     .expectNext(site + "/receipt/${receiptId}/invite/${inviteId}/${creationTime}")
                     .verifyComplete()
     }

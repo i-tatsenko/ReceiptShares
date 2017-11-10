@@ -32,7 +32,8 @@ export default class Receipt extends React.Component {
             showItemDeletedMessage: false,
             itemDeletedMessage: "",
             deletedItemId: "",
-            itemsIdWithPendingChange: []
+            itemsIdWithPendingChange: [],
+            showShareLink: false
         };
 
         this.additionalAction =
@@ -55,6 +56,10 @@ export default class Receipt extends React.Component {
         let {myItems, otherItems} = this.renderItems();
         return (
             <section className="receipt">
+                <div>
+                    <h3>{receipt.place.name}</h3>
+
+                </div>
                 <section className="receipt-header__spending">
                     <div className="receipt-header__my-spending">Your spending: <span
                         className="receipt-header__my-spending-money">{mySpending.toFixed(2)}</span></div>
