@@ -11,6 +11,7 @@ import "./receipt.css";
 import {withRouter} from "react-router-dom";
 import Snackbar from 'material-ui/Snackbar';
 import ListSubheader from 'material-ui/List/ListSubheader';
+import ShareLink from '../share-link.jsx'
 
 const NotFoundReceipt = withRouter(props => {
     return (
@@ -56,9 +57,9 @@ export default class Receipt extends React.Component {
         let {myItems, otherItems} = this.renderItems();
         return (
             <section className="receipt">
-                <div>
-                    <h3>{receipt.place.name}</h3>
-
+                <div className="receipt-heading">
+                    <h3 className="receipt-address__head">{receipt.place.name}</h3>
+                    <ShareLink link={receipt.inviteLink} className="receipt-share__link"/>
                 </div>
                 <section className="receipt-header__spending">
                     <div className="receipt-header__my-spending">Your spending: <span

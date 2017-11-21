@@ -1,9 +1,27 @@
 import IconButton from 'material-ui/IconButton';
 import Share from 'material-ui-icons/Share'
+import CopyAbleInput from './input-copy-able.jsx'
 
 class ShareLink extends React.Component {
 
+    constructor(args) {
+        super(args);
+        this.state = {showShareLink: false}
+    }
+
     render() {
-        return (<IconButton onClick={() => this.setState({showShareLink: true})}><Share/></IconButton>)
+        let linkText = null;
+        if (this.state.showShareLink) {
+            linkText = <CopyAbleInput value={this.props.link}/>
+
+        }
+        return (<div className={this.props.className}>
+                {linkText}
+                <IconButton onClick={() => this.setState({showShareLink: true})}><Share/>
+                </IconButton>
+            </div>
+        )
     }
 }
+
+export default ShareLink;

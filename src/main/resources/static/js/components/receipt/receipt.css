@@ -39,3 +39,12 @@
 .receipt-item-actions__action {
     padding: 10px
 }
+
+.receipt-share__link {
+    height: 100%;
+}
+
+.receipt-heading {
+    display: flex;
+    justify-content: space-between;
+}
