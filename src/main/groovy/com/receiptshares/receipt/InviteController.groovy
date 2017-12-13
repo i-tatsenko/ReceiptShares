@@ -1,6 +1,7 @@
 package com.receiptshares.receipt
 
-import com.receiptshares.receipt.dao.ReceiptEntity
+import com.receiptshares.receipt.model.Invite
+import com.receiptshares.receipt.model.Receipt
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
@@ -19,7 +20,13 @@ class InviteController {
 
     @PostMapping("/accept")
     @ResponseBody
-    Mono<ReceiptEntity> accept(Authentication auth, @RequestParam("inviteId") String inviteId, @RequestParam("time")long creationTime) {
+    Mono<Receipt> accept(Authentication auth, @RequestParam("inviteId") String inviteId) {
         inviteService.accept(auth.principal.person.id, inviteId)
+    }
+
+    @GetMapping("/{inviteId}")
+    @ResponseBody
+    Mono<Invite> inviteForId(@PathVariable("inviteId") String inviteId) {
+        return inviteService.findById(inviteId)
     }
 }

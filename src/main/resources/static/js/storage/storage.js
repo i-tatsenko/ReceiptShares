@@ -1,4 +1,5 @@
 import {EventEmitter} from "fbemitter"
+import * as Rx from "rxjs-es";
 
 let state = {
     actionButtonMenuItems: []
@@ -36,5 +37,16 @@ class Storage {
         emitter.emit("add-action-menu");
     }
 }
+
+class InviteService {
+
+    findById(inviteId) {
+        return Rx.Observable.fromPromise(
+            $.get(`/v1/invite/${inviteId}`)
+        )
+    }
+}
+
+export const inviteService = new InviteService();
 
 export default new Storage();

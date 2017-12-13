@@ -4,6 +4,8 @@ import com.receiptshares.receipt.dao.InviteEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.repository.InviteRepository
 import com.receiptshares.receipt.dao.repository.ReceiptRepository
+import com.receiptshares.receipt.model.Invite
+import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.model.Person
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +31,27 @@ class InviteService {
         createInvite(receiptId, author).map(this.&constructInviteLink)
     }
 
+    Mono<Receipt> accept(String userId, String inviteId) {
+        inviteRepository.findById(inviteId)
+                        .switchIfEmpty(Mono.error(new IllegalArgumentException("There is no such invite")))
+                        .flatMap({ addUserToReceipt(userId, it.receiptId) })
+                        .map({ it as Receipt })
+    }
+
+    Mono<Invite> findById(String inviteId) {
+        inviteRepository.findById(inviteId)
+                        .flatMap(this.&mapToInvite)
+    }
+
+    private Mono<Invite> mapToInvite(InviteEntity inviteEntity) {
+        Invite result = inviteEntity as Invite
+        return receiptRepository.findById(inviteEntity.receiptId)
+                                .map({
+            result.receipt = it as Receipt
+            return result
+        })
+    }
+
     private Mono<InviteEntity> createInvite(String receiptId, PersonEntity author) {
         return inviteRepository.save(new InviteEntity(
                 receiptId: receiptId,
@@ -37,13 +60,7 @@ class InviteService {
     }
 
     private String constructInviteLink(InviteEntity invite) {
-        return siteUrl + "/receipt/invite/" + invite.id + "/"
-    }
-
-    Mono<ReceiptEntity> accept(String userId, String inviteId) {
-        inviteRepository.findById(inviteId)
-                        .switchIfEmpty(Mono.error(new IllegalArgumentException("There is no such invite")))
-                        .flatMap({ addUserToReceipt(userId, it.receiptId) })
+        return siteUrl + "/receipt/invite/" + invite.id
     }
 
     private Mono<ReceiptEntity> addUserToReceipt(String userId, String receiptId) {

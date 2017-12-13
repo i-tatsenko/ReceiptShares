@@ -11,6 +11,7 @@ import CreateNewReceipt from './receipt/create-new-receipt.jsx'
 import ReceiptList from './receipt/receipt-list.jsx'
 import App from './app.jsx'
 import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
+import Invite from "./invite/invite.jsx";
 
 let Help = () => <h1>Application is under construction</h1>;
 let LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
@@ -20,11 +21,11 @@ storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 class Mui extends React.Component {
     render() {
         return (
-                <div className="container-div">
-                        <Paper elevation={3} style={{minHeight: '90vh'}}>
-                            {this.props.children}
-                        </Paper>
-                </div>
+            <div className="container-div">
+                <Paper elevation={3} style={{minHeight: '90vh'}}>
+                    {this.props.children}
+                </Paper>
+            </div>
         )
     }
 }
@@ -55,6 +56,7 @@ function getMainLayout(user) {
             <Switch>
                 <Route exact path="/" component={ReceiptList}/>
                 <Route path="/new" component={CreateNewReceipt}/>
+                <Route path="/receipt/invite/:id" component={Invite}/>
                 <Route path="/receipt/:id" component={Receipt}/>
                 <Route path="/help" component={Help}/>
                 <Redirect to="/" push/>

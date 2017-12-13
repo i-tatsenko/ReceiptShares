@@ -3,11 +3,10 @@ package com.receiptshares.receipt.model
 import com.receiptshares.DuckTypeConversion
 import com.receiptshares.user.model.Person
 
-class Invite implements DuckTypeConversion {
+class ReceiptInvite implements DuckTypeConversion {
 
     String id
-    Receipt receipt
     Person author
+    String receiptId
     long creationTime
-
 }

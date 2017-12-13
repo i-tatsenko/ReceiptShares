@@ -6,5 +6,4 @@ import reactor.core.publisher.Mono
 
 interface InviteRepository extends ReactiveCrudRepository<InviteEntity, String> {
 
-    Mono<InviteEntity> findByIdAndCreationTime(String id, long creationTime)
 }
