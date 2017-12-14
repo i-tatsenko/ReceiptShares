@@ -36,6 +36,16 @@ class Storage {
         state.actionButtonMenuItems.splice(indexToRemove, 1);
         emitter.emit("add-action-menu");
     }
+
+    saveReturnUrl(url) {
+        sessionStorage.setItem("returnUrl", url);
+    }
+
+    getAndRemoveReturnUrl() {
+        let result = sessionStorage.getItem("returnUrl");
+        sessionStorage.removeItem("returnUrl");
+        return result || "/";
+    }
 }
 
 class InviteService {

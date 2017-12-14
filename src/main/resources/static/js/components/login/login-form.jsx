@@ -34,11 +34,13 @@ export default class LoginForm extends React.Component {
                     <FormAlert message={this.state.alertMessage}/>
                     <form id="login-form">
                         <TextField
+                            inputRef={loginInput => this.loginInput = loginInput}
                             label="Email"
                             placeholder="Your login"
                             name="username"
                         /><br/>
                         <TextField
+                            inputRef={passwordInput => this.passwordInput = passwordInput}
                             label="Password"
                             placeholder="Your password"
                             name="password" type="password"
@@ -55,13 +57,16 @@ export default class LoginForm extends React.Component {
                     <span className="login__invite-to-register"><Link to="/register">Register</Link> if you have no account!</span>
                 </div>
             </div>
-        )
+        );
     }
 
     login(event) {
         let that = this;
         event.preventDefault();
-        let loginData = $('#login-form').serialize();
+        let loginData = {
+            login: this.loginInput.value.toLowerCase(),
+            password: this.passwordInput.value
+        };
         loginData.login = loginData.login.toLowerCase();
         $.post({
             url: '/v1/open/login',

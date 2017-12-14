@@ -14,7 +14,7 @@ import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 import Invite from "./invite/invite.jsx";
 
 let Help = () => <h1>Application is under construction</h1>;
-let LoginComponent = () => <LoginForm loginCallback={() => window.location = '/'}/>;
+let LoginComponent = () => <LoginForm loginCallback={() => window.location = storage.getAndRemoveReturnUrl()}/>;
 
 storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 
@@ -73,6 +73,7 @@ let loginLayout =
                 <Route exact path="/" component={LoginComponent}/>
                 <Route path="/login" component={LoginComponent}/>
                 <Route path="/register" component={RegistrationForm}/>
+                <Route path="/receipt/invite/:id" component={Invite}/>
                 <Route component={LoginComponent}/>
             </Switch>
         </Mui>
@@ -85,8 +86,8 @@ $(document).ajaxSend(function (event, jqXHR) {
 
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
     console.log(thrownError);
-    if (jqxhr.status === 401 && window.location.pathname !== '/') {
-        window.location = "/"
+    if (jqxhr.status === 401 && window.location.pathname !== '/login') {
+        window.location = "/login"
     }
 });
 
@@ -96,6 +97,7 @@ $.get({
         renderApp(getMainLayout(resp));
     }
 }).fail(() => {
+    storage.saveReturnUrl(window.location);
     renderApp(loginLayout);
 });
 

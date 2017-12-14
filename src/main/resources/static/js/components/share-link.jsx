@@ -17,7 +17,7 @@ class ShareLink extends React.Component {
         }
         return (<div className={this.props.className}>
                 {linkText}
-                <IconButton onClick={() => this.setState({showShareLink: true})}><Share/>
+                <IconButton onClick={() => this.setState({showShareLink: !this.state.showShareLink})}><Share/>
                 </IconButton>
             </div>
         )
