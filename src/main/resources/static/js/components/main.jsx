@@ -14,7 +14,8 @@ import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 import Invite from "./invite/invite.jsx";
 
 let Help = () => <h1>Application is under construction</h1>;
-let LoginComponent = () => <LoginForm loginCallback={() => window.location = storage.getAndRemoveReturnUrl()}/>;
+
+let LoginComponent = () => <LoginForm loginCallback={() => redirectToPreviousLocation()}/>;
 
 storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 
@@ -59,12 +60,11 @@ function getMainLayout(user) {
                 <Route path="/receipt/invite/:id" component={Invite}/>
                 <Route path="/receipt/:id" component={Receipt}/>
                 <Route path="/help" component={Help}/>
-                <Redirect to="/" push/>
+                <Redirect to={storage.getAndRemoveReturnUrl()} push/>
             </Switch>
         </AppWrapper>
     </BrowserRouter>;
 }
-
 
 let loginLayout =
     <BrowserRouter>
@@ -84,6 +84,7 @@ $(document).ajaxSend(function (event, jqXHR) {
     jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))
 });
 
+
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
     console.log(thrownError);
     if (jqxhr.status === 401 && window.location.pathname !== '/login') {
@@ -97,10 +98,16 @@ $.get({
         renderApp(getMainLayout(resp));
     }
 }).fail(() => {
-    storage.saveReturnUrl(window.location);
+    if (window.location.pathname !== '/login') {
+        storage.saveReturnUrl(window.location.pathname);
+    }
     renderApp(loginLayout);
 });
 
 function renderApp(app) {
     ReactDOM.render(app, document.getElementById('container'));
+}
+
+function redirectToPreviousLocation() {
+    return window.location = storage.getAndRemoveReturnUrl();
 }

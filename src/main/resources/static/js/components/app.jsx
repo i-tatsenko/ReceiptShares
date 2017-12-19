@@ -30,7 +30,7 @@ class App extends React.Component {
             menuItems: {
                 Receipts: '/',
                 Help: '/help',
-                Logout: () => $.post('/v1/open/logout').done(window.location = '/')
+                Logout: () => $.post('/v1/open/logout').done(() => window.location = '/login')
             }
         };
         storage.listenFor("screenTitle", () => this.setState({barTitle: storage.getState().screenTitle}))

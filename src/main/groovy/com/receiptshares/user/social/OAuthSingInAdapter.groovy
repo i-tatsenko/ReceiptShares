@@ -34,7 +34,7 @@ class OAuthSingInAdapter implements SignInAdapter {
             throw new IllegalArgumentException("There is no user with email: ${userId}")
         authenticator.authenticate(authentication)
         tokenBasedRememberMeServices.loginSuccess(request.getNativeRequest(), request.getNativeResponse(), authentication)
-        return request.getHeader(HttpHeaders.REFERER)
+        return "/social/signin-callback"
     }
 
 }

@@ -38,12 +38,14 @@ export default class LoginForm extends React.Component {
                             label="Email"
                             placeholder="Your login"
                             name="username"
+                            onKeyPress={e => e.key === 'Enter' ? this.login(e) : ''}
                         /><br/>
                         <TextField
                             inputRef={passwordInput => this.passwordInput = passwordInput}
                             label="Password"
                             placeholder="Your password"
                             name="password" type="password"
+                            onKeyPress={e => e.key === 'Enter' ? this.login(e) : ''}
                         /><br/>
                         <Button raised color="primary" className="login__login-button"
                                 onClick={(event) => this.login(event)}>Login</Button>
@@ -64,10 +66,9 @@ export default class LoginForm extends React.Component {
         let that = this;
         event.preventDefault();
         let loginData = {
-            login: this.loginInput.value.toLowerCase(),
+            username: this.loginInput.value.toLowerCase(),
             password: this.passwordInput.value
         };
-        loginData.login = loginData.login.toLowerCase();
         $.post({
             url: '/v1/open/login',
             data: loginData,
