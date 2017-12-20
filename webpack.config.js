@@ -4,6 +4,8 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const outputDir = path.resolve(__dirname, "src/main/resources/static/js/dist/");
 const ideaOutFile = path.resolve(__dirname, "out/production/resources/static/js/dist/");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: './src/main/resources/static/js/components/main.jsx',
@@ -30,7 +32,7 @@ module.exports = {
             }
         ]
     },
-
+    devtool: "inline-cheap-source-map",
 
     plugins: [
         new webpack.ProvidePlugin({
@@ -40,7 +42,12 @@ module.exports = {
         }),
         new WebpackShellPlugin({
             onBuildExit: [`echo cp ${outputDir}/bundle.js ${ideaOutFile}/`,`cp ${outputDir}/bundle.js ${ideaOutFile}/bundle.js`]
-        })
+        }),
+        // new UglifyJsPlugin({
+        //     sourceMap: true,
+        //     parallel: true
+        // }),
+        // new BundleAnalyzerPlugin()
     ]
 
 };

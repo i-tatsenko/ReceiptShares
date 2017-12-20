@@ -1,5 +1,5 @@
 import {EventEmitter} from "fbemitter"
-import * as Rx from "rxjs-es";
+import * as Rx from "rxjs";
 
 let state = {
     actionButtonMenuItems: []
