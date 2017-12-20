@@ -18,15 +18,15 @@ class InviteController {
         this.inviteService = inviteService
     }
 
-    @PostMapping("/accept")
-    @ResponseBody
-    Mono<Receipt> accept(Authentication auth, @RequestParam("inviteId") String inviteId) {
-        inviteService.accept(auth.principal.person.id, inviteId)
-    }
-
     @GetMapping("/{inviteId}")
     @ResponseBody
-    Mono<Invite> inviteForId(@PathVariable("inviteId") String inviteId) {
-        return inviteService.findById(inviteId)
+    Mono<Invite> inviteForId(Authentication auth, @PathVariable("inviteId") String inviteId) {
+        return inviteService.findById(auth.principal.person.id, inviteId)
+    }
+
+    @PostMapping("{inviteId}/accept")
+    @ResponseBody
+    Mono<Receipt> accept(Authentication auth, @PathVariable("inviteId") String inviteId) {
+        inviteService.accept(auth.principal.person.id, inviteId)
     }
 }

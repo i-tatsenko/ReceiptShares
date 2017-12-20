@@ -9,5 +9,6 @@ class Invite implements DuckTypeConversion {
     Receipt receipt
     Person author
     long creationTime
+    boolean alreadyAccepted
 
 }

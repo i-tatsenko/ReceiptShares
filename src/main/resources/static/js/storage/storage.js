@@ -55,6 +55,12 @@ class InviteService {
             $.get(`/v1/invite/${inviteId}`)
         )
     }
+
+    accept(inviteId) {
+        return Rx.Observable.fromPromise(
+            $.post(`/v1/invite/${inviteId}/accept`)
+        )
+    }
 }
 
 export const inviteService = new InviteService();

@@ -1,10 +1,11 @@
-import {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
+import {ListItem, ListItemText} from 'material-ui/List';
 import Avatar from "material-ui/Avatar";
 import {LinearProgress} from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 import Remove from 'material-ui-icons/Remove'
 import Add from 'material-ui-icons/Add'
 import PlusOne from 'material-ui-icons/PlusOne'
+import Divider from 'material-ui/Divider';
 
 import "./receipt.css";
 
@@ -61,13 +62,15 @@ class CommonComponent extends React.Component {
         let secondaryText = <div className='receipt-item__secondary-text'>{orderedItem.count} x
             ${orderedItem.item.price}</div>;
 
-        return (
+        return [
             <ListItem className="receipt-item" key={"ListItem" + orderedItem.id}>
-                <Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl}/>
-                <ListItemText primary={primaryText} secondary={secondaryText}/>
+                <Avatar className='receipt-item__avatar' src={orderedItem.owner.avatarUrl} />
+                <ListItemText className="receipt-item__owner-name" primary={orderedItem.owner.name}/>
+                <ListItemText className="receipt-item__item-summary" primary={primaryText} secondary={secondaryText}/>
                 {this.children()}
-            </ListItem>
-        )
+            </ListItem>,
+            <Divider inset key="divider"/>
+        ]
     }
 
     children() {

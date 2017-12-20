@@ -5,7 +5,9 @@ import com.receiptshares.receipt.dao.InviteEntity
 import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.repository.InviteRepository
 import com.receiptshares.receipt.dao.repository.ReceiptRepository
+import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
+import com.receiptshares.user.model.Person
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -14,8 +16,8 @@ import org.mockito.Mock
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
+import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.ArgumentMatchers.refEq
-import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
@@ -35,6 +37,10 @@ class InviteServiceTest {
     String personId = "42"
     PersonEntity person = new PersonEntity(id: personId, name: "Tester")
     String receiptId = "receipt_id"
+    @Mock
+    ReceiptEntity receiptEntity
+    @Mock
+    Receipt receipt
     long creationTime = new Date().time
     String site = "https://test.com"
 
@@ -42,6 +48,7 @@ class InviteServiceTest {
     void init() {
         underTest.siteUrl = site
         createInviteEntity()
+        when(receiptEntity.asType(Receipt)).thenReturn(receipt)
     }
 
     @Test
@@ -49,29 +56,53 @@ class InviteServiceTest {
         when(inviteRepository.save(refEq(inviteEntity, "id", "creationTime"))).thenReturn(Mono.just(inviteEntity))
 
         StepVerifier.create(underTest.createInviteLink(receiptId, person))
-                .expectNext(site + '/receipt/invite/' + inviteId)
-                .verifyComplete()
+                    .expectNext(site + '/receipt/invite/' + inviteId)
+                    .verifyComplete()
     }
+
+    @Test
+    void "Should set receipt and already invited to the invite"() {
+        when(inviteRepository.findById(inviteId)).thenReturn(Mono.just(inviteEntity))
+        when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receiptEntity))
+
+        StepVerifier.create(underTest.findById(personId, inviteId))
+                    .assertNext({ invite ->
+            assertThat(invite.receipt).isSameAs(receipt)
+            assertThat(invite.alreadyAccepted).isFalse()
+        })
+                    .verifyComplete()
+    }
+
+    @Test
+    void "Should set already invited field"() {
+        when(inviteRepository.findById(inviteId)).thenReturn(Mono.just(inviteEntity))
+        when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receiptEntity))
+        when(receipt.members).thenReturn([new Person(id: personId)] as Set)
+
+        StepVerifier.create(underTest.findById(personId, inviteId))
+                    .assertNext({ assertThat(it.alreadyAccepted).isTrue() })
+                    .verifyComplete()
+    }
+
 
     @Test
     void "Should return error when there is no invite for id"() {
         when(inviteRepository.findById(inviteId)).thenReturn(Mono.empty())
 
         StepVerifier.create(underTest.accept(personId, inviteId))
-                .expectError(IllegalArgumentException)
-                .verify()
+                    .expectError(IllegalArgumentException)
+                    .verify()
     }
 
     @Test
     void "Should add user to receipt and return receipt"() {
-        ReceiptEntity receipt = mock(ReceiptEntity)
         when(inviteRepository.findById(inviteId)).thenReturn(Mono.just(inviteEntity))
         when(receiptRepository.addUserToReceipt(receiptId, personId)).thenReturn(Mono.empty())
-        when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receipt))
+        when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receiptEntity))
 
         StepVerifier.create(underTest.accept(personId, inviteId))
-                .expectNext(receipt)
-                .verifyComplete()
+                    .expectNext(receipt)
+                    .verifyComplete()
 
         verify(receiptRepository).addUserToReceipt(receiptId, personId)
     }

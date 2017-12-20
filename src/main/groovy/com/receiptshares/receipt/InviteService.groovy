@@ -38,9 +38,13 @@ class InviteService {
                         .map({ it as Receipt })
     }
 
-    Mono<Invite> findById(String inviteId) {
+    Mono<Invite> findById(String userId, String inviteId) {
         inviteRepository.findById(inviteId)
                         .flatMap(this.&mapToInvite)
+                        .map({
+            it.alreadyAccepted = it.receipt.members?.find({ member -> member.id == userId }) != null
+            return it
+        })
     }
 
     private Mono<Invite> mapToInvite(InviteEntity inviteEntity) {

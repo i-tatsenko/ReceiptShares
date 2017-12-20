@@ -48,3 +48,11 @@
     display: flex;
     justify-content: space-between;
 }
+
+.receipt-item .receipt-item__item-summary {
+    flex-grow: 10;
+}
+
+.receipt-item .receipt-item__owner-name {
+    width: 50px;
+}
