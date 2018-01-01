@@ -39,7 +39,7 @@ class BigAvatarInner extends React.Component {
     }
 
     componentWillMount() {
-        ImageService.findLargeImageLink(this.props.avatar || "/images/no-photo-avatar.svg")
+        imageService.findLargeImageLink(this.props.avatar || "/images/no-photo-avatar.svg")
                     .subscribe(link => this.setState({avatarLink: link}))
     }
 }

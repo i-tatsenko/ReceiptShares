@@ -12,6 +12,7 @@ import App from './app.jsx'
 import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 import Invite from "./invite/invite.jsx";
 import Settings from "./settings.jsx";
+import Grid from 'material-ui/Grid';
 
 let Help = () => <h1>Application is under construction</h1>;
 
@@ -22,9 +23,15 @@ storage.addAddActionButtonMenuItem(<NewReceiptMenuItem/>);
 class Mui extends React.Component {
     render() {
         return (
-            <div className="container-div">
-                {this.props.children}
-            </div>
+            <Grid container alignContent="center" direction="column">
+                <Grid item xs={12} md={10} lg={8} style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    {this.props.children}
+                </Grid>
+            </Grid>
         )
     }
 }

@@ -1,7 +1,7 @@
 import storage from "../storage/storage";
 import {BigAvatar} from "./avatar/avatar.jsx";
 import {withStyles} from "material-ui/styles";
-import List, {ListItem, ListItemText,} from 'material-ui/List';
+import List, {ListItem, ListItemText} from 'material-ui/List';
 import ExitToApp from "material-ui-icons/ExitToApp"
 import Grid from 'material-ui/Grid';
 

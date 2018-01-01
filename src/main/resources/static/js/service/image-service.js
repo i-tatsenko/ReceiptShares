@@ -12,7 +12,7 @@ function findLargeImageLink(link) {
 
 class ImageService {
 
-    static findLargeImageLink(sourceLink) {
+    findLargeImageLink(sourceLink) {
         return Observable.of(sourceLink)
                          .map(findLargeImageLink)
     }
