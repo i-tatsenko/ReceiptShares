@@ -1,14 +1,23 @@
 import {withRouter} from "react-router-dom";
+import {withStyles} from "material-ui/styles"
 import {inviteService} from "../../storage/storage.js";
-import Avatar from 'material-ui/Avatar';
 import WaitingData from "../waiting-data.jsx";
+import {BigAvatar} from "../avatar/avatar.jsx";
 import Button from 'material-ui/Button';
 import "./invite.css";
+
+const classes = {
+    avatar: {
+        marginTop: 50,
+        marginBottom: 50
+    }
+};
 
 class Invite extends React.Component {
 
     constructor(args) {
         super(args);
+        this.classes = args.classes;
         this.state = {}
     }
 
@@ -19,9 +28,10 @@ class Invite extends React.Component {
         }
         let inviteAuthor = invite.author;
         let inviteAction = this.constructInviteAction(invite);
+        console.log(this.classes.avatar);
         return (
             <section className="invite" style={{["--place-url"]: `url(${invite.receipt.place.imageUrl})`}}>
-                <Avatar src={inviteAuthor.avatarUrl} className="invite-owner__avatar"/>
+                <BigAvatar avatar={inviteAuthor.avatarUrl} className={this.classes.avatar}/>
                 <div className="invite-owner__name">{inviteAuthor.name}</div>
                 <div className="invite-text"> invites you to join him in</div>
                 <div className="invite-place__name">{invite.receipt.place.name}</div>
@@ -66,4 +76,4 @@ class Invite extends React.Component {
     }
 }
 
-export default withRouter(Invite)
+export default withRouter(withStyles(classes)(Invite))

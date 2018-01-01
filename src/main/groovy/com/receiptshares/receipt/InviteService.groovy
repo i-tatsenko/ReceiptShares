@@ -42,7 +42,7 @@ class InviteService {
         inviteRepository.findById(inviteId)
                         .flatMap(this.&mapToInvite)
                         .map({
-            it.alreadyAccepted = it.receipt.members?.find({ member -> member.id == userId }) != null
+            it.alreadyAccepted = it.receipt.owner.id == userId || it.receipt.members?.find({ member -> member.id == userId }) != null
             return it
         })
     }

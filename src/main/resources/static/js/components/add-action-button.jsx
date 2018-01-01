@@ -21,7 +21,7 @@ export default class ActionButton extends React.Component {
                 <Button fab color="primary" style={{
                     position: 'fixed',
                     right: '30px',
-                    bottom: '20px'
+                    bottom: '50px'
                 }}
                         onClick={event => this.setState({menuOpen: !this.state.menuOpen, floatMenuButton: event.currentTarget})}
                 >

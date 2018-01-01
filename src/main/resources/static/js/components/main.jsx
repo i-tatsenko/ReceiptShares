@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import RegistrationForm from "./registration/registration-form.jsx";
 import LoginForm from "./login/login-form.jsx";
 import Receipt from "./receipt/receipt.jsx";
-import Paper from "material-ui/Paper";
 import Cookies from "js-cookie"
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 import storage from "../storage/storage.js"
@@ -12,6 +11,7 @@ import ReceiptList from './receipt/receipt-list.jsx'
 import App from './app.jsx'
 import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 import Invite from "./invite/invite.jsx";
+import Settings from "./settings.jsx";
 
 let Help = () => <h1>Application is under construction</h1>;
 
@@ -23,9 +23,7 @@ class Mui extends React.Component {
     render() {
         return (
             <div className="container-div">
-                <Paper elevation={3} style={{minHeight: '90vh'}}>
-                    {this.props.children}
-                </Paper>
+                {this.props.children}
             </div>
         )
     }
@@ -33,7 +31,7 @@ class Mui extends React.Component {
 
 function getMainLayout(user) {
     storage.setUser(user);
-    let AppWrapper = class extends React.Component {
+    const AppWrapper = class extends React.Component {
 
         constructor(args) {
             super(args);
@@ -59,6 +57,7 @@ function getMainLayout(user) {
                 <Route path="/new" component={CreateNewReceipt}/>
                 <Route path="/receipt/invite/:id" component={Invite}/>
                 <Route path="/receipt/:id" component={Receipt}/>
+                <Route path="/settings" component={Settings}/>
                 <Route path="/help" component={Help}/>
                 <Redirect to={storage.getAndRemoveReturnUrl()} push/>
             </Switch>
