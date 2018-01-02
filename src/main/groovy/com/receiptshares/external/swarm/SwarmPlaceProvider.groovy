@@ -68,9 +68,9 @@ class SwarmPlaceProvider implements PlaceProvider {
         return uri.accept(MediaType.APPLICATION_JSON)
                   .retrieve()
                   .bodyToMono(SwarmVenueResult)
-        //TODO
-//        .filter({it.response.venue?.bestPhoto != null})
+                  .filter({ it.response.venue?.bestPhoto != null })
                   .map(this.&mapPlaceResponseToImageLink)
+                  .switchIfEmpty(Mono.just(""))
     }
 
     private String mapPlaceResponseToImageLink(SwarmVenueResult result) {

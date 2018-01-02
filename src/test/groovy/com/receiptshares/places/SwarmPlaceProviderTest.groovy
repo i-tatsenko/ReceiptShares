@@ -53,14 +53,14 @@ class SwarmPlaceProviderTest {
     void "should request image"() {
         def host = "www.swarm.com/"
         def path = "/image/test"
-        def mockResponse = [bestPhoto: [prefix: host, suffix: path, width: 100, heigth: 100]]
+        def mockResponse = [bestPhoto: [prefix: host, suffix: path, width: 100, height: 100]]
         def placeId = "placeId"
         mockImageResult(placeId, mockResponse)
 
         def result = underTest.getPlaceImage(placeId)
 
         StepVerifier.create(result)
-                    .expectNextMatches({it == "${host}100x100${path}"})
+                    .expectNext("${host}100x100${path}".toString())
                     .verifyComplete()
     }
 
@@ -75,10 +75,8 @@ class SwarmPlaceProviderTest {
 
     private mockImageResult(String venueId, responseImage) {
         def imageString = new ObjectMapper().writeValueAsString(responseImage)
-        def response = """{"response": {"venue": ${imageString}} """
+        def response = """{"response": {"venue": ${imageString}}}"""
         //TODO
-        //https://api.foursquare.com/v2/venues/placeId?client_id=&client_secret=&v=20171004
-        //https://api.foursquare.com/v2/venues/placeId
         mockConnector.stubGet("https://api.foursquare.com/v2/venues/${venueId}.*", response)
     }
 
