@@ -7,11 +7,11 @@ import storage from "../../storage/storage.js"
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 
-const styles = theme => ({
+const styles = {
     media: {
         height: 194
     }
-});
+};
 
 class ReceiptCard extends React.Component {
 
@@ -29,7 +29,7 @@ class ReceiptCard extends React.Component {
                 Members:
                 <div style={chipWrapperStyle}>
                     {receipt.members.map(user =>
-                        <Chip key={'avatarlink' + user.avatarUrl} style={chipStyle}
+                        <Chip key={'avatarlink' + user.id} style={chipStyle}
                               avatar={<Avatar src={user.avatarUrl}/>}
                               label={user.name}/>)}
                 </div>

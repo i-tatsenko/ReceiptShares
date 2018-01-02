@@ -1,5 +1,6 @@
 package com.receiptshares.external.swarm
 
+import com.receiptshares.external.swarm.model.SwarmPhoto
 import com.receiptshares.external.swarm.model.SwarmSuggestResult
 import com.receiptshares.external.swarm.model.SwarmVenueResult
 import com.receiptshares.places.PlaceProvider
@@ -67,8 +68,14 @@ class SwarmPlaceProvider implements PlaceProvider {
         return uri.accept(MediaType.APPLICATION_JSON)
                   .retrieve()
                   .bodyToMono(SwarmVenueResult)
-                  .map({ it.response.venue.bestPhoto })
-                  .map({ "${it.prefix}${it.width}x${it.height}${it.suffix}" })
+        //TODO
+//        .filter({it.response.venue?.bestPhoto != null})
+                  .map(this.&mapPlaceResponseToImageLink)
+    }
+
+    private String mapPlaceResponseToImageLink(SwarmVenueResult result) {
+        SwarmPhoto bestPhoto = result.response.venue.bestPhoto
+        return "${bestPhoto.prefix}${bestPhoto.width}x${bestPhoto.height}${bestPhoto.suffix}"
     }
 
     @Override

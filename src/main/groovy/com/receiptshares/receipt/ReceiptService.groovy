@@ -26,6 +26,7 @@ import reactor.util.function.Tuple4
 import java.util.function.Function
 
 import static com.receiptshares.receipt.model.ReceiptStatus.ACTIVE
+import static java.util.Collections.emptyList
 
 @Component
 @Slf4j
@@ -58,14 +59,21 @@ class ReceiptService {
 
     Mono<Receipt> createNewReceipt(Place p, String ownerId, String name, Collection<String> memberIds) {
         Mono<PersonEntity> ownerMono = personRepository.findById(ownerId)
-        Mono<List<PersonEntity>> members = personRepository.findAllById(memberIds)
-                                                           .collectList()
+
+        Mono<List<PersonEntity>> members = findMembers(memberIds)
         Mono<PlaceEntity> place = placeService.findOrCreatePlace(p, ownerId)
         return Mono.when(ownerMono, members, place, Mono.just(name))
                    .map({ buildReceipt(it) })
                    .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
                    .flatMap(this.&addInviteLink)
                    .map({ it as Receipt })
+    }
+
+    private Mono<List<PersonEntity>> findMembers(Collection<String> memberIds) {
+        return Optional.ofNullable(memberIds)
+                       .filter({ !it.isEmpty() })
+                       .map({ personRepository.findAllById(it).collectList() })
+                       .orElseGet({Mono.just(emptyList())})
     }
 
     private Mono<ReceiptEntity> addInviteLink(ReceiptEntity receipt) {
@@ -84,7 +92,7 @@ class ReceiptService {
                             .status(ACTIVE.toString())
                             .name(ownerMembersAndPlaceAndName.t4)
                             .members(new ArrayList<PersonEntity>(ownerMembersAndPlaceAndName.t2))
-                            .orderedItems(Collections.emptyList())
+                            .orderedItems(emptyList())
                             .build()
     }
 

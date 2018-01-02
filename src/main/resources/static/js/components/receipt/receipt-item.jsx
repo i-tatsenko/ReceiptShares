@@ -58,9 +58,9 @@ class CommonComponent extends React.Component {
     render() {
         let orderedItem = this.props.item;
         let total = orderedItem.total;
-        let primaryText = <div className='receipt-item__main-text'>{orderedItem.item.name}: ${total.toFixed(2)}</div>;
-        let secondaryText = <div className='receipt-item__secondary-text'>{orderedItem.count} x
-            ${orderedItem.item.price}</div>;
+        let primaryText = <span className='receipt-item__main-text'>{orderedItem.item.name}: ${total.toFixed(2)}</span>;
+        let secondaryText = <span className='receipt-item__secondary-text'>{orderedItem.count} x
+            ${orderedItem.item.price}</span>;
 
         return [
             <ListItem className="receipt-item" key={"ListItem" + orderedItem.id}>

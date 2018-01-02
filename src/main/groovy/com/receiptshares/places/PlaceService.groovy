@@ -26,8 +26,7 @@ class PlaceService {
         if (place.id) {
             result = placeRepository.findByIdAndProvider(place.id, place.provider)
         }
-        result.switchIfEmpty(createNewPlace(place, authorId))
-
+        return result.switchIfEmpty(createNewPlace(place, authorId))
     }
 
     Mono<PlaceEntity> createNewPlace(Place place, String authorId) {

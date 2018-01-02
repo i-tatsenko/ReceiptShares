@@ -29,13 +29,13 @@ class Navigation extends React.Component {
         super(args);
         this.classes = args.classes;
         this.state = {
-            navigationLocation: "receipts"
+            // navigationLocation: "receipts"
         }
     }
 
     render() {
         return (
-            <Grid xs={12} md={10} lg={8} className={this.classes.navigationSlot}>
+            <Grid item xs={12} md={10} lg={8} className={this.classes.navigationSlot}>
                 <BottomNavigation onChange={(e, v) => this.navigationChange(v)}
                                   showLabels className={this.classes.navigationBar}>
                     <BottomNavigationButton label="Receipts" value="receipts" icon={<Description/>}/>

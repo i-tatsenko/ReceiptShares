@@ -61,11 +61,24 @@ class SwarmPlaceProviderTest {
 
         StepVerifier.create(result)
                     .expectNextMatches({it == "${host}100x100${path}"})
+                    .verifyComplete()
+    }
+
+    @Test
+    void "should return empty string when there is no image"() {
+        mockImageResult("placeId", [:])
+
+        StepVerifier.create(underTest.getPlaceImage("placeId"))
+                    .expectNext("")
+                    .verifyComplete()
     }
 
     private mockImageResult(String venueId, responseImage) {
         def imageString = new ObjectMapper().writeValueAsString(responseImage)
-        def response = """{"response": {"venue": {${imageString}}} """
+        def response = """{"response": {"venue": ${imageString}} """
+        //TODO
+        //https://api.foursquare.com/v2/venues/placeId?client_id=&client_secret=&v=20171004
+        //https://api.foursquare.com/v2/venues/placeId
         mockConnector.stubGet("https://api.foursquare.com/v2/venues/${venueId}.*", response)
     }
 
