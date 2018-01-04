@@ -16,11 +16,9 @@ class OAuthSingInAdapter implements SignInAdapter {
 
     UserService userService
     SpringSecurityAuthenticator authenticator
-    RememberMeServices tokenBasedRememberMeServices
 
     @Autowired
-    OAuthSingInAdapter(UserService userService, SpringSecurityAuthenticator authenticator, RememberMeServices tokenBasedRememberMeServices) {
-        this.tokenBasedRememberMeServices = tokenBasedRememberMeServices
+    OAuthSingInAdapter(UserService userService, SpringSecurityAuthenticator authenticator) {
         this.userService = userService
         this.authenticator = authenticator
     }
@@ -33,7 +31,6 @@ class OAuthSingInAdapter implements SignInAdapter {
         if (!authentication)
             throw new IllegalArgumentException("There is no user with email: ${userId}")
         authenticator.authenticate(authentication)
-        tokenBasedRememberMeServices.loginSuccess(request.getNativeRequest(), request.getNativeResponse(), authentication)
         return "/social/signin-callback"
     }
 

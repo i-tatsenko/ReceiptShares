@@ -75,12 +75,15 @@ dependencies {
         exclude group: "org.springframework", module: "spring-expression"
         exclude group: "org.springframework", module: "spring-web"
     }
-    compile 'org.springframework.boot:spring-boot-starter-social-facebook:2.0.0.M6'
+    compile ('org.springframework.boot:spring-boot-starter-social-facebook:2.0.0.M6') {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
+    }
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.mongodb:mongodb-driver-reactivestreams:1.6.0'
     compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'org.springframework.security:spring-security-webflux:5.0.0.M3'
 
     compile 'org.codehaus.groovy:groovy:2.4.13'
 
