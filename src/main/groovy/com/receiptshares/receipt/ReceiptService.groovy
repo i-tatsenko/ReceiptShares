@@ -2,17 +2,18 @@ package com.receiptshares.receipt
 
 import com.receiptshares.places.PlaceService
 import com.receiptshares.places.dao.PlaceEntity
-import com.receiptshares.receipt.dao.*
-import com.receiptshares.receipt.dao.repository.InviteRepository
+import com.receiptshares.places.dao.repository.PlaceRepository
+import com.receiptshares.places.model.Place
+import com.receiptshares.receipt.dao.ItemEntity
+import com.receiptshares.receipt.dao.OrderedItemEntity
+import com.receiptshares.receipt.dao.ReceiptEntity
 import com.receiptshares.receipt.dao.repository.ItemRepository
 import com.receiptshares.receipt.dao.repository.OrderItemRepository
-import com.receiptshares.places.dao.repository.PlaceRepository
 import com.receiptshares.receipt.dao.repository.ReceiptRepository
 import com.receiptshares.receipt.exception.OrderedItemNotFound
 import com.receiptshares.receipt.exception.ReceiptNotFoundException
 import com.receiptshares.receipt.model.ItemStatus
 import com.receiptshares.receipt.model.OrderedItem
-import com.receiptshares.places.model.Place
 import com.receiptshares.receipt.model.Receipt
 import com.receiptshares.user.dao.PersonEntity
 import com.receiptshares.user.dao.PersonRepository
@@ -62,7 +63,7 @@ class ReceiptService {
 
         Mono<List<PersonEntity>> members = findMembers(memberIds)
         Mono<PlaceEntity> place = placeService.findOrCreatePlace(p, ownerId)
-        return Mono.when(ownerMono, members, place, Mono.just(name))
+        return Mono.zip(ownerMono, members, place, Mono.just(name))
                    .map({ buildReceipt(it) })
                    .flatMap({ ReceiptEntity receipt -> receiptRepository.save(receipt) } as Function)
                    .flatMap(this.&addInviteLink)
@@ -126,7 +127,7 @@ class ReceiptService {
 
     Mono<Void> restoreOrderedItem(String ownerId, String receiptId, String orderedItemId) {
         //TODO check security
-        return Mono.when(receiptRepository.changeOrderedItemStatus(receiptId, orderedItemId, ItemStatus.ACTIVE),
+        return Mono.zip(receiptRepository.changeOrderedItemStatus(receiptId, orderedItemId, ItemStatus.ACTIVE),
                 orderItemRepository.changeStatus(orderedItemId, ItemStatus.ACTIVE))
                    .then()
 
@@ -138,7 +139,7 @@ class ReceiptService {
                                                        .switchIfEmpty(Mono.error(new ReceiptNotFoundException()))
         Mono<OrderedItemEntity> orderedItem = orderItemRepository.findById(cloneSourceId)
                                                                  .switchIfEmpty(Mono.error(new OrderedItemNotFound()))
-        return Mono.when(receipt, orderedItem)
+        return Mono.zip(receipt, orderedItem).log()
                    .flatMap({ createOrIncrementOrderedItem(ownerId, it.t1, it.t2) })
     }
 

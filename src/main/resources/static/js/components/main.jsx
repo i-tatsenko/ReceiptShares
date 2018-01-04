@@ -93,8 +93,9 @@ $(document).ajaxSend(function (event, jqXHR) {
 
 $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
     console.log(thrownError);
-    if (jqxhr.status === 401 && window.location.pathname !== '/login') {
-        window.location = "/login"
+    if (jqxhr.status === 403 && window.location.pathname !== '/login') {
+        returnToCurrentViewAfterLogin();
+        window.location = "/login";
     }
 });
 
@@ -105,7 +106,7 @@ $.get({
     }
 }).fail(() => {
     if (window.location.pathname !== '/login') {
-        storage.saveReturnUrl(window.location.pathname);
+        returnToCurrentViewAfterLogin();
     }
     renderApp(loginLayout);
 });
@@ -116,4 +117,8 @@ function renderApp(app) {
 
 function redirectToPreviousLocation() {
     return window.location = storage.getAndRemoveReturnUrl();
+}
+
+function returnToCurrentViewAfterLogin() {
+    storage.saveReturnUrl(window.location.pathname);
 }

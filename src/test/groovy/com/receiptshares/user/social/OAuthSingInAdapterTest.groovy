@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.springframework.http.HttpHeaders
 import org.springframework.security.web.authentication.RememberMeServices
 import org.springframework.social.connect.Connection
 import org.springframework.web.context.request.NativeWebRequest
@@ -40,14 +39,12 @@ class OAuthSingInAdapterTest {
     void shouldSetAuthAndReturnRedirectToRefererWhenEmailWasFound() {
         def user = mock(User)
         def request = mock(NativeWebRequest)
-        def referer = "Referer location"
         when(userService.getById(email)).thenReturn(Mono.just(user))
-        when(request.getHeader(HttpHeaders.REFERER)).thenReturn(referer)
 
         def result = underTest.signIn(email, null, request)
 
         verify(authenticator).authenticate(any(UserAuthentication))
-        assertThat(result).isEqualTo(referer)
+        assertThat(result).isEqualTo("/social/signin-callback")
     }
 
     @Test

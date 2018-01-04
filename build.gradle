@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.0.M3'
+        springBootVersion = '2.0.0.M7'
     }
     repositories {
         maven {
@@ -75,24 +75,24 @@ dependencies {
         exclude group: "org.springframework", module: "spring-expression"
         exclude group: "org.springframework", module: "spring-web"
     }
-    compile 'org.springframework.boot:spring-boot-starter-social-facebook'
+    compile 'org.springframework.boot:spring-boot-starter-social-facebook:2.0.0.M6'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.mongodb:mongodb-driver-reactivestreams:1.6.0'
     compile 'org.apache.commons:commons-lang3:3.1'
 
-    compile 'org.codehaus.groovy:groovy:2.4.10'
+    compile 'org.codehaus.groovy:groovy:2.4.13'
 
 
 
     testCompile 'cglib:cglib-nodep:3.2.4'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'io.projectreactor.addons:reactor-test:3.1.0.BUILD-SNAPSHOT'
+    testCompile 'io.projectreactor:reactor-test:3.1.2.RELEASE'
     testCompile 'org.mockito:mockito-core:2.7.22'
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0'
-    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0'
-    testCompile 'org.junit.jupiter:junit-jupiter-params:5.0.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.2'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.2'
+    testCompile 'org.junit.jupiter:junit-jupiter-params:5.0.2'
     testCompile 'org.assertj:assertj-core:3.6.2'
 }
 

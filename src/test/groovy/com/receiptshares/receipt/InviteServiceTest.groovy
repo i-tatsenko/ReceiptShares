@@ -64,6 +64,7 @@ class InviteServiceTest {
     void "Should set receipt and already invited to the invite"() {
         when(inviteRepository.findById(inviteId)).thenReturn(Mono.just(inviteEntity))
         when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receiptEntity))
+        when(receipt.owner).thenReturn(new Person())
 
         StepVerifier.create(underTest.findById(personId, inviteId))
                     .assertNext({ invite ->
@@ -78,6 +79,7 @@ class InviteServiceTest {
         when(inviteRepository.findById(inviteId)).thenReturn(Mono.just(inviteEntity))
         when(receiptRepository.findById(receiptId)).thenReturn(Mono.just(receiptEntity))
         when(receipt.members).thenReturn([new Person(id: personId)] as Set)
+        when(receipt.owner).thenReturn(new Person())
 
         StepVerifier.create(underTest.findById(personId, inviteId))
                     .assertNext({ assertThat(it.alreadyAccepted).isTrue() })
