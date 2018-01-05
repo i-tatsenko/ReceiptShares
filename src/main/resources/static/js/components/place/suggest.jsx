@@ -1,9 +1,10 @@
+import React from "react"
 import location from '../../service/location.js'
 import Autosuggest from 'react-autosuggest';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
-import { ListItem, ListItemText } from 'material-ui/List';
-import { withStyles } from 'material-ui/styles';
+import {ListItem, ListItemText} from 'material-ui/List';
+import {withStyles} from 'material-ui/styles';
 
 function renderSuggestionsContainer(options) {
     const { containerProps, children } = options;

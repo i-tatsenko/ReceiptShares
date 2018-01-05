@@ -1,6 +1,6 @@
 import React from 'react'
 import FormAlert from '../alert/form-alert.jsx';
-import FbLoginButton from './facebook-login-button.jsx';
+import FbLoginButton from './facebook-login-button';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';

@@ -1,3 +1,4 @@
+import React from "react"
 import storage from "../storage/storage.js"
 import {withStyles} from 'material-ui/styles';
 import AppBar from "material-ui/AppBar";

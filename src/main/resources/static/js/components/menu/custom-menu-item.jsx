@@ -1,4 +1,5 @@
-import {MenuItem}  from 'material-ui/Menu';
+import React from "react"
+import {MenuItem} from 'material-ui/Menu';
 
 export default class CustomMenuItem extends React.Component {
     constructor(args) {

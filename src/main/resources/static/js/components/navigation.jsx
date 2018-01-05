@@ -1,3 +1,4 @@
+import React from "react"
 import Description from 'material-ui-icons/Description';
 import Settings from 'material-ui-icons/Settings';
 import BottomNavigation, {BottomNavigationButton} from 'material-ui/BottomNavigation';

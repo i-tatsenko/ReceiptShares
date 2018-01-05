@@ -1,15 +1,11 @@
-import React from 'react';
-import IconButton from 'material-ui/IconButton';
-import Cookies from 'js-cookie'
+import * as React from "react";
+import * as Cookies from "js-cookie"
+import IconButton from "material-ui/IconButton"
 
-export default class FbLoginButton extends React.Component {
+export default class FbLoginButton extends React.Component<void, void> {
 
     constructor(args) {
         super(args);
-        this.state = {
-            scriptReady: false
-
-        }
     }
 
     render() {

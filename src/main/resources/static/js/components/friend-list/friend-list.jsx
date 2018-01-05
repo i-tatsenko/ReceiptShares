@@ -1,4 +1,5 @@
-import List, {ListItemIcon, ListItem, ListItemText} from 'material-ui/List';
+import React from "react"
+import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ListSubheader from 'material-ui/List/ListSubheader';
 

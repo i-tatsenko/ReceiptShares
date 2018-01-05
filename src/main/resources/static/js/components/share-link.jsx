@@ -1,3 +1,4 @@
+import React from "react"
 import IconButton from 'material-ui/IconButton';
 import Share from 'material-ui-icons/Share'
 import CopyAbleInput from './input-copy-able.jsx'

@@ -1,11 +1,12 @@
-import Card, {CardHeader, CardMedia, CardContent} from "material-ui/Card";
+import React from "react"
+import Card, {CardContent, CardHeader, CardMedia} from "material-ui/Card";
 import Chip from "material-ui/Chip";
 import Avatar from "material-ui/Avatar";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import {withRouter} from "react-router-dom";
 import storage from "../../storage/storage.js"
 import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/styles';
+import {withStyles} from 'material-ui/styles';
 
 const styles = {
     media: {

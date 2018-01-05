@@ -1,8 +1,9 @@
+import React from "react"
 import ListItem from 'material-ui/List/ListItem';
 import Avatar from 'material-ui/Avatar';
 import './avatar.css';
 import {withStyles} from "material-ui/styles";
-import {imageService} from "../../service/image-service.js"
+import {imageService} from "../../service/image-service"
 
 export default class extends React.Component {
     render() {

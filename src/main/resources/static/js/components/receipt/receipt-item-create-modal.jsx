@@ -1,8 +1,5 @@
-import Dialog, {
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from 'material-ui/Dialog';
+import React from "react"
+import Dialog, {DialogActions, DialogContent, DialogTitle,} from 'material-ui/Dialog';
 import TextField from "material-ui/TextField";
 import Button from 'material-ui/Button';
 

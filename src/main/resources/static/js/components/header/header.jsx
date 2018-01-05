@@ -1,4 +1,5 @@
-import Avatar from '../avatar/avatar.jsx'
+import React from "react"
+import Avatar from '../avatar/avatar'
 import './header.css';
 
 

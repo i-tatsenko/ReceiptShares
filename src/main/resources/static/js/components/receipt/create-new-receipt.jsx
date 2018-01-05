@@ -1,6 +1,6 @@
+import React from "react"
 import storage from "../../storage/storage.js"
 import FriendList from "../friend-list/friend-list.jsx";
-import TextField from "material-ui/TextField";
 import Button from 'material-ui/Button';
 import Divider from "material-ui/Divider";
 import Avatar from "material-ui/Avatar";
@@ -8,7 +8,6 @@ import Chip from "material-ui/Chip";
 import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
 import Snackbar from "material-ui/Snackbar";
 import {withRouter} from "react-router-dom";
-import location from "../../service/location.js"
 import PlaceSelect from "../place/suggest.jsx"
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import Input, {InputLabel} from 'material-ui/Input';

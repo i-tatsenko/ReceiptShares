@@ -13,35 +13,55 @@ module.exports = {
         filename: 'bundle.js',
         path: outputDir
     },
+
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
+    },
+
     module: {
-        rules: [
-            {
-                test: /.jsx?$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/,
-                query: {
-                    presets: ['es2015', 'react', 'stage-2']
-                }
+        rules: [{
+            test: /\.(t|j)sx?$/,
+            use: {
+                loader: 'awesome-typescript-loader'
             },
+            exclude: /node_modules/
+        },
+
             {
-                test:/\.css$/,
+                test: /\.css$/,
                 use: [
                     'style-loader',
                     'css-loader'
-                ]
+                ],
+                exclude: /node_modules/
+            },
+            {
+                enforce: "pre",
+                test: /\.js$/, loader: "source-map-loader",
+                exclude: /node_modules/
             }
         ]
     },
-    devtool: "inline-cheap-source-map",
+    externals: {
+        // "react": "React",
+        // "react-dom": "ReactDOM",
+    },
+    devtool: "source-map",
 
     plugins: [
+        function () {
+            this.plugin("watch-run", function (watching, callback) {
+                console.log("Compiled at " + new Date().toTimeString());
+                callback();
+            })
+        },
         new webpack.ProvidePlugin({
             '$': 'jquery',
-            'React': 'react',
-            'ReactDOM': 'react-dom'
+            // 'React': 'react',
+            // 'ReactDOM': 'react-dom'
         }),
         new WebpackShellPlugin({
-            onBuildExit: [`echo cp ${outputDir}/bundle.js ${ideaOutFile}/`,`cp ${outputDir}/bundle.js ${ideaOutFile}/bundle.js`]
+            onBuildExit: [`echo cp ${outputDir}/bundle.js ${ideaOutFile}/`, `cp ${outputDir}/bundle.js ${ideaOutFile}/bundle.js`]
         }),
         // new UglifyJsPlugin({
         //     sourceMap: true,

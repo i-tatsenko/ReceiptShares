@@ -1,3 +1,4 @@
+import React from "react"
 import storage from "../../storage/storage.js"
 import ReceiptCard from "./receipt-card.jsx";
 import WaitingData from "../waiting-data.jsx";

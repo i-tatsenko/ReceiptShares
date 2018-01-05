@@ -1,8 +1,9 @@
+import React from "react"
 import {withRouter} from "react-router-dom";
 import {withStyles} from "material-ui/styles"
-import {inviteService} from "../../storage/storage.js";
-import WaitingData from "../waiting-data.jsx";
-import {BigAvatar} from "../avatar/avatar.jsx";
+import {inviteService} from "../../storage/storage";
+import WaitingData from "../waiting-data";
+import {BigAvatar} from "../avatar/avatar";
 import Button from 'material-ui/Button';
 import "./invite.css";
 

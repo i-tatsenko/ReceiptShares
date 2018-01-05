@@ -1,3 +1,4 @@
+import React from "react"
 import storage from "../storage/storage";
 import {BigAvatar} from "./avatar/avatar.jsx";
 import {withStyles} from "material-ui/styles";
