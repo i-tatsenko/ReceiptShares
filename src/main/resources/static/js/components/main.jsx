@@ -87,7 +87,7 @@ let loginLayout =
 
 
 $(document).ajaxSend(function (event, jqXHR) {
-    jqXHR.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"))
+    jqXHR.setRequestHeader("X-CSRF-TOKEN", Cookies.get("X-CSRF-TOKEN"))
 });
 
 

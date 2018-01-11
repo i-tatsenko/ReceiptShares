@@ -34,7 +34,7 @@ export default class FbLoginButton extends React.Component {
     }
 
     setCsrfToken() {
-        document.forms['signInFacebook']['_csrf'].value = Cookies.get("XSRF-TOKEN")
+        document.forms['signInFacebook']['_csrf'].value = Cookies.get("X-CSRF-TOKEN")
     }
 
 

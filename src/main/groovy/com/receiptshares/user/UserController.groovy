@@ -9,10 +9,14 @@ import com.receiptshares.user.social.ConnectionService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.social.MissingAuthorizationException
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+
+import java.security.Principal
 
 @Component
 @RestController
@@ -33,8 +37,8 @@ class UserController {
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
-    def me(Authentication userAuth) {
-        return (userAuth.principal as User).person
+    def me(Mono<Principal> userAuth) {
+        return userAuth.map({it as User}).map({it.person}).switchIfEmpty(Mono.error(new MissingAuthorizationException("")))
     }
 
     @RequestMapping(value = "/open/reg", method = RequestMethod.POST)

@@ -1,6 +1,7 @@
 package com.receiptshares;
 
-import com.receiptshares.user.dao.RememberMeTokenRepository;
+import com.receiptshares.security.CookieCsrfTokenRepository;
+import com.receiptshares.security.CsrfCookieWebFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,29 +9,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
-import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import reactor.core.publisher.Mono;
-
-import javax.servlet.http.Cookie;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -48,37 +38,43 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public ReactiveAuthenticationManager authenticationManager(ReactiveUserDetailsService userDetailsService) {
+        return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+    }
+
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager authenticationManager) {
         return http.formLogin().loginPage("/v1/open/login").authenticationSuccessHandler(authSuccessHandler()).authenticationFailureHandler(authFailureHandler())
                 .and()
                 .logout().logoutUrl("/v1/open/logout").logoutSuccessHandler(logoutSuccessHandler())
                 .and()
-                .csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository())
+                .csrf().csrfTokenRepository(new CookieCsrfTokenRepository())
                 .and()
                 .authorizeExchange().pathMatchers("/**").permitAll()
                 .pathMatchers("/v1/open/**", "/signin/**").permitAll()
                 .pathMatchers("/v1/**").authenticated()
                 .and()
+                .authenticationManager(authenticationManager)
                 .exceptionHandling().authenticationEntryPoint(new HttpBasicServerAuthenticationEntryPoint())
                 .and()
         .build();
     }
 
     protected void configure(HttpSecurity http) throws Exception {
-//        http.rememberMe().rememberMeServices(tokenBasedRememberMeServices())
-//            .and()
-//            .formLogin().loginProcessingUrl("/v1/open/login").successHandler(authSuccessHandler()).failureHandler(authFailureHandler())
-//            .and()
-//            .logout().logoutUrl("/v1/open/logout").deleteCookies(REMEMBER_ME_COOKIE_NAME).logoutSuccessHandler(logoutSuccessHandler())
-//            .and()
-//            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//            .and()
-//            .antMatcher("/**").authorizeRequests()
-//            .antMatchers("/v1/open/**", "/signin/**").permitAll()
-//            .antMatchers("/v1/**").authenticated()
-//            .anyRequest().permitAll()
-//            .and()
-//            .exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint());
+       /* http.rememberMe().rememberMeServices(tokenBasedRememberMeServices())
+            .and()
+            .formLogin().loginProcessingUrl("/v1/open/login").successHandler(authSuccessHandler()).failureHandler(authFailureHandler())
+            .and()
+            .logout().logoutUrl("/v1/open/logout").deleteCookies(REMEMBER_ME_COOKIE_NAME).logoutSuccessHandler(logoutSuccessHandler())
+            .and()
+            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .and()
+            .antMatcher("/**").authorizeRequests()
+            .antMatchers("/v1/open/**", "/signin/**").permitAll()
+            .antMatchers("/v1/**").authenticated()
+            .anyRequest().permitAll()
+            .and()
+            .exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint());*/
     }
 
 
@@ -112,5 +108,10 @@ public class SecurityConfiguration {
             webFilterExchange.getExchange().getResponse().addCookie(ResponseCookie.from(REMEMBER_ME_COOKIE_NAME, "").build());
             return Mono.just(webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)).then();
         };
+    }
+
+    @Bean
+    public CsrfCookieWebFilter csrfCookieWebFilter() {
+        return new CsrfCookieWebFilter();
     }
 }
