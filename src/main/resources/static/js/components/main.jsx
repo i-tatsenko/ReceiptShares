@@ -13,6 +13,7 @@ import NewReceiptMenuItem from "./menu/new-receipt-menu-item.jsx"
 import Invite from "./invite/invite.jsx";
 import Settings from "./settings.jsx";
 import Grid from 'material-ui/Grid';
+import MainLayoutWrapper from "./main-layout-wrapper.jsx";
 
 let Help = () => <h1>Application is under construction</h1>;
 
@@ -24,13 +25,9 @@ class Mui extends React.Component {
     render() {
         return (
             <Grid container alignContent="center" direction="column">
-                <Grid item xs={12} md={10} lg={8} style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
+                <MainLayoutWrapper>
                     {this.props.children}
-                </Grid>
+                </MainLayoutWrapper>
             </Grid>
         )
     }

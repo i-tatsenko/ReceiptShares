@@ -1,9 +1,9 @@
 import Description from 'material-ui-icons/Description';
 import Settings from 'material-ui-icons/Settings';
-import BottomNavigation, {BottomNavigationButton} from 'material-ui/BottomNavigation';
+import BottomNavigation, {BottomNavigationAction} from 'material-ui/BottomNavigation';
 import {withRouter} from "react-router-dom";
 import {withStyles} from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
+import MainLayoutWrapper from "./main-layout-wrapper.jsx";
 
 const navigationNodes = {
     "receipts": "/",
@@ -35,13 +35,13 @@ class Navigation extends React.Component {
 
     render() {
         return (
-            <Grid item xs={12} md={10} lg={8} className={this.classes.navigationSlot}>
+            <MainLayoutWrapper className={this.classes.navigationSlot}>
                 <BottomNavigation onChange={(e, v) => this.navigationChange(v)}
                                   showLabels className={this.classes.navigationBar}>
-                    <BottomNavigationButton label="Receipts" value="receipts" icon={<Description/>}/>
-                    <BottomNavigationButton label="Settings" value="settings" icon={<Settings/>}/>
+                    <BottomNavigationAction label="Receipts" value="receipts" icon={<Description/>}/>
+                    <BottomNavigationAction label="Settings" value="settings" icon={<Settings/>}/>
                 </BottomNavigation>
-            </Grid>
+            </MainLayoutWrapper>
         )
     }
 

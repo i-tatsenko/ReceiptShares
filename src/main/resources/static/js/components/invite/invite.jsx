@@ -4,6 +4,7 @@ import {inviteService} from "../../storage/storage.js";
 import WaitingData from "../waiting-data.jsx";
 import {BigAvatar} from "../avatar/avatar.jsx";
 import Button from 'material-ui/Button';
+import storage from '../../storage/storage'
 import "./invite.css";
 
 const classes = {
@@ -57,11 +58,16 @@ class Invite extends React.Component {
 
     componentWillMount() {
         inviteService.findById(this.props.match.params.id)
-                     .subscribe(invite => this.setState({invite}), error => {
+                     .subscribe(this.setInvite.bind(this), error => {
                          this.setState({error});
                          console.log(error)
                          //TODO add error handling
                      })
+    }
+
+    setInvite(invite) {
+        this.setState({invite});
+        storage.screenTitle("Join " + invite.receipt.name)
     }
 
     acceptInvite(inviteId) {
