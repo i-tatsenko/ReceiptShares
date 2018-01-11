@@ -1,17 +1,18 @@
-import React from "react";
-import storage from "../../storage/storage.js"
-import WaitingData from "../waiting-data.jsx";
-import Divider from "material-ui/Divider";
-import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
-import NewItemModal from "./receipt-item-create-modal.jsx";
-import List from "material-ui/List";
 import Button from 'material-ui/Button';
-import CustomMenuItem from "../menu/custom-menu-item.jsx";
-import "./receipt.css";
-import {withRouter} from "react-router-dom";
-import Snackbar from 'material-ui/Snackbar';
+import Divider from "material-ui/Divider";
+import List from "material-ui/List";
 import ListSubheader from 'material-ui/List/ListSubheader';
+import Snackbar from 'material-ui/Snackbar';
+import React from "react";
+import {withRouter} from "react-router-dom";
+import NavigationHistory from "../../service/navigation-history";
+import storage from "../../storage/storage.js"
+import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import ShareLink from '../share-link.jsx'
+import WaitingData from "../waiting-data.jsx";
+import NewItemModal from "./receipt-item-create-modal.jsx";
+import {OwnReceiptItem, ReceiptItem} from "./receipt-item.jsx";
+import "./receipt.css";
 
 const NotFoundReceipt = withRouter(props => {
     return (
@@ -133,10 +134,12 @@ export default class Receipt extends React.Component {
     componentDidMount() {
         this.getReceiptFromServer();
         storage.addAddActionButtonMenuItem(storage.addAddActionButtonMenuItem(this.additionalAction));
+        NavigationHistory.pushHistory("/receipts");
     }
 
     componentWillUnmount() {
         storage.removeAddActionButtonMenuItem(this.additionalAction);
+        NavigationHistory.removeFromHistory("/receipts")
     }
 
     incrementItemCount(receiptId, itemId) {

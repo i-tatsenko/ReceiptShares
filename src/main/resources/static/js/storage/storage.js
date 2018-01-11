@@ -18,7 +18,7 @@ class Storage {
     };
 
     listenFor(propertyName, fn) {
-        emitter.addListener(propertyName, fn)
+        return emitter.addListener(propertyName, fn)
     }
 
     screenTitle(newTitle) {

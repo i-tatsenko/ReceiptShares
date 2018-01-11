@@ -17,6 +17,6 @@ export default class MainLayoutWrapper extends React.Component {
 }
 
 MainLayoutWrapper.propTypes = {
-    children: PropTypes.array.isRequired,
+    children: PropTypes.any.isRequired,
     className: PropTypes.string
 };
