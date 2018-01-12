@@ -52,7 +52,7 @@ junitPlatform {
 }
 
 jar {
-    baseName = 'receiptshares'
+    baseName = 'splitit'
     version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -79,8 +79,10 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     compile 'org.mongodb:mongodb-driver-reactivestreams:1.6.0'
     compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'com.google.guava:guava:23.6-jre'
 
     compile 'org.codehaus.groovy:groovy:2.4.13'
 
