@@ -1,10 +1,10 @@
 package cf.splitit.user.social
 
+import cf.splitit.MockitoExtension
 import cf.splitit.user.dao.PersonEntity
 import cf.splitit.user.dao.UserEntity
 import cf.splitit.user.dao.UserRepository
 import cf.splitit.user.model.Person
-import com.cf.splititres.MockitoExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

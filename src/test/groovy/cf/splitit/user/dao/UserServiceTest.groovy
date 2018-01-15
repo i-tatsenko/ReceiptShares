@@ -1,9 +1,9 @@
 package cf.splitit.user.dao
 
+import cf.splitit.MockitoExtension
 import cf.splitit.user.model.User
 import cf.splitit.user.registration.EmailNotUniqueException
 import cf.splitit.user.registration.NewUserDTO
-import com.cf.splititres.MockitoExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

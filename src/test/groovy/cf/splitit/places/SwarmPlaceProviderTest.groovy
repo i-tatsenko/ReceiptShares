@@ -1,7 +1,7 @@
 package cf.splitit.places
 
 import cf.splitit.external.swarm.SwarmPlaceProvider
-import com.cf.splititres.util.MockClientHttpConnector
+import cf.splitit.util.MockClientHttpConnector
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 import reactor.test.StepVerifier

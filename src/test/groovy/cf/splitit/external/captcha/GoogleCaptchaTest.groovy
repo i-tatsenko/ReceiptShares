@@ -1,7 +1,7 @@
 package cf.splitit.external.captcha
 
 import cf.splitit.user.registration.CaptchaInvalidException
-import com.cf.splititres.util.MockClientHttpConnector
+import cf.splitit.util.MockClientHttpConnector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier

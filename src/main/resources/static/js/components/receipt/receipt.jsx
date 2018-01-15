@@ -6,6 +6,7 @@ import Snackbar from 'material-ui/Snackbar';
 import React from "react";
 import {withRouter} from "react-router-dom";
 import NavigationHistory from "../../service/navigation-history";
+import receiptService from "../../service/receipt-service.js";
 import storage from "../../storage/storage.js"
 import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import ShareLink from '../share-link.jsx'
@@ -144,9 +145,8 @@ export default class Receipt extends React.Component {
 
     incrementItemCount(receiptId, itemId) {
         this.markItemAsPendingForChange(itemId);
-        $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment`).done(() =>
-            this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId))
-        );
+        receiptService.addOneItem(receiptId, itemId)
+            .then(() => this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId)))
     }
 
     deleteItem(receiptId, orderedItem) {

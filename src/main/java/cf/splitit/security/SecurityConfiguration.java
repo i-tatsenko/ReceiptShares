@@ -1,8 +1,13 @@
-package cf.splitit;
+package cf.splitit.security;
 
+import cf.splitit.security.limit.DimensionOfSecondRateLimit;
+import cf.splitit.security.limit.RateLimit;
+import cf.splitit.security.limit.RateLimitHandlerInterceptor;
+import cf.splitit.security.limit.RateLimitWebFilter;
 import cf.splitit.user.dao.RememberMeTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,6 +23,8 @@ import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${security.rememberme.key}")
     private String rememberMeKey;
+    @Value("${security.rate.limit.per.second}")
+    private int perSecondRateLimit;
 
     @Autowired
     public SecurityConfiguration(UserDetailsService userDetailsService, MongoTemplate mongoTemplate) {
@@ -86,5 +95,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     protected AuthenticationFailureHandler authFailureHandler() {
         return (request, response, auth) -> response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Bean
+    RateLimit perSecondRateLimit() {
+        return new DimensionOfSecondRateLimit("Per second rate limit", perSecondRateLimit);
+    }
+
+    @Bean
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+    protected WebFilter perSecondRateLimitFilter() {
+        return new RateLimitWebFilter(perSecondRateLimit());
+    }
+
+    @Bean
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    HandlerInterceptor perSecondRateLimitInterceptor() {
+        return new RateLimitHandlerInterceptor(perSecondRateLimit());
     }
 }

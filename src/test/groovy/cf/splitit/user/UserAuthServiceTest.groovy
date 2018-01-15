@@ -1,8 +1,8 @@
 package cf.splitit.user
 
+import cf.splitit.MockitoExtension
 import cf.splitit.user.dao.UserService
 import cf.splitit.user.model.User
-import com.cf.splititres.MockitoExtension
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

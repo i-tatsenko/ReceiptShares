@@ -1,5 +1,6 @@
 package cf.splitit.receipt
 
+import cf.splitit.MockitoExtension
 import cf.splitit.receipt.dao.OrderedItemEntity
 import cf.splitit.receipt.dao.ReceiptEntity
 import cf.splitit.receipt.dao.repository.ItemRepository
@@ -8,9 +9,8 @@ import cf.splitit.receipt.dao.repository.ReceiptRepository
 import cf.splitit.receipt.exception.OrderedItemNotFound
 import cf.splitit.receipt.exception.ReceiptNotFoundException
 import cf.splitit.receipt.model.Receipt
+import cf.splitit.user.dao.UserRepository
 import cf.splitit.user.model.User
-import com.cf.splititres.MockitoExtension
-import com.cf.splititres.user.dao.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

@@ -1,4 +1,4 @@
-package cf.splitit;
+package cf.splitit.configuration;
 
 import com.mongodb.MongoClientURI;
 import com.mongodb.reactivestreams.client.MongoClient;

@@ -1,9 +1,9 @@
 package cf.splitit.user.social
 
+import cf.splitit.MockitoExtension
 import cf.splitit.user.dao.UserService
 import cf.splitit.user.model.User
 import cf.splitit.user.model.UserAuthentication
-import com.cf.splititres.MockitoExtension
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks

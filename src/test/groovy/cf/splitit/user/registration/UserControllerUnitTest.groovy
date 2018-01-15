@@ -1,10 +1,10 @@
 package cf.splitit.user.registration
 
+import cf.splitit.MockitoExtension
 import cf.splitit.user.UserController
 import cf.splitit.user.dao.UserService
 import cf.splitit.user.model.User
 import cf.splitit.user.social.ConnectionService
-import com.cf.splititres.MockitoExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
