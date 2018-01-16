@@ -6,7 +6,7 @@ import Snackbar from 'material-ui/Snackbar';
 import React from "react";
 import {withRouter} from "react-router-dom";
 import NavigationHistory from "../../service/navigation-history";
-import receiptService from "../../service/receipt-service.js";
+import {receiptService} from "../../service/receipt-service.js";
 import storage from "../../storage/storage.js"
 import CustomMenuItem from "../menu/custom-menu-item.jsx";
 import ShareLink from '../share-link.jsx'
@@ -88,9 +88,8 @@ export default class Receipt extends React.Component {
                 <Snackbar
                     open={this.state.showItemDeletedMessage}
                     message={this.state.itemDeletedMessage}
-                    action="undo"
-                    onActionClick={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}
-                    onRequestClose={() => this.setState({showItemDeletedMessage: false})}
+                    action={[<Button key="undo" color="accent" dense onClick={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}>UNDO</Button>]}
+                    onClose={() => this.setState({showItemDeletedMessage: false})}
                     autoHideDuration={5000}
                 />
             </section>);
@@ -125,11 +124,16 @@ export default class Receipt extends React.Component {
     }
 
     getReceiptFromServer(callback) {
-        $.get('/v1/receipt/' + this.props.match.params.id, resp => {
-            this.setState({rec: resp});
-            storage.screenTitle(resp.name);
-            callback && callback();
-        }).fail(() => this.setState({notFoundError: true}));
+        receiptService.getReceipt(this.props.match.params.id)
+                      .subscribe(receipt => {
+                              this.setState({rec: receipt});
+                              storage.screenTitle(receipt.name);
+                              callback && callback();
+                          },
+                          error => {
+                              console.log("Can't obtain receipt due to " + error);
+                              this.setState({notFoundError: true})
+                          });
     }
 
     componentDidMount() {
@@ -146,30 +150,31 @@ export default class Receipt extends React.Component {
     incrementItemCount(receiptId, itemId) {
         this.markItemAsPendingForChange(itemId);
         receiptService.addOneItem(receiptId, itemId)
-            .then(() => this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId)))
+                      .subscribe(() => this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId)))
     }
 
     deleteItem(receiptId, orderedItem) {
         let itemId = orderedItem.id;
         this.markItemAsPendingForChange(itemId);
-        $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment?amount=-1`).done(data => {
-                this.getReceiptFromServer(() => {
-                    if (data.value) {
-                        this.setState({
-                            deletedItemId: itemId,
-                            itemDeletedMessage: `${orderedItem.item.name} was removed.`,
-                            showItemDeletedMessage: true
-                        });
-                    }
-                    this.unMarkItemAsPendingForChange(itemId);
-                });
-            }
-        );
+        receiptService.deleteOneItem(receiptId, itemId)
+                      .subscribe(data => {
+                              this.getReceiptFromServer(() => {
+                                  if (data.value) {
+                                      this.setState({
+                                          deletedItemId: itemId,
+                                          itemDeletedMessage: `${orderedItem.item.name} was removed.`,
+                                          showItemDeletedMessage: true
+                                      });
+                                  }
+                                  this.unMarkItemAsPendingForChange(itemId);
+                              });
+                          }
+                      );
     }
 
     cloneItem(receiptId, itemId) {
         this.markItemAsPendingForChange(itemId);
-        $.post(`/v1/receipt/${receiptId}/item/${itemId}/clone`).done(() => {
+        receiptService.cloneItem(receiptId, itemId).subscribe(() => {
             this.getReceiptFromServer(() => this.unMarkItemAsPendingForChange(itemId))
         })
     }
@@ -195,6 +200,6 @@ export default class Receipt extends React.Component {
             itemDeletedMessage: "",
             deletedItemId: ""
         });
-        $.post(`/v1/receipt/${receiptId}/item/${orderedItemId}/restore`).done(() => this.getReceiptFromServer());
+        receiptService.undoDelete(receiptId, orderedItemId).subscribe(() => this.getReceiptFromServer());
     }
 }

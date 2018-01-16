@@ -1,5 +1,5 @@
 import {EventEmitter} from "fbemitter"
-import * as Rx from "rxjs";
+import {httpService} from "../service/http-service";
 
 let state = {
     actionButtonMenuItems: []
@@ -51,15 +51,11 @@ class Storage {
 class InviteService {
 
     findById(inviteId) {
-        return Rx.Observable.fromPromise(
-            $.get(`/v1/invite/${inviteId}`)
-        )
+        return httpService.get(`/v1/invite/${inviteId}`);
     }
 
     accept(inviteId) {
-        return Rx.Observable.fromPromise(
-            $.post(`/v1/invite/${inviteId}/accept`)
-        )
+        return httpService.post(`/v1/invite/${inviteId}/accept`);
     }
 }
 

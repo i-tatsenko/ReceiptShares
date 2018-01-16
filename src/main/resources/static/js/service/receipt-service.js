@@ -1,15 +1,27 @@
-import {Observable} from "rxjs/Observable";
+import {httpService} from './http-service';
 
 class ReceiptService {
+
+    getReceipt(id) {
+        return httpService.get(`/v1/receipt/${id}`)
+    }
+
     addOneItem(receiptId, itemId) {
-        Observable.fromPromise(
-            $.post(`/v1/receipt/${receiptId}/item/${itemId}/increment`))
-                  .catch((err, source) => {
-                      console.log(err);
-                      return source;
-                  })
+        return httpService.post(`/v1/receipt/${receiptId}/item/${itemId}/increment`);
+    }
+
+    deleteOneItem(receiptId, itemId) {
+        return httpService.post(`/v1/receipt/${receiptId}/item/${itemId}/increment?amount=-1`);
+    }
+
+    cloneItem(receiptId, itemId) {
+        return httpService.post(`/v1/receipt/${receiptId}/item/${itemId}/clone`);
+    }
+
+    undoDelete(receiptId, itemId) {
+        return httpService.post(`/v1/receipt/${receiptId}/item/${itemId}/restore`);
     }
 }
 
 
-export default new ReceiptService();
+export const receiptService = new ReceiptService();
