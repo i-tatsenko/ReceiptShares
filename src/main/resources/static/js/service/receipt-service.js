@@ -2,6 +2,10 @@ import {httpService} from './http-service';
 
 class ReceiptService {
 
+    getAll() {
+        return httpService.get('/v1/receipt/all');
+    }
+
     getReceipt(id) {
         return httpService.get(`/v1/receipt/${id}`)
     }

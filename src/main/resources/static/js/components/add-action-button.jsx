@@ -31,7 +31,7 @@ export default class ActionButton extends React.Component {
                 <Menu
                     anchorEl={this.state.floatMenuButton}
                     open={this.state.menuOpen}
-                    onRequestClose={() => this.setState({menuOpen: false})}
+                    onClose={() => this.setState({menuOpen: false})}
                     //TODO: check if this working
                     // onItemTouchTap={() => this.setState({menuOpen: false})}
                 >

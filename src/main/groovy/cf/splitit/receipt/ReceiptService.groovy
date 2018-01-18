@@ -14,6 +14,7 @@ import cf.splitit.receipt.exception.OrderedItemNotFound
 import cf.splitit.receipt.exception.ReceiptNotFoundException
 import cf.splitit.receipt.model.ItemStatus
 import cf.splitit.receipt.model.OrderedItem
+import cf.splitit.receipt.model.OrderedItemModificationType
 import cf.splitit.receipt.model.Receipt
 import cf.splitit.user.dao.PersonEntity
 import cf.splitit.user.dao.PersonRepository
@@ -26,6 +27,7 @@ import reactor.util.function.Tuple4
 
 import java.util.function.Function
 
+import static cf.splitit.receipt.model.OrderedItemModificationType.CREATED
 import static cf.splitit.receipt.model.ReceiptStatus.ACTIVE
 import static java.util.Collections.emptyList
 
@@ -40,10 +42,11 @@ class ReceiptService {
     private PersonRepository personRepository
     private InviteService inviteService
     private PlaceService placeService
+    private OrderedItemModificationService orderedItemModificationService
 
     @Autowired
     ReceiptService(ReceiptRepository receiptRepository, OrderItemRepository orderItemRepository,
-                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository, PlaceService placeService, InviteService inviteService) {
+                   ItemRepository itemRepository, PlaceRepository placeRepository, PersonRepository personRepository, PlaceService placeService, InviteService inviteService, OrderedItemModificationService orderedItemModificationService) {
         this.receiptRepository = receiptRepository
         this.orderItemRepository = orderItemRepository
         this.itemRepository = itemRepository
@@ -51,6 +54,7 @@ class ReceiptService {
         this.personRepository = personRepository
         this.placeService = placeService
         this.inviteService = inviteService
+        this.orderedItemModificationService = orderedItemModificationService
     }
 
     Flux<Receipt> receiptsForUser(String ownerId) {
@@ -74,7 +78,7 @@ class ReceiptService {
         return Optional.ofNullable(memberIds)
                        .filter({ !it.isEmpty() })
                        .map({ personRepository.findAllById(it).collectList() })
-                       .orElseGet({Mono.just(emptyList())})
+                       .orElseGet({ Mono.just(emptyList()) })
     }
 
     private Mono<ReceiptEntity> addInviteLink(ReceiptEntity receipt) {
@@ -108,7 +112,13 @@ class ReceiptService {
         //TODO check security
         return itemRepository.save(new ItemEntity(name: name, price: price))
                              .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) })
+                             .flatMap({logChange(it, CREATED, 1)})
                              .map({ it as OrderedItem })
+    }
+
+    private Mono<OrderedItemEntity> logChange(OrderedItemEntity orderedItem, OrderedItemModificationType type, Integer count = null) {
+        orderedItemModificationService.logChange(orderedItem.id, type, count)
+                                      .then(Mono.just(orderedItem))
     }
 
     Mono<Boolean> incrementOrderedItem(String ownerId, String receiptId, String orderedItemId, boolean isIncrement) {

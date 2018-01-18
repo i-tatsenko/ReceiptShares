@@ -1,10 +1,6 @@
-import Dialog, {
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from 'material-ui/Dialog';
-import TextField from "material-ui/TextField";
 import Button from 'material-ui/Button';
+import Dialog, {DialogActions, DialogContent, DialogTitle,} from 'material-ui/Dialog';
+import TextField from "material-ui/TextField";
 
 export default class NewItemModal extends React.Component {
 
@@ -20,7 +16,7 @@ export default class NewItemModal extends React.Component {
     render() {
         let t = this;
         return (
-            <Dialog modal={false} open={this.props.opened} onRequestClose={this.close}>
+            <Dialog  open={this.props.opened} onClose={this.close}>
                 <DialogTitle>
                     Add new item
                 </DialogTitle>

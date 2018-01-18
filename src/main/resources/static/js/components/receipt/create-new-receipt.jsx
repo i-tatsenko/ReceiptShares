@@ -1,17 +1,15 @@
-import storage from "../../storage/storage.js"
-import FriendList from "../friend-list/friend-list.jsx";
-import TextField from "material-ui/TextField";
-import Button from 'material-ui/Button';
-import Divider from "material-ui/Divider";
 import Avatar from "material-ui/Avatar";
+import Button from 'material-ui/Button';
 import Chip from "material-ui/Chip";
-import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
-import Snackbar from "material-ui/Snackbar";
-import {withRouter} from "react-router-dom";
-import location from "../../service/location.js"
-import PlaceSelect from "../place/suggest.jsx"
+import Divider from "material-ui/Divider";
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import Input, {InputLabel} from 'material-ui/Input';
+import Snackbar from "material-ui/Snackbar";
+import {withRouter} from "react-router-dom";
+import storage from "../../storage/storage.js"
+import {chipStyle, chipWrapperStyle} from "../default-styles.jsx";
+import FriendList from "../friend-list/friend-list.jsx";
+import PlaceSelect from "../place/suggest.jsx"
 
 class CreateNewReceipt extends React.Component {
 
@@ -38,7 +36,7 @@ class CreateNewReceipt extends React.Component {
                         return (
                             <Chip avatar={<Avatar src={user.avatarUrl}/>}
                                   label={user.name}
-                                  onRequestDelete={() => this.removeSelectedFriend(user.id)} style={chipStyle}/>
+                                  onDelete={() => this.removeSelectedFriend(user.id)} style={chipStyle}/>
                         );
                     })}
                 </div>
@@ -64,7 +62,7 @@ class CreateNewReceipt extends React.Component {
                     open={this.state.error}
                     message="Can't create receipt. Please try one more time"
                     autoHideDuration={4000}
-                    onRequestClose={() => this.setState({error: false})}
+                    onClose={() => this.setState({error: false})}
                 />
             </section>
         )

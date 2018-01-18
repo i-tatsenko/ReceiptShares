@@ -1,7 +1,9 @@
+import {receiptService} from "../../service/receipt-service";
 import storage from "../../storage/storage.js"
-import ReceiptCard from "./receipt-card.jsx";
 import WaitingData from "../waiting-data.jsx";
+import ReceiptCard from "./receipt-card.jsx";
 import "./receipt.css";
+
 
 let NoReceipts = () => <section
     className="receipt-list__no-receipts">{"Here will be present list of your receipts"}</section>;
@@ -32,8 +34,8 @@ export default class ReceiptList extends React.Component {
 
     componentWillMount() {
         storage.screenTitle("Receipts");
-        let t = this;
-        $.get('/v1/receipt/all').done(resp => t.setState({receiptsList: resp}));
+        receiptService.getAll()
+                      .subscribe(receipts => this.setState({receiptsList: receipts}));
     }
 }
 

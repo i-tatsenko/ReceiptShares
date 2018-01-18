@@ -1,7 +1,7 @@
 import ContentCopy from 'material-ui-icons/ContentCopy'
-import Input, {InputAdornment} from 'material-ui/Input';
 import {FormControl} from 'material-ui/Form';
 import IconButton from 'material-ui/IconButton';
+import Input, {InputAdornment} from 'material-ui/Input';
 import Snackbar from 'material-ui/Snackbar';
 
 export default class CopyAbleInput extends React.Component {
@@ -32,7 +32,7 @@ export default class CopyAbleInput extends React.Component {
                     key="notification"
                     open={this.state.notificationOpen}
                     autoHideDuration={3000}
-                    onRequestClose={() => this.setState({notificationOpen: false})}
+                    onClose={() => this.setState({notificationOpen: false})}
                     message={<span>Invite link was copied to clipboard!</span>}
                 />
             ]
