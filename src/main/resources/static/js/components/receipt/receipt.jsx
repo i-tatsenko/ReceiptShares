@@ -88,7 +88,8 @@ export default class Receipt extends React.Component {
                 <Snackbar
                     open={this.state.showItemDeletedMessage}
                     message={this.state.itemDeletedMessage}
-                    action={[<Button key="undo" color="accent" dense onClick={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}>UNDO</Button>]}
+                    action={[<Button key="undo" color="accent" dense
+                                     onClick={() => this.undoDelete(this.state.rec.id, this.state.deletedItemId)}>UNDO</Button>]}
                     onClose={() => this.setState({showItemDeletedMessage: false})}
                     autoHideDuration={5000}
                 />
@@ -140,11 +141,14 @@ export default class Receipt extends React.Component {
         this.getReceiptFromServer();
         storage.addAddActionButtonMenuItem(storage.addAddActionButtonMenuItem(this.additionalAction));
         NavigationHistory.pushHistory("/receipts");
+        this.receiptListener = receiptService.listenForReceiptChanges(this.props.match.params.id)
+                                             .subscribe(data => this.getReceiptFromServer());
     }
 
     componentWillUnmount() {
         storage.removeAddActionButtonMenuItem(this.additionalAction);
-        NavigationHistory.removeFromHistory("/receipts")
+        NavigationHistory.removeFromHistory("/receipts");
+        this.receiptListener.unsubscribe();
     }
 
     incrementItemCount(receiptId, itemId) {

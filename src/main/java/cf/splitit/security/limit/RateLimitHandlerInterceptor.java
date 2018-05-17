@@ -25,15 +25,21 @@ public class RateLimitHandlerInterceptor implements HandlerInterceptor {
         String remoteId = findRemoteId(request);
         return rateLimit.checkRate(remoteId)
                  .then(Mono.just(true))
-                 .onErrorResume(RateLimitException.class, e -> handleRateLimitError(remoteId, response, e))
+                 .onErrorResume(RateLimitException.class, e -> handleRateLimitError(remoteId, request, response, e))
                  .block();
     }
 
-    private Mono<Boolean> handleRateLimitError(String remoteId, HttpServletResponse response, RateLimitException exception)  {
+    private Mono<Boolean> handleRateLimitError(String remoteId, HttpServletRequest request, HttpServletResponse response, RateLimitException exception)  {
         log.error("Too many requests from " + remoteId);
         try {
+            //TODO: should return error without processing handler
+            //It seems that action takes place even if rate limit exceeded
             exception.retryAfter().ifPresent(after -> response.setHeader("Retry-After", after.toString()));
-            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value());
+            if (!response.isCommitted()) {
+                response.sendError(HttpStatus.TOO_MANY_REQUESTS.value());
+            } else {
+                log.warn("Can't set error status code, response is commited. URL: " + request.getRequestURL());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

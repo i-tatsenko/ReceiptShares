@@ -43,6 +43,6 @@ class UserAuthentication implements Authentication {
 
     @Override
     String getName() {
-        return user.name
+        return user.person.name
     }
 }

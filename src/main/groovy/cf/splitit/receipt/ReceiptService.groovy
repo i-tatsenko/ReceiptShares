@@ -27,7 +27,7 @@ import reactor.util.function.Tuple4
 
 import java.util.function.Function
 
-import static cf.splitit.receipt.model.OrderedItemModificationType.CREATED
+import static cf.splitit.receipt.model.OrderedItemModificationType.*
 import static cf.splitit.receipt.model.ReceiptStatus.ACTIVE
 import static java.util.Collections.emptyList
 
@@ -112,12 +112,12 @@ class ReceiptService {
         //TODO check security
         return itemRepository.save(new ItemEntity(name: name, price: price))
                              .flatMap({ item -> createOrderedItem(ownerId, item, receiptId) })
-                             .flatMap({logChange(it, CREATED, 1)})
+                             .flatMap({ logChange(receiptId, it, CREATED, 1) })
                              .map({ it as OrderedItem })
     }
 
-    private Mono<OrderedItemEntity> logChange(OrderedItemEntity orderedItem, OrderedItemModificationType type, Integer count = null) {
-        orderedItemModificationService.logChange(orderedItem.id, type, count)
+    private Mono<OrderedItemEntity> logChange(String receiptId, OrderedItemEntity orderedItem, OrderedItemModificationType type, Integer count = null) {
+        orderedItemModificationService.logChange(receiptId, orderedItem.id, type, count)
                                       .then(Mono.just(orderedItem))
     }
 
@@ -125,13 +125,15 @@ class ReceiptService {
         //TODO check security
         return receiptRepository.incrementOrderedItemAmount(receiptId, orderedItemId, isIncrement)
                                 .flatMap({ result ->
+            Mono<Void> resultMono
             if (result) {
-                return orderItemRepository.changeStatus(orderedItemId, ItemStatus.DELETED)
-                                          .then(Mono.just(result))
+                resultMono = orderItemRepository.changeStatus(orderedItemId, ItemStatus.DELETED)
             } else {
-                return orderItemRepository.incrementCount(orderedItemId, isIncrement ? 1 : -1)
-                                          .then(Mono.just(result))
+                resultMono = orderItemRepository.incrementCount(orderedItemId, isIncrement ? 1 : -1)
             }
+            return resultMono
+                    .then(orderedItemModificationService.logChange(receiptId, orderedItemId, result ? DELETED : MODIFIED, isIncrement ? 1 : -1))
+                    .then(Mono.just(result))
         })
     }
 
@@ -139,6 +141,7 @@ class ReceiptService {
         //TODO check security
         return Mono.zip(receiptRepository.changeOrderedItemStatus(receiptId, orderedItemId, ItemStatus.ACTIVE),
                 orderItemRepository.changeStatus(orderedItemId, ItemStatus.ACTIVE))
+                   .then(orderedItemModificationService.logChange(receiptId, orderedItemId, CREATED, 1))
                    .then()
 
     }
@@ -169,12 +172,13 @@ class ReceiptService {
     }
 
     private Mono<OrderedItemEntity> createOrderedItem(String ownerId, ItemEntity item, String receiptId) {
-        Mono<OrderedItemEntity> orderedItem = personRepository.findById(ownerId)
-                                                              .map({ owner -> new OrderedItemEntity(owner, item) })
-                                                              .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) })
-                                                              .cache()
-
-        return orderedItem.flatMap({ receiptRepository.addOrderedItem(receiptId, it) })
-                          .then(orderedItem)
+        return personRepository.findById(ownerId)
+                               .map({ owner -> new OrderedItemEntity(owner, item) })
+                               .flatMap({ orderedItem -> orderItemRepository.save(orderedItem) })
+                               .flatMap({ OrderedItemEntity entity ->
+            orderedItemModificationService.logChange(receiptId, entity.id, CREATED, 1)
+                                          .then(receiptRepository.addOrderedItem(receiptId, entity))
+                                          .thenReturn(entity)
+        })
     }
 }

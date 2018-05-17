@@ -2,6 +2,7 @@ package cf.splitit.receipt
 
 import cf.splitit.places.model.Place
 import cf.splitit.receipt.model.OrderedItem
+import cf.splitit.receipt.model.OrderedItemModification
 import cf.splitit.receipt.model.Receipt
 import cf.splitit.user.model.User
 import cf.splitit.web.response.SimpleValueResponse
@@ -17,10 +18,12 @@ import reactor.core.publisher.Mono
 class ReceiptController {
 
     ReceiptService receiptService
+    OrderedItemModificationService orderedItemModificationService
 
     @Autowired
-    ReceiptController(ReceiptService receiptService) {
+    ReceiptController(ReceiptService receiptService, OrderedItemModificationService orderedItemModificationService) {
         this.receiptService = receiptService
+        this.orderedItemModificationService = orderedItemModificationService
     }
 
     @GetMapping(value = '/{id}', produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,8 +74,13 @@ class ReceiptController {
 
     @PostMapping("/{receiptId}/item/{orderedItemId}/clone")
     Mono<Void> cloneItem(Authentication auth,
-                                               @PathVariable("receiptId") String receiptId,
-                                               @PathVariable("orderedItemId") String orderedItemId) {
+                         @PathVariable("receiptId") String receiptId,
+                         @PathVariable("orderedItemId") String orderedItemId) {
         return receiptService.cloneItem(auth.principal.person.id, receiptId, orderedItemId)
+    }
+
+    @GetMapping(value = "/{receiptId}/listen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    Flux<OrderedItemModification> listen(@PathVariable("receiptId") String receiptId) {
+        return orderedItemModificationService.listen().log().filter({it.receiptId == receiptId})
     }
 }
